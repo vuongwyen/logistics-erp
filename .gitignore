@@ -28,4 +28,4 @@ Thumbs.db
 /installer/prerequisites/*.exe
 /installer/prerequisites/*.zip
 /installer/prerequisites/*.phar
-public\NT-Logistics-ERP-Setup-v3.0.0.exe
+public\NT-Logistics-ERP-Setup-v3.0.0.exe@file:NT-Logistics-ERP-Setup-v3.0.0.exe
