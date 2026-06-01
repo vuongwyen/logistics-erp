@@ -23,6 +23,10 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         Paginator::useBootstrap();
-        //URL::forceScheme('https');
+        
+        // Force HTTPS nếu APP_URL bắt đầu bằng https (ví dụ dùng Cloudflare Tunnel)
+        if (\Illuminate\Support\Str::startsWith(config('app.url'), 'https://')) {
+            URL::forceScheme('https');
+        }
     }
 }

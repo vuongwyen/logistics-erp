@@ -133,6 +133,12 @@
                             <i class="fa fa-database nav-icon"></i>
                             <span>Lưu trữ dữ liệu</span>
                         </a>
+
+                        <a class="nav-link {{ $activeTab === 'tab-trienkhai' ? 'active' : '' }}"
+                           id="nav-trienkhai" data-bs-toggle="tab" href="#tab-trienkhai" role="tab">
+                            <i class="fa fa-box nav-icon"></i>
+                            <span>Gói triển khai (All-in-One)</span>
+                        </a>
                         @endif
 
                     </div>
@@ -499,16 +505,37 @@
 
                                 {{-- Sao lưu --}}
                                 <div class="col-md-5">
-                                    <div class="p-4 bg-success bg-opacity-10 rounded-4 border border-success border-opacity-25 h-100 text-center">
-                                        <div class="p-3 bg-success text-white rounded-circle d-inline-block mb-3">
+                                    <div class="p-4 bg-success bg-opacity-10 rounded-4 border border-success border-opacity-25 h-100 text-center d-flex flex-column">
+                                        <div class="p-3 bg-success text-white rounded-circle d-inline-block mb-3 mx-auto">
                                             <i class="fa fa-download fs-4"></i>
                                         </div>
                                         <h6 class="fw-bold text-navy">Xuất dữ liệu (Sao lưu)</h6>
                                         <p class="small text-muted mb-4">Tải xuống toàn bộ cấu trúc và dữ liệu của hệ thống dưới dạng SQL.</p>
-                                        <a href="{{ route('settings.backup') }}" class="btn btn-success fw-bold w-100 py-2">
+                                        <a href="{{ route('settings.backup') }}" class="btn btn-success fw-bold w-100 py-2 mb-4">
                                             <i class="fa fa-database me-2"></i>Sao lưu toàn bộ cơ sở dữ liệu
                                         </a>
-                                        <p class="small text-muted text-center mt-2 mb-0">Định dạng tệp SQL</p>
+
+                                        <hr class="border-success opacity-25 my-0 mb-3">
+
+                                        <h6 class="fw-bold text-navy mb-2"><i class="fa fa-clock-rotate-left me-1"></i>Tự động sao lưu</h6>
+                                        <p class="small text-muted mb-3">Hệ thống sẽ tự động sao lưu ngầm theo lịch trình.</p>
+                                        <form action="{{ route('settings.update') }}" method="POST" class="mt-auto">
+                                            @csrf
+                                            <div class="input-group input-group-sm mb-2">
+                                                @php
+                                                    $autoBackup = \App\Models\Setting::where('key', 'auto_backup_interval')->value('value') ?? 'off';
+                                                @endphp
+                                                <select name="settings[auto_backup_interval]" class="form-select border-success">
+                                                    <option value="off" {{ $autoBackup === 'off' ? 'selected' : '' }}>Không tự động</option>
+                                                    <option value="daily" {{ $autoBackup === 'daily' ? 'selected' : '' }}>Mỗi 24 giờ (1 ngày)</option>
+                                                    <option value="3_days" {{ $autoBackup === '3_days' ? 'selected' : '' }}>Mỗi 3 ngày</option>
+                                                    <option value="weekly" {{ $autoBackup === 'weekly' ? 'selected' : '' }}>Mỗi 7 ngày</option>
+                                                    <option value="monthly" {{ $autoBackup === 'monthly' ? 'selected' : '' }}>Mỗi 30 ngày</option>
+                                                </select>
+                                                <button class="btn btn-success" type="submit">Lưu</button>
+                                            </div>
+                                            <p class="small text-muted text-center mt-1 mb-0" style="font-size: 0.75rem;">(Bản backup sẽ lưu trong hệ thống máy chủ)</p>
+                                        </form>
                                     </div>
                                 </div>
 
@@ -570,6 +597,84 @@
                         </div>
                     </div>
                 </div>
+                {{-- ---------------------------------------------------- --}}
+                {{-- TAB 5: TRIỂN KHAI (ADMIN only) --}}
+                {{-- ---------------------------------------------------- --}}
+                <div class="tab-pane fade {{ $activeTab === 'tab-trienkhai' ? 'show active' : '' }}"
+                     id="tab-trienkhai" role="tabpanel">
+                    <div class="card border-0 rounded-4 shadow-sm">
+                        <div class="card-header bg-white border-0 p-4 pb-0">
+                            <h6 class="fw-bold text-navy text-uppercase mb-1" style="letter-spacing:.05em;">
+                                <i class="fa fa-box me-2"></i>Bộ Cài Đặt Khách Hàng (.exe)
+                            </h6>
+                            <p class="text-muted small mb-0">Tải xuống file cài đặt All-in-One dùng cho bất kỳ máy tính Windows nào (kể cả không có Internet).</p>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-6 text-center text-md-start mb-4 mb-md-0">
+                                    <div class="mb-4">
+                                        <h4 class="fw-bold text-primary mb-2">NT-Logistics-ERP-Setup-v3.0.0.exe</h4>
+                                        <span class="badge bg-secondary mb-2">Dung lượng: ~300 MB</span>
+                                        <span class="badge bg-success mb-2">Bao gồm: Database + PHP + Tool mạng</span>
+                                    </div>
+                                    <a href="{{ route('settings.setup-download') }}" class="btn btn-primary btn-lg fw-bold px-5 py-3 shadow-sm rounded-pill">
+                                        <i class="fa fa-download me-2"></i>Tải Về Máy Tính
+                                    </a>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="alert alert-info border-0 rounded-4 h-100 m-0">
+                                        <h6 class="fw-bold text-info-emphasis mb-3"><i class="fa fa-info-circle me-2"></i>Hướng dẫn cài đặt nhanh:</h6>
+                                        <ol class="small text-info-emphasis mb-0 ps-3 lh-lg">
+                                            <li>Tải file <strong>.exe</strong> bên cạnh về máy tính mới.</li>
+                                            <li>Nhấn đúp (Double-click) để bắt đầu cài đặt.</li>
+                                            <li>Làm theo trình hướng dẫn cài đặt (Wizard). Hệ thống sẽ tự động giải nén và cấu hình.</li>
+                                            <li>Đợi khoảng 1 phút để ứng dụng tự động cài đặt Database ẩn và nạp dữ liệu nền.</li>
+                                            <li>Biểu tượng "Khởi động Server" sẽ xuất hiện trên màn hình Desktop.</li>
+                                            <li><strong>Lưu ý:</strong> Quá trình lần đầu tiên cài đặt cần kết nối mạng để đồng bộ thư viện (vendor).</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Modal Hướng dẫn --}}
+                <div class="modal fade" id="guideModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content border-0 shadow">
+                            <div class="modal-header bg-navy text-white">
+                                <h5 class="modal-title fw-bold"><i class="fa fa-book me-2"></i>Hướng Dẫn Gói Triển Khai Portable</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <h6 class="fw-bold text-navy mb-2">Kiến trúc Portable (không cần XAMPP):</h6>
+                                <ul class="list-unstyled small text-muted mb-4">
+                                    <li class="mb-1"><i class="fa fa-check-circle text-success me-2"></i>Dùng <strong>PHP 8.2 (x86)</strong> và <strong>MariaDB 10.6 (x86)</strong> dạng di động.</li>
+                                    <li class="mb-1"><i class="fa fa-check-circle text-success me-2"></i>Hỗ trợ <strong>Windows 32-bit và 64-bit</strong>.</li>
+                                    <li class="mb-1"><i class="fa fa-check-circle text-success me-2"></i><strong>Không cần cài XAMPP</strong>, không cần Internet khi cài.</li>
+                                    <li class="mb-1"><i class="fa fa-check-circle text-success me-2"></i>MariaDB đăng ký thành <strong>Windows Service</strong> — tự khởi động khi bật máy.</li>
+                                </ul>
+
+                                <h6 class="fw-bold text-navy mb-2">Quy trình 3 bước (thực hiện 1 lần):</h6>
+                                <ol class="small text-muted ps-3">
+                                    <li class="mb-2">Tải file <strong>NT-Logistics-System-Installer.exe</strong> từ tab này về máy tính.</li>
+                                    <li class="mb-2">Trên máy mới: <strong>Click đúp</strong> vào file → Hộp thoại hỏi xác nhận cài vào <code>D:\NT-Logistics-ERP</code> → Bấm <strong>OK</strong>.</li>
+                                    <li class="mb-2">Cửa sổ đen hiện ra, nhập <strong>tên database</strong> và <strong>thông tin Admin</strong> → Enter → Chờ <strong>2–3 phút</strong> → Trình duyệt tự mở!</li>
+                                </ol>
+
+                                <div class="alert alert-warning border-0 rounded-3 small mb-0">
+                                    <i class="fa fa-shield-alt me-2"></i>
+                                    <strong>Lưu ý:</strong> Cần chạy với quyền <strong>Administrator</strong> để cài Windows Service và mở Firewall. Script sẽ tự yêu cầu nâng quyền nếu chưa có.
+                                </div>
+                            </div>
+                            <div class="modal-footer border-0">
+                                <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">Đã hiểu</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 @endif {{-- end isAdmin --}}
 
             </div>{{-- /tab-content --}}
@@ -582,6 +687,17 @@
 
 @push('scripts')
 <script>
+    // ── Xác nhận và loading khi Render bộ cài .exe ──────────────────────
+    function confirmBuild(form) {
+        if (!confirm('Render bo cai .exe moi?\n\nQua trinh mat 30-60 giay, trang se bi freeze trong luc cho.\nBo cai cu (neu co) se bi ghi de.\n\nXac nhan tiep tuc?')) {
+            return false;
+        }
+        const btn = form.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa fa-spinner fa-spin me-2"></i>Dang Render...';
+        return true;
+    }
+
     // Giữ nguyên tab đang chọn sau khi submit form (qua hidden field)
     document.addEventListener('DOMContentLoaded', function () {
         // Nếu URL hash khớp với một tab, kích hoạt tab đó

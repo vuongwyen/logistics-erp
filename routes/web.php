@@ -58,6 +58,19 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:ADMIN')->group(function () {
         Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
         Route::get('/settings/backup', [SettingController::class, 'backup'])->name('settings.backup');
+        Route::get('/settings/backups/{filename}/download', [SettingController::class, 'downloadBackup'])->name('settings.backup-download');
+        Route::delete('/settings/backups/{filename}', [SettingController::class, 'deleteBackup'])->name('settings.backup-delete');
+        Route::post('/settings/installer/build', [SettingController::class, 'buildExeInstaller'])->name('settings.installer-build');
+        Route::get('/settings/installer/download', [SettingController::class, 'downloadExeInstaller'])->name('settings.installer-download');
+        Route::get('/settings/setup/download', function () {
+            $path = public_path('NT-Logistics-ERP-Setup-v3.0.0.exe');
+            if (!file_exists($path)) {
+                abort(404, 'File not found');
+            }
+            return response()->download($path);
+        })->name('settings.setup-download');
+        Route::post('/settings/installer/sync', [SettingController::class, 'syncInstallers'])->name('settings.installer-sync');
+        Route::delete('/settings/installer', [SettingController::class, 'deleteExeInstaller'])->name('settings.installer-delete');
         Route::post('/settings/restore', [SettingController::class, 'restore'])->name('settings.restore');
         Route::post('/settings/upload-asset', [SettingController::class, 'uploadAsset'])->name('settings.upload-asset');
         Route::get('/settings/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');

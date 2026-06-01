@@ -23,3 +23,8 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 /.ai
+/wan-url.txt
+/server/cloudflared.exe/public/*.exe
+/installer/prerequisites/*.exe
+/installer/prerequisites/*.zip
+/installer/prerequisites/*.phar
