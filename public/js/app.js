@@ -18,8 +18,22 @@ function confirmDelete(id, message = 'Bạn có chắc chắn muốn xóa?') {
 // Custom HTML5 Validation Tooltip
 // -----------------------------------------------------------------------
 (function () {
+    function getLabelText(el) {
+        if (el.labels && el.labels.length > 0) {
+            return el.labels[0].textContent.replace('*', '').trim();
+        }
+        const parent = el.closest('div');
+        if (parent) {
+            const label = parent.querySelector('label');
+            if (label) {
+                return label.textContent.replace('*', '').trim();
+            }
+        }
+        return el.name || 'này';
+    }
+
     const MESSAGES = {
-        valueMissing: (el) => `Trường "${el.labels?.[0]?.textContent?.replace('*', '').trim() || el.name || 'này'}" không được để trống.`,
+        valueMissing: (el) => `Trường "${getLabelText(el)}" không được để trống.`,
         typeMismatch: (el) => el.type === 'email' ? 'Địa chỉ email không hợp lệ (VD: user@example.com).' : 'Giá trị không đúng định dạng.',
         patternMismatch: (el) => el.title || 'Giá trị không đúng định dạng yêu cầu.',
         tooShort: (el) => `Tối thiểu ${el.minLength} ký tự.`,
