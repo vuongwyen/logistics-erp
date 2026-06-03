@@ -9,7 +9,7 @@
 </div>
 
 <!-- Filters -->
-<div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
     <div class="row g-3">
         <div class="col-md-4">
             <input type="text" class="form-control border-light" placeholder="Mã lô hàng, Bill no...">

@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}?v={{ filemtime(public_path('css/style.css')) }}">
     <style>
         :root {
@@ -146,6 +147,9 @@
                 @if(Auth::user()->hasRole(['ADMIN', 'DISPATCH']))
                 <div class="small text-white text-uppercase fw-bold mt-4 mb-2 px-3" style="font-size: 0.65rem; letter-spacing: 1px;">Hệ thống</div>
 
+                <a href="{{ route('settings.company') }}" class="nav-link-custom {{ request()->routeIs('settings.company') ? 'active' : '' }}">
+                    <i class="fa fa-building"></i> Công ty
+                </a>
                 <a href="{{ route('users.index') }}" class="nav-link-custom {{ request()->routeIs('users.*') ? 'active' : '' }}">
                     <i class="fa fa-users-cog"></i> Nhân sự
                 </a>
@@ -275,18 +279,33 @@
             });
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/vn.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Change empty date inputs to text inputs to show custom placeholder
-            document.querySelectorAll('input[type="date"]').forEach(input => {
-                if (!input.value) {
-                    input.type = 'text';
-                    input.placeholder = 'Ngày/Tháng/Năm';
-                }
-                input.addEventListener('focus', function() { this.type = 'date'; this.showPicker && this.showPicker(); });
-                input.addEventListener('blur', function() { if (!this.value) this.type = 'text'; });
+            // Khởi tạo Flatpickr cho tất cả các ô chọn ngày để đồng bộ định dạng dd/mm/yyyy
+            flatpickr('input[type="date"]', {
+                locale: "vn",
+                altInput: true,
+                altFormat: "d/m/Y",
+                dateFormat: "Y-m-d",
+                allowInput: true,
+                disableMobile: true,
+                placeholder: "dd/mm/yyyy"
             });
         });
+
+        // Hàm hỗ trợ gán giá trị ngày an toàn khi có dùng Flatpickr
+        window.setDateValue = function(id, value) {
+            let el = document.getElementById(id);
+            if (el) {
+                if (el._flatpickr) {
+                    el._flatpickr.setDate(value);
+                } else {
+                    el.value = value;
+                }
+            }
+        };
     </script>
     @stack('scripts')
 </body>

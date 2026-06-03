@@ -378,9 +378,13 @@
                                     </div>
                                 </div>
                                 <div class="d-flex gap-1">
-                                    <a href="{{ Storage::url($doc->file_url) }}" target="_blank" class="btn btn-link text-white p-1">
+                                    @php
+                                        $fileExt = pathinfo($doc->file_url, PATHINFO_EXTENSION);
+                                        $fileUrl = route('documents.show', $doc);
+                                    @endphp
+                                    <button type="button" class="btn btn-link text-white p-1" data-bs-toggle="modal" data-bs-target="#previewModal" onclick="previewDocument('{{ $fileUrl }}', '{{ $doc->doc_category }}', '{{ $fileExt }}')">
                                         <i class="fa fa-eye"></i>
-                                    </a>
+                                    </button>
                                     <form action="{{ route('documents.destroy', $doc->id) }}" method="POST" id="delete-doc-{{ $doc->id }}" class="d-none">
                                         @csrf @method('DELETE')
                                     </form>
@@ -570,3 +574,5 @@
     </div>
 </div>
 @endsection
+
+<x-document-preview-modal />

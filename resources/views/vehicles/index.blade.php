@@ -9,7 +9,7 @@
     <x-export-buttons />
 </div>
 
-<div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
     <form action="{{ route('vehicles.index') }}" method="GET" class="row g-3">
         <!-- <div class="col-md-7">
             <input type="text" name="search" class="form-control border-light" placeholder="Tìm theo biển số, loại xe..." value="{{ request('search') }}">
@@ -150,9 +150,10 @@
                     <div class="row g-3">
                         <div class="col-md-12">
                             <label class="form-label fw-semibold">Biển Số Xe</label>
-                            <input type="text" name="plate_number" id="plate_number" class="form-control bg-light border-0 @error('plate_number') is-invalid @enderror" placeholder="VD: 51C-123.45" required pattern="^[0-9]{2}[A-Z]{1,2}-[0-9]{3}\.[0-9]{2}$" title="Vui lòng nhập đúng định dạng biển số chuẩn (VD: 30A-123.45 hoặc 51LD-123.45)" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9\-\.]/g, '');">
+                            <input type="text" name="plate_number" id="plate_number" class="form-control bg-light border-0 @error('plate_number') is-invalid @enderror" placeholder="VD: 51C-123.45" required oninput="formatLicensePlate(this)">
+                            <div class="invalid-feedback" id="plate_number_error" style="display: none;"></div>
                             @error('plate_number')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="col-md-12">
@@ -218,6 +219,81 @@
         document.getElementById('status').value = vehicle.status;
         document.getElementById('registration_expiry').value = vehicle.registration_expiry ? vehicle.registration_expiry.split(' ')[0] : '';
         document.getElementById('note').value = vehicle.note || '';
+    }
+
+    function formatLicensePlate(input) {
+        let val = input.value.toUpperCase();
+        let errorMsg = '';
+        
+        // Remove spaces and any invalid chars overall to keep it clean
+        val = val.replace(/[^A-Z0-9\-\.]/g, '');
+
+        if (val.length > 0) {
+            let part1 = val.split('-')[0] || '';
+            let part2 = val.split('-')[1] || '';
+
+            // Kiểm tra mã vùng (2 ký tự đầu phải là số)
+            if (part1.length >= 2 && !/^[0-9]{2}/.test(part1)) {
+                errorMsg = "2 ký tự đầu phải là mã vùng (số).";
+            }
+            // Kiểm tra series (sau mã vùng phải là chữ)
+            else if (part1.length > 2 && !/^[0-9]{2}[A-Z]{1,2}$/.test(part1)) {
+                errorMsg = "Sau mã vùng phải là 1 hoặc 2 chữ cái series.";
+            }
+            // Nếu đã gõ xong phần 1 và chưa có dấu -
+            else if (part1.length >= 3 && part1.length <= 4 && !val.includes('-') && input.value.length > part1.length) {
+                // Tự động thêm - (optional) or let user type
+                // But user rules: bắt lỗi.
+            }
+            // Kiểm tra phần 2
+            else if (val.includes('-')) {
+                if (part2.length > 0) {
+                    let p2_1 = part2.split('.')[0] || '';
+                    let p2_2 = part2.split('.')[1] || '';
+
+                    if (p2_1.length > 0 && !/^[0-9]+$/.test(p2_1)) {
+                        errorMsg = "Sau dấu '-' phải là số.";
+                    } else if (p2_1.length > 3) {
+                        errorMsg = "Sau dấu '-' chỉ được 3 chữ số, sau đó là dấu chấm.";
+                    }
+
+                    if (part2.includes('.')) {
+                        if (p2_2.length > 0 && !/^[0-9]+$/.test(p2_2)) {
+                            errorMsg = "Sau dấu '.' phải là 2 chữ số.";
+                        } else if (p2_2.length > 2) {
+                            errorMsg = "Chỉ được nhập 2 số sau dấu '.'.";
+                        }
+                    }
+                }
+            }
+            
+            // Lỗi tổng thể (Regex cuối)
+            if (val.length >= 8 && !errorMsg) {
+                if (!/^[0-9]{2}[A-Z]{1,2}-[0-9]{3}\.[0-9]{2}$/.test(val)) {
+                    errorMsg = "Định dạng biển số chưa đúng chuẩn (VD: 51C-123.45, 51R-123.45).";
+                }
+            }
+        }
+
+        input.value = val;
+
+        let errorDiv = document.getElementById('plate_number_error');
+        if (errorMsg) {
+            input.classList.add('is-invalid');
+            input.setCustomValidity(errorMsg);
+            if (errorDiv) {
+                errorDiv.innerText = errorMsg;
+                errorDiv.style.display = 'block';
+                errorDiv.classList.add('d-block');
+            }
+        } else {
+            input.classList.remove('is-invalid');
+            input.setCustomValidity('');
+            if (errorDiv) {
+                errorDiv.style.display = 'none';
+                errorDiv.classList.remove('d-block');
+            }
+        }
     }
 </script>
 @endpush

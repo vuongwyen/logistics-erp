@@ -9,7 +9,7 @@
     <x-export-buttons />
 </div>
 
-<div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
     <form action="{{ route('drivers.index') }}" method="GET" class="row g-3">
         <!-- <div class="col-md-5">
             <input type="text" name="search" class="form-control border-light" placeholder="Tìm theo mã tài xế, tên, GPLX, cấp bậc..." value="{{ request('search') }}">
@@ -125,11 +125,13 @@
                     <div class="row g-3">
                         <div class="col-md-12">
                             <label class="form-label fw-semibold">Họ và Tên</label>
-                            <input type="text" name="full_name" id="full_name" class="form-control bg-light border-0" required onblur="this.value = this.value.trim().replace(/\s+/g, ' ').replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });">
+                            <input type="text" name="full_name" id="full_name" class="form-control bg-light border-0" required oninput="formatName(this)">
+                            <div class="invalid-feedback" id="full_name_error" style="display: none;"></div>
                         </div>
                         <div class="col-md-12">
                             <label class="form-label fw-semibold">Số Điện Thoại</label>
-                            <input type="text" name="phone" id="phone" class="form-control bg-light border-0" maxlength="10" inputmode="numeric" required oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                            <input type="text" name="phone" id="phone" class="form-control bg-light border-0" maxlength="10" inputmode="numeric" required oninput="formatPhone(this)">
+                            <div class="invalid-feedback" id="phone_error" style="display: none;"></div>
                         </div>
                         <div class="col-md-12">
                             <label class="form-label fw-semibold">Ngày sinh</label>
@@ -137,7 +139,8 @@
                         </div>
                         <div class="col-md-12">
                             <label class="form-label fw-semibold">Số Bằng Lái</label>
-                            <input type="text" name="license_number" id="license_number" class="form-control bg-light border-0" required oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');">
+                            <input type="text" name="license_number" id="license_number" class="form-control bg-light border-0" maxlength="12" required oninput="formatLicense(this)">
+                            <div class="invalid-feedback" id="license_number_error" style="display: none;"></div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Ngày bắt đầu làm việc</label>
@@ -185,6 +188,15 @@
         document.getElementById('driverForm').action = "{{ route('drivers.store') }}";
         document.getElementById('methodField').innerHTML = '';
         document.getElementById('driverForm').reset();
+        
+        let today = new Date();
+        let adultDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+        
+        if (window.setDateValue) {
+            setDateValue('date_of_birth', adultDate);
+            setDateValue('start_date', today);
+            setDateValue('contract_expiry', today);
+        }
     }
 
     function prepareEdit(driver) {

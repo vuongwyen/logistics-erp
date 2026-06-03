@@ -59,17 +59,31 @@ class SettingController extends Controller
             usort($backupFiles, fn ($a, $b) => $b['modified'] <=> $a['modified']);
         }
 
-        // Thông tin file installer .exe (nếu đã Render)
-        $installerExeInfo = null;
-        $exePath = storage_path('app/installers/NT-Logistics-System-Installer.exe');
-        if (file_exists($exePath)) {
-            $installerExeInfo = [
-                'size' => filesize($exePath),
-                'modified' => filemtime($exePath),
-            ];
+        $installers = collect();
+        if (Storage::disk('public')->exists('installers')) {
+            $files = Storage::disk('public')->files('installers');
+            foreach ($files as $file) {
+                if (str_ends_with($file, '.exe')) {
+                    $installers->push([
+                        'name' => basename($file),
+                        'path' => $file,
+                        'size' => Storage::disk('public')->size($file),
+                        'modified' => Storage::disk('public')->lastModified($file),
+                        'url' => Storage::disk('public')->url($file),
+                    ]);
+                }
+            }
         }
+        $installers = $installers->sortByDesc('modified');
 
-        return view('settings.index', compact('settings', 'systemParams', 'user', 'backupFiles', 'installerExeInfo'));
+        return view('settings.index', compact('settings', 'systemParams', 'backupFiles', 'installers'));
+    }
+
+    public function company()
+    {
+        $settings = Setting::all()->groupBy('group');
+        $companySettings = $settings->get('company', collect())->keyBy('key');
+        return view('settings.company', compact('companySettings'));
     }
 
     public function update(Request $request)

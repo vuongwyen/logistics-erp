@@ -11,7 +11,7 @@
     <x-export-buttons />
 </div>
 
-<div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
     <form action="{{ route('documents.index') }}" method="GET" class="row g-3">
         <!-- <div class="col-md-6">
             <input type="text" name="search" class="form-control border-light" placeholder="Tìm theo mã job, khách hàng, loại chứng từ..." value="{{ request('search') }}">
@@ -90,9 +90,13 @@
                         </td>
                         <td>{{ $document->uploader->name ?? '---' }}</td>
                         <td class="text-center">
-                            <a href="{{ route('documents.show', $document) }}" target="_blank" class="btn btn-sm btn-outline-navy">
+                            @php
+                                $fileExt = pathinfo($document->file_url, PATHINFO_EXTENSION);
+                                $fileUrl = route('documents.show', $document);
+                            @endphp
+                            <button type="button" class="btn btn-sm btn-outline-navy" data-bs-toggle="modal" data-bs-target="#previewModal" onclick="previewDocument('{{ $fileUrl }}', '{{ $document->doc_category }}', '{{ $fileExt }}')">
                                 <i class="fa fa-eye"></i>
-                            </a>
+                            </button>
                         </td>
                     </tr>
                 @empty
@@ -108,3 +112,5 @@
     </div>
 </div>
 @endsection
+
+<x-document-preview-modal />

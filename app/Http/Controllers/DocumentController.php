@@ -71,7 +71,7 @@ class DocumentController extends Controller
             'document_flow' => ['required', Rule::in(['input', 'output'])],
             'tax_stage' => ['required', Rule::in(['before_tax', 'after_tax'])],
             'note' => 'nullable|string|max:255',
-            'file' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120', // Max 5MB
+            'file' => 'required|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:10240', // Max 10MB
         ]);
 
         if (Auth::user()->hasRole('FIELD')) {

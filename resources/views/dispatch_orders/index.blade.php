@@ -66,7 +66,7 @@
 @endif
 
 <!-- Filters -->
-<div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
     <form action="{{ route('dispatch-orders.index') }}" method="GET" class="row g-3">
         <!-- <div class="col-md-9">
             <input type="text" name="search" class="form-control border-light" placeholder="Tìm theo Số lệnh, Mã Job, Biển số xe, Tên tài xế..." value="{{ request('search') }}">

@@ -54,6 +54,7 @@ Route::middleware('auth')->group(function () {
 
     // System Settings & Backup (ADMIN / GĐ)
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::get('/settings/company', [SettingController::class, 'company'])->name('settings.company');
 
     Route::middleware('role:ADMIN')->group(function () {
         Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');

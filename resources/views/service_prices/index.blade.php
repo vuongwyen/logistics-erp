@@ -8,7 +8,7 @@
     <x-export-buttons />
 </div>
 
-<div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
     <form action="{{ route('service-prices.index') }}" method="GET" class="row g-3">
         <!-- <div class="col-md-7">
             <input type="text" name="search" class="form-control border-light" placeholder="Tìm theo mã gói, tên dịch vụ, đơn vị..." value="{{ request('search') }}">

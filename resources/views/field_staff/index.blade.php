@@ -9,7 +9,7 @@
     <x-export-buttons />
 </div>
 
-<div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
     <form action="{{ route('field-staff.index') }}" method="GET" class="row g-3">
         <!-- <div class="col-md-4">
             <input type="text" name="search" class="form-control border-light" placeholder="Tìm theo mã, tên, chứng chỉ, khu vực..." value="{{ request('search') }}">
@@ -133,15 +133,17 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Họ và tên <span class="text-danger">*</span></label>
-                            <input type="text" name="full_name" id="full_name" class="form-control bg-light border-0" required maxlength="100" placeholder="Nhập họ và tên">
+                            <input type="text" name="full_name" id="full_name" class="form-control bg-light border-0" required maxlength="100" placeholder="Nhập họ và tên" oninput="formatName(this)">
+                            <div class="invalid-feedback" id="full_name_error" style="display: none;"></div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Số điện thoại <span class="text-danger">*</span></label>
-                            <input type="text" name="phone" id="phone" class="form-control bg-light border-0" maxlength="11" pattern="[0-9]{10,11}" title="Vui lòng nhập 10-11 số" inputmode="numeric" required placeholder="VD: 0912345678">
+                            <input type="text" name="phone" id="phone" class="form-control bg-light border-0" maxlength="10" inputmode="numeric" required placeholder="VD: 0912345678" oninput="formatPhone(this)">
+                            <div class="invalid-feedback" id="phone_error" style="display: none;"></div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Ngày sinh <span class="text-danger">*</span></label>
-                            <input type="text" onfocus="(this.type='date')" onblur="(this.value == '' ? this.type='text' : this.type='date')" placeholder="VD: 25/05/1990" name="date_of_birth" id="date_of_birth" class="form-control bg-light border-0" min="1950-01-01" max="{{ now()->subYears(18)->toDateString() }}" required>
+                            <input type="date" name="date_of_birth" id="date_of_birth" class="form-control bg-light border-0" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Tài khoản liên kết</label>
@@ -195,15 +197,105 @@
 
 @push('scripts')
 <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        if (typeof flatpickr !== 'undefined') {
+            flatpickr("#date_of_birth", { dateFormat: "d/m/Y", allowInput: true });
+            flatpickr("#start_date", { dateFormat: "d/m/Y", allowInput: true });
+        }
+    });
+
+    function dateOnly(value) {
+        return value ? value.split('T')[0].split(' ')[0] : '';
+    }
+
+    function setDateValue(id, date) {
+        if (typeof flatpickr !== 'undefined') {
+            let instance = flatpickr("#" + id, { dateFormat: "d/m/Y" });
+            instance.setDate(date);
+        }
+    }
+
     function prepareAdd() {
         document.getElementById('modalTitle').innerText = 'Thêm Nhân viên hiện trường';
         document.getElementById('fieldStaffForm').action = "{{ route('field-staff.store') }}";
         document.getElementById('methodField').innerHTML = '';
         document.getElementById('fieldStaffForm').reset();
+
+        let today = new Date();
+        let adultDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+        
+        if (window.setDateValue) {
+            setDateValue('date_of_birth', adultDate);
+        }
     }
 
-    function dateOnly(value) {
-        return value ? value.split('T')[0].split(' ')[0] : '';
+    function formatName(input) {
+        let val = input.value;
+        let errorMsg = '';
+
+        if (/^\s/.test(val)) {
+            errorMsg = "Không được nhập khoảng trắng ở đầu.";
+        }
+        val = val.replace(/^\s+/, '');
+        
+        if (/\s{2,}/.test(val)) {
+            errorMsg = "Chỉ được nhập 1 khoảng trắng giữa các từ.";
+        }
+        val = val.replace(/\s{2,}/g, ' ');
+
+        if (/[^a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỮỰỲỴÝỶỸửữựỳỵỷỹ\s]/g.test(val)) {
+            errorMsg = "Chỉ được nhập chữ cái tiếng Việt, không số hoặc ký tự đặc biệt.";
+        }
+        val = val.replace(/[^a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỮỰỲỴÝỶỸửữựỳỵỷỹ\s]/g, '');
+
+        val = val.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
+        
+        input.value = val;
+        
+        let errorDiv = document.getElementById('full_name_error');
+        if (errorDiv) {
+            if (errorMsg) {
+                input.classList.add('is-invalid');
+                errorDiv.innerText = errorMsg;
+                errorDiv.style.display = 'block';
+                input.setCustomValidity(errorMsg);
+            } else {
+                input.classList.remove('is-invalid');
+                errorDiv.style.display = 'none';
+                input.setCustomValidity('');
+            }
+        }
+    }
+
+    function formatPhone(input) {
+        let val = input.value;
+        let errorMsg = '';
+
+        val = val.replace(/[^0-9]/g, '');
+        
+        if (val.length > 0 && val[0] !== '0') {
+            errorMsg = "Số điện thoại phải bắt đầu bằng số 0.";
+        } else if (val.length > 10) {
+            val = val.substring(0, 10);
+        } else if (val.length > 0 && val.length < 10) {
+            errorMsg = "Số điện thoại phải đủ 10 số.";
+        }
+        
+        input.value = val;
+        
+        let errorDiv = document.getElementById('phone_error');
+        if (errorDiv) {
+            if (errorMsg) {
+                input.classList.add('is-invalid');
+                errorDiv.innerText = errorMsg;
+                errorDiv.style.display = 'block';
+                input.setCustomValidity(errorMsg);
+            } else {
+                input.classList.remove('is-invalid');
+                errorDiv.style.display = 'none';
+                input.setCustomValidity('');
+            }
+        }
     }
 
     function prepareEdit(staff) {

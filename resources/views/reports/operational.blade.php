@@ -11,7 +11,7 @@
         </div>
     </div>
 
-    <div class="card border-0 rounded-4 shadow-sm p-4 mb-4 no-print">
+    <div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white no-print">
         <form action="{{ route('reports.operational') }}" method="GET" class="row g-3 align-items-end">
             <div class="col-md-3">
                 <label class="form-label small fw-bold text-muted">Kỳ báo cáo</label>
