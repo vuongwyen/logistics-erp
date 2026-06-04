@@ -226,77 +226,11 @@
         
         if (window.setDateValue) {
             setDateValue('date_of_birth', adultDate);
+            setDateValue('start_date', today);
         }
     }
 
-    function formatName(input) {
-        let val = input.value;
-        let errorMsg = '';
 
-        if (/^\s/.test(val)) {
-            errorMsg = "Không được nhập khoảng trắng ở đầu.";
-        }
-        val = val.replace(/^\s+/, '');
-        
-        if (/\s{2,}/.test(val)) {
-            errorMsg = "Chỉ được nhập 1 khoảng trắng giữa các từ.";
-        }
-        val = val.replace(/\s{2,}/g, ' ');
-
-        if (/[^a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỮỰỲỴÝỶỸửữựỳỵỷỹ\s]/g.test(val)) {
-            errorMsg = "Chỉ được nhập chữ cái tiếng Việt, không số hoặc ký tự đặc biệt.";
-        }
-        val = val.replace(/[^a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỮỰỲỴÝỶỸửữựỳỵỷỹ\s]/g, '');
-
-        val = val.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
-        
-        input.value = val;
-        
-        let errorDiv = document.getElementById('full_name_error');
-        if (errorDiv) {
-            if (errorMsg) {
-                input.classList.add('is-invalid');
-                errorDiv.innerText = errorMsg;
-                errorDiv.style.display = 'block';
-                input.setCustomValidity(errorMsg);
-            } else {
-                input.classList.remove('is-invalid');
-                errorDiv.style.display = 'none';
-                input.setCustomValidity('');
-            }
-        }
-    }
-
-    function formatPhone(input) {
-        let val = input.value;
-        let errorMsg = '';
-
-        val = val.replace(/[^0-9]/g, '');
-        
-        if (val.length > 0 && val[0] !== '0') {
-            errorMsg = "Số điện thoại phải bắt đầu bằng số 0.";
-        } else if (val.length > 10) {
-            val = val.substring(0, 10);
-        } else if (val.length > 0 && val.length < 10) {
-            errorMsg = "Số điện thoại phải đủ 10 số.";
-        }
-        
-        input.value = val;
-        
-        let errorDiv = document.getElementById('phone_error');
-        if (errorDiv) {
-            if (errorMsg) {
-                input.classList.add('is-invalid');
-                errorDiv.innerText = errorMsg;
-                errorDiv.style.display = 'block';
-                input.setCustomValidity(errorMsg);
-            } else {
-                input.classList.remove('is-invalid');
-                errorDiv.style.display = 'none';
-                input.setCustomValidity('');
-            }
-        }
-    }
 
     function prepareEdit(staff) {
         document.getElementById('modalTitle').innerText = 'Chỉnh sửa Nhân viên hiện trường';

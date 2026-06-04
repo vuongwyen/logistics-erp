@@ -225,58 +225,48 @@
         let val = input.value.toUpperCase();
         let errorMsg = '';
         
-        // Remove spaces and any invalid chars overall to keep it clean
+        // Xóa ký tự không hợp lệ
         val = val.replace(/[^A-Z0-9\-\.]/g, '');
-
-        if (val.length > 0) {
-            let part1 = val.split('-')[0] || '';
-            let part2 = val.split('-')[1] || '';
-
-            // Kiểm tra mã vùng (2 ký tự đầu phải là số)
-            if (part1.length >= 2 && !/^[0-9]{2}/.test(part1)) {
-                errorMsg = "2 ký tự đầu phải là mã vùng (số).";
-            }
-            // Kiểm tra series (sau mã vùng phải là chữ)
-            else if (part1.length > 2 && !/^[0-9]{2}[A-Z]{1,2}$/.test(part1)) {
-                errorMsg = "Sau mã vùng phải là 1 hoặc 2 chữ cái series.";
-            }
-            // Nếu đã gõ xong phần 1 và chưa có dấu -
-            else if (part1.length >= 3 && part1.length <= 4 && !val.includes('-') && input.value.length > part1.length) {
-                // Tự động thêm - (optional) or let user type
-                // But user rules: bắt lỗi.
-            }
-            // Kiểm tra phần 2
-            else if (val.includes('-')) {
-                if (part2.length > 0) {
-                    let p2_1 = part2.split('.')[0] || '';
-                    let p2_2 = part2.split('.')[1] || '';
-
-                    if (p2_1.length > 0 && !/^[0-9]+$/.test(p2_1)) {
-                        errorMsg = "Sau dấu '-' phải là số.";
-                    } else if (p2_1.length > 3) {
-                        errorMsg = "Sau dấu '-' chỉ được 3 chữ số, sau đó là dấu chấm.";
-                    }
-
-                    if (part2.includes('.')) {
-                        if (p2_2.length > 0 && !/^[0-9]+$/.test(p2_2)) {
-                            errorMsg = "Sau dấu '.' phải là 2 chữ số.";
-                        } else if (p2_2.length > 2) {
-                            errorMsg = "Chỉ được nhập 2 số sau dấu '.'.";
-                        }
-                    }
-                }
-            }
-            
-            // Lỗi tổng thể (Regex cuối)
-            if (val.length >= 8 && !errorMsg) {
-                if (!/^[0-9]{2}[A-Z]{1,2}-[0-9]{3}\.[0-9]{2}$/.test(val)) {
-                    errorMsg = "Định dạng biển số chưa đúng chuẩn (VD: 51C-123.45, 51R-123.45).";
-                }
+        
+        let cleaned = val.replace(/[\-\.]/g, ''); // Loại bỏ - và . để format lại
+        let formatted = '';
+        
+        for (let i = 0; i < cleaned.length; i++) {
+            let c = cleaned[i];
+            if (i === 0 || i === 1) { // Slot 1, 2: Số
+                if (/[0-9]/.test(c)) formatted += c;
+                else { errorMsg = "Ký tự " + (i+1) + " phải là số."; break; }
+            } else if (i === 2) { // Slot 3: Chữ
+                if (/[A-Z]/.test(c)) formatted += c;
+                else { errorMsg = "Ký tự 3 phải là chữ cái."; break; }
+            } else if (i >= 3 && i <= 5) { // Slot 5, 6, 7: Số (Slot 4 là dấu -)
+                if (i === 3) formatted += '-';
+                if (/[0-9]/.test(c)) formatted += c;
+                else { errorMsg = "Ký tự " + (i+2) + " phải là số."; break; }
+            } else if (i >= 6 && i <= 7) { // Slot 9, 10: Số (Slot 8 là dấu .)
+                if (i === 6) formatted += '.';
+                if (/[0-9]/.test(c)) formatted += c;
+                else { errorMsg = "Ký tự " + (i+3) + " phải là số."; break; }
             }
         }
 
-        input.value = val;
-
+        // Preserve trailing dashes and dots if they are typed at the correct position
+        if (val.endsWith('-') && cleaned.length === 3) {
+            formatted = cleaned + '-';
+        } else if (val.endsWith('.') && cleaned.length === 6) {
+            formatted = formatted.substring(0, 7) + '.';
+        }
+        
+        if (formatted.length > 10) {
+            formatted = formatted.substring(0, 10);
+        }
+        
+        input.value = formatted;
+        
+        if (formatted.length > 0 && formatted.length < 10 && !errorMsg) {
+            errorMsg = "Biển số xe phải đủ 10 ký tự (Ví dụ: 51C-123.45).";
+        }
+        
         let errorDiv = document.getElementById('plate_number_error');
         if (errorMsg) {
             input.classList.add('is-invalid');
