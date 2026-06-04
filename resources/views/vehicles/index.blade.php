@@ -10,37 +10,38 @@
 </div>
 
 <div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
-    <form action="{{ route('vehicles.index') }}" method="GET" class="row g-3">
-        <!-- <div class="col-md-7">
-            <input type="text" name="search" class="form-control border-light" placeholder="Tìm theo biển số, loại xe..." value="{{ request('search') }}">
-        </div> -->
-        <div class="col-md-3">
-            <select name="status" class="form-select border-light">
-                <option value="">Tất cả trạng thái</option>
-                <option value="available" {{ request('status') === 'available' ? 'selected' : '' }}>Sẵn sàng</option>
-                <option value="busy" {{ request('status') === 'busy' ? 'selected' : '' }}>Đang chạy</option>
-                <option value="maintenance" {{ request('status') === 'maintenance' ? 'selected' : '' }}>Bảo trì</option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-navy w-100">Lọc</button>
-        </div>
-        <div class="col-md-3"><input type="text" name="plate_number" class="form-control border-light" placeholder="Biển số" value="{{ request('plate_number') }}"></div>
-        <div class="col-md-3">
-            <select name="vehicle_type" class="form-select border-light">
-                <option value="">Loại xe</option>
-                @foreach(\App\Support\LogisticsOptions::vehicleTypes() as $value => $label)
-                    <option value="{{ $value }}" {{ request('vehicle_type') === $value ? 'selected' : '' }}>{{ $label }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div class="col-md-3">
-            <select name="payload" class="form-select border-light">
-                <option value="">Tải trọng</option>
-                @foreach(\App\Support\LogisticsOptions::payloads() as $value => $label)
-                    <option value="{{ $value }}" {{ request('payload') === $value ? 'selected' : '' }}>{{ $label }}</option>
-                @endforeach
-            </select>
+    <form action="{{ route('vehicles.index') }}" method="GET">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-3"><input type="text" name="plate_number" class="form-control border-light" placeholder="Biển số" value="{{ request('plate_number') }}"></div>
+            <div class="col-md-3">
+                <select name="status" class="form-select border-light">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="available" {{ request('status') === 'available' ? 'selected' : '' }}>Sẵn sàng</option>
+                    <option value="busy" {{ request('status') === 'busy' ? 'selected' : '' }}>Đang chạy</option>
+                    <option value="maintenance" {{ request('status') === 'maintenance' ? 'selected' : '' }}>Bảo trì</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="vehicle_type" class="form-select border-light">
+                    <option value="">Loại xe</option>
+                    @foreach(\App\Support\LogisticsOptions::vehicleTypes() as $value => $label)
+                        <option value="{{ $value }}" {{ request('vehicle_type') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="payload" class="form-select border-light">
+                    <option value="">Tải trọng</option>
+                    @foreach(\App\Support\LogisticsOptions::payloads() as $value => $label)
+                        <option value="{{ $value }}" {{ request('payload') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+                <a href="{{ route('vehicles.index') }}" class="btn btn-light px-4">Xóa lọc</a>
+                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
+            </div>
         </div>
     </form>
 </div>

@@ -35,35 +35,36 @@
 </div>
 
 <div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
-    <form action="{{ route('field-assignments.index') }}" method="GET" class="row g-3">
-        <!-- <div class="col-md-9">
-            <input type="text" name="search" class="form-control border-light" placeholder="Tìm theo mã phiếu, đơn hàng, nhân viên, vị trí, ghi chú..." value="{{ request('search') }}">
-        </div> -->
-        <div class="col-md-3">
-            <button type="submit" class="btn btn-navy w-100">Tìm kiếm</button>
-        </div>
-        <div class="col-md-2">
-            <input type="text" name="assignment_code" class="form-control border-light" placeholder="Mã phiếu" value="{{ request('assignment_code') }}">
-        </div>
-        <div class="col-md-2">
-            <input type="text" name="job_code" class="form-control border-light" placeholder="Mã đơn hàng" value="{{ request('job_code') }}">
-        </div>
-        <div class="col-md-3">
-            <input type="text" name="field_staff_name" class="form-control border-light" placeholder="Nhân viên" value="{{ request('field_staff_name') }}">
-        </div>
-        <div class="col-md-2">
-            <input type="text" name="location_name" class="form-control border-light" placeholder="Vị trí" value="{{ request('location_name') }}">
-        </div>
-        <div class="col-md-2">
-            <input type="date" name="assigned_date" class="form-control border-light" value="{{ request('assigned_date') }}">
-        </div>
-        <div class="col-md-1">
-            <select name="status" class="form-select border-light">
-                <option value="">Trạng thái</option>
-                @foreach($statusLabels as $status => $label)
-                    <option value="{{ $status }}" {{ request('status') === $status ? 'selected' : '' }}>{{ $label }}</option>
-                @endforeach
-            </select>
+    <form action="{{ route('field-assignments.index') }}" method="GET">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-2">
+                <input type="text" name="assignment_code" class="form-control border-light" placeholder="Mã phiếu" value="{{ request('assignment_code') }}">
+            </div>
+            <div class="col-md-2">
+                <input type="text" name="job_code" class="form-control border-light" placeholder="Mã đơn hàng" value="{{ request('job_code') }}">
+            </div>
+            <div class="col-md-2">
+                <input type="text" name="field_staff_name" class="form-control border-light" placeholder="Nhân viên" value="{{ request('field_staff_name') }}">
+            </div>
+            <div class="col-md-2">
+                <input type="text" name="location_name" class="form-control border-light" placeholder="Vị trí" value="{{ request('location_name') }}">
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="assigned_date" class="form-control border-light" value="{{ request('assigned_date') }}">
+            </div>
+            <div class="col-md-2">
+                <select name="status" class="form-select border-light">
+                    <option value="">Trạng thái</option>
+                    @foreach($statusLabels as $status => $label)
+                        <option value="{{ $status }}" {{ request('status') === $status ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            
+            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+                <a href="{{ route('field-assignments.index') }}" class="btn btn-light px-4">Xóa lọc</a>
+                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
+            </div>
         </div>
     </form>
 </div>

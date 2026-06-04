@@ -15,28 +15,29 @@
     </div>
 
     <div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
-        <form action="{{ route('users.index') }}" method="GET" class="row g-3" id="search_form">
-            <!-- <div class="col-md-10">
-                <input type="text" name="search" class="form-control border-light" placeholder="Tìm theo mã nhân sự, họ tên, email, chức vụ, bộ phận..." value="{{ request('search') }}">
-            </div> -->
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-navy w-100">Lọc</button>
-            </div>
-            <div class="col-md-2"><input type="text" name="employee_code" class="form-control border-light" placeholder="Mã" value="{{ request('employee_code') }}"></div>
-            <div class="col-md-2"><input type="text" name="name" class="form-control border-light" placeholder="Họ tên" value="{{ request('name') }}"></div>
-            <div class="col-md-2">
-                <input type="text" id="search_email" name="email" class="form-control border-light" placeholder="Email" value="{{ request('email') }}">
-                <div id="search_email_error" class="invalid-feedback position-absolute"></div>
-            </div>
-            <div class="col-md-2"><input type="text" name="position" class="form-control border-light" placeholder="Chức vụ" value="{{ request('position') }}"></div>
-            <div class="col-md-2"><input type="text" name="department" class="form-control border-light" placeholder="Bộ phận" value="{{ request('department') }}"></div>
-            <div class="col-md-2">
-                <select name="role_id" class="form-select border-light">
-                    <option value="">Vai trò</option>
-                    @foreach($roles as $role)
-                        <option value="{{ $role->id }}" {{ (string) request('role_id') === (string) $role->id ? 'selected' : '' }}>{{ $role->role_name }}</option>
-                    @endforeach
-                </select>
+        <form action="{{ route('users.index') }}" method="GET" id="search_form">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-2"><input type="text" name="employee_code" class="form-control border-light" placeholder="Mã" value="{{ request('employee_code') }}"></div>
+                <div class="col-md-2"><input type="text" name="name" class="form-control border-light" placeholder="Họ tên" value="{{ request('name') }}"></div>
+                <div class="col-md-2">
+                    <input type="text" id="search_email" name="email" class="form-control border-light" placeholder="Email" value="{{ request('email') }}">
+                    <div id="search_email_error" class="invalid-feedback position-absolute"></div>
+                </div>
+                <div class="col-md-2"><input type="text" name="position" class="form-control border-light" placeholder="Chức vụ" value="{{ request('position') }}"></div>
+                <div class="col-md-2"><input type="text" name="department" class="form-control border-light" placeholder="Bộ phận" value="{{ request('department') }}"></div>
+                <div class="col-md-2">
+                    <select name="role_id" class="form-select border-light">
+                        <option value="">Vai trò</option>
+                        @foreach($roles as $role)
+                            <option value="{{ $role->id }}" {{ (string) request('role_id') === (string) $role->id ? 'selected' : '' }}>{{ $role->role_name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                
+                <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+                    <a href="{{ route('users.index') }}" class="btn btn-light px-4">Xóa lọc</a>
+                    <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
+                </div>
             </div>
         </form>
     </div>

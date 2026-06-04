@@ -67,24 +67,25 @@
 
 <!-- Filters -->
 <div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
-    <form action="{{ route('dispatch-orders.index') }}" method="GET" class="row g-3">
-        <!-- <div class="col-md-9">
-            <input type="text" name="search" class="form-control border-light" placeholder="Tìm theo Số lệnh, Mã Job, Biển số xe, Tên tài xế..." value="{{ request('search') }}">
-        </div> -->
-        <div class="col-md-3">
-            <button type="submit" class="btn btn-navy w-100">Tìm kiếm</button>
-        </div>
-        <div class="col-md-2"><input type="text" name="order_number" class="form-control border-light" placeholder="Số lệnh" value="{{ request('order_number') }}"></div>
-        <div class="col-md-2"><input type="text" name="job_code" class="form-control border-light" placeholder="Mã Job" value="{{ request('job_code') }}"></div>
-        <div class="col-md-2"><input type="text" name="driver_name" class="form-control border-light" placeholder="Tài xế" value="{{ request('driver_name') }}"></div>
-        <div class="col-md-2"><input type="text" name="plate_number" class="form-control border-light" placeholder="Biển số" value="{{ request('plate_number') }}"></div>
-        <div class="col-md-2">
-            <select name="approval_status" class="form-select border-light">
-                <option value="">Duyệt</option>
-                <option value="pending" {{ request('approval_status') === 'pending' ? 'selected' : '' }}>Chờ duyệt</option>
-                <option value="approved" {{ request('approval_status') === 'approved' ? 'selected' : '' }}>Đã duyệt</option>
-                <option value="rejected" {{ request('approval_status') === 'rejected' ? 'selected' : '' }}>Từ chối</option>
-            </select>
+    <form action="{{ route('dispatch-orders.index') }}" method="GET">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-2"><input type="text" name="order_number" class="form-control border-light" placeholder="Số lệnh" value="{{ request('order_number') }}"></div>
+            <div class="col-md-2"><input type="text" name="job_code" class="form-control border-light" placeholder="Mã Job" value="{{ request('job_code') }}"></div>
+            <div class="col-md-2"><input type="text" name="driver_name" class="form-control border-light" placeholder="Tài xế" value="{{ request('driver_name') }}"></div>
+            <div class="col-md-2"><input type="text" name="plate_number" class="form-control border-light" placeholder="Biển số" value="{{ request('plate_number') }}"></div>
+            <div class="col-md-2">
+                <select name="approval_status" class="form-select border-light">
+                    <option value="">Duyệt</option>
+                    <option value="pending" {{ request('approval_status') === 'pending' ? 'selected' : '' }}>Chờ duyệt</option>
+                    <option value="approved" {{ request('approval_status') === 'approved' ? 'selected' : '' }}>Đã duyệt</option>
+                    <option value="rejected" {{ request('approval_status') === 'rejected' ? 'selected' : '' }}>Từ chối</option>
+                </select>
+            </div>
+            
+            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+                <a href="{{ route('dispatch-orders.index') }}" class="btn btn-light px-4">Xóa lọc</a>
+                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
+            </div>
         </div>
     </form>
 </div>

@@ -9,29 +9,30 @@
 </div>
 
 <div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
-    <form action="{{ route('service-prices.index') }}" method="GET" class="row g-3">
-        <!-- <div class="col-md-7">
-            <input type="text" name="search" class="form-control border-light" placeholder="Tìm theo mã gói, tên dịch vụ, đơn vị..." value="{{ request('search') }}">
-        </div> -->
-        <div class="col-md-3">
-            <select name="is_tax_included" class="form-select border-light">
-                <option value="">Tất cả thuế</option>
-                <option value="1" {{ request('is_tax_included') === '1' ? 'selected' : '' }}>Đã gồm thuế</option>
-                <option value="0" {{ request('is_tax_included') === '0' ? 'selected' : '' }}>Chưa gồm thuế</option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-navy w-100">Lọc</button>
-        </div>
-        <div class="col-md-3"><input type="text" name="package_code" class="form-control border-light" placeholder="Mã gói" value="{{ request('package_code') }}"></div>
-        <div class="col-md-3"><input type="text" name="service_name" class="form-control border-light" placeholder="Dịch vụ" value="{{ request('service_name') }}"></div>
-        <div class="col-md-3">
-            <select name="unit" class="form-select border-light">
-                <option value="">Đơn vị</option>
-                @foreach(\App\Support\LogisticsOptions::serviceUnits() as $value => $label)
-                    <option value="{{ $value }}" {{ request('unit') === $value ? 'selected' : '' }}>{{ $label }}</option>
-                @endforeach
-            </select>
+    <form action="{{ route('service-prices.index') }}" method="GET">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-3"><input type="text" name="package_code" class="form-control border-light" placeholder="Mã gói" value="{{ request('package_code') }}"></div>
+            <div class="col-md-3"><input type="text" name="service_name" class="form-control border-light" placeholder="Dịch vụ" value="{{ request('service_name') }}"></div>
+            <div class="col-md-3">
+                <select name="unit" class="form-select border-light">
+                    <option value="">Đơn vị</option>
+                    @foreach(\App\Support\LogisticsOptions::serviceUnits() as $value => $label)
+                        <option value="{{ $value }}" {{ request('unit') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="is_tax_included" class="form-select border-light">
+                    <option value="">Tất cả thuế</option>
+                    <option value="1" {{ request('is_tax_included') === '1' ? 'selected' : '' }}>Đã gồm thuế</option>
+                    <option value="0" {{ request('is_tax_included') === '0' ? 'selected' : '' }}>Chưa gồm thuế</option>
+                </select>
+            </div>
+
+            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+                <a href="{{ route('service-prices.index') }}" class="btn btn-light px-4">Xóa lọc</a>
+                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
+            </div>
         </div>
     </form>
 </div>

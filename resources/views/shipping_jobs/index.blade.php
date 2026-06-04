@@ -11,47 +11,45 @@
 
 <!-- Filters -->
 <div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
-    <form action="{{ route('shipping-jobs.index') }}" method="GET" class="row g-3">
-        <!-- <div class="col-lg-4 col-md-6">
-            <input type="text" name="search" class="form-control border-light" placeholder="Tìm theo Mã Job, Số Cont, Tên khách hàng..." value="{{ request('search') }}">
-        </div> -->
-        <div class="col-lg-2 col-md-6">
-            <select name="customer_id" class="form-select border-light">
-                <option value="">Tất cả khách hàng</option>
-                @foreach($customers as $customer)
-                    <option value="{{ $customer->id }}" {{ (string) request('customer_id') === (string) $customer->id ? 'selected' : '' }}>
-                        {{ $customer->customer_name }}
-                    </option>
-                @endforeach
-            </select>
+    <form action="{{ route('shipping-jobs.index') }}" method="GET">
+        <div class="row g-3 align-items-center">
+            <div class="col-lg-2 col-md-6">
+                <select name="customer_id" class="form-select border-light">
+                    <option value="">Tất cả khách hàng</option>
+                    @foreach($customers as $customer)
+                        <option value="{{ $customer->id }}" {{ (string) request('customer_id') === (string) $customer->id ? 'selected' : '' }}>
+                            {{ $customer->customer_name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-lg-2 col-md-4">
+                <select name="status" class="form-select border-light">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Đang xử lý</option>
+                    <option value="new" {{ request('status') == 'new' ? 'selected' : '' }}>Mới tạo</option>
+                    <option value="dispatched" {{ request('status') == 'dispatched' ? 'selected' : '' }}>Đã điều xe</option>
+                    <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Hoàn thành</option>
+                    <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Đã hủy</option>
+                </select>
+            </div>
+            <div class="col-lg-2 col-md-4">
+                <input type="date" name="date_from" class="form-control border-light" value="{{ request('date_from') }}" title="Từ ngày dự kiến">
+            </div>
+            <div class="col-lg-2 col-md-4">
+                <input type="date" name="date_to" class="form-control border-light" value="{{ request('date_to') }}" title="Đến ngày dự kiến">
+            </div>
+            <div class="col-lg-2 col-md-4"><input type="text" name="job_code" class="form-control border-light" placeholder="Mã Job" value="{{ request('job_code') }}"></div>
+            <div class="col-md-2"><input type="text" name="container_number" class="form-control border-light" placeholder="Số Cont" value="{{ request('container_number') }}"></div>
+            <div class="col-md-2"><input type="text" name="customs_declaration_no" class="form-control border-light" placeholder="Tờ khai" value="{{ request('customs_declaration_no') }}"></div>
+            <div class="col-md-2"><input type="text" name="cargo_type" class="form-control border-light" placeholder="Hàng hóa" value="{{ request('cargo_type') }}"></div>
+            <div class="col-md-2"><input type="text" name="container_type" class="form-control border-light" placeholder="Loại cont" value="{{ request('container_type') }}"></div>
+            
+            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+                <a href="{{ route('shipping-jobs.index') }}" class="btn btn-light px-4">Xóa lọc</a>
+                <button type="submit" class="btn btn-navy px-4">Lọc</button>
+            </div>
         </div>
-        <div class="col-lg-2 col-md-4">
-            <select name="status" class="form-select border-light">
-                <option value="">Tất cả trạng thái</option>
-                <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Đang xử lý</option>
-                <option value="new" {{ request('status') == 'new' ? 'selected' : '' }}>Mới tạo</option>
-                <option value="dispatched" {{ request('status') == 'dispatched' ? 'selected' : '' }}>Đã điều xe</option>
-                <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Hoàn thành</option>
-                <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Đã hủy</option>
-            </select>
-        </div>
-        <div class="col-lg-2 col-md-4">
-            <input type="date" name="date_from" class="form-control border-light" value="{{ request('date_from') }}" title="Từ ngày dự kiến">
-        </div>
-        <div class="col-lg-2 col-md-4">
-            <input type="date" name="date_to" class="form-control border-light" value="{{ request('date_to') }}" title="Đến ngày dự kiến">
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-navy w-100">Lọc</button>
-        </div>
-        <div class="col-md-2">
-            <a href="{{ route('shipping-jobs.index') }}" class="btn btn-light w-100">Xóa lọc</a>
-        </div>
-        <div class="col-md-2"><input type="text" name="job_code" class="form-control border-light" placeholder="Mã Job" value="{{ request('job_code') }}"></div>
-        <div class="col-md-2"><input type="text" name="container_number" class="form-control border-light" placeholder="Số Cont" value="{{ request('container_number') }}"></div>
-        <div class="col-md-2"><input type="text" name="customs_declaration_no" class="form-control border-light" placeholder="Tờ khai" value="{{ request('customs_declaration_no') }}"></div>
-        <div class="col-md-2"><input type="text" name="cargo_type" class="form-control border-light" placeholder="Hàng hóa" value="{{ request('cargo_type') }}"></div>
-        <div class="col-md-2"><input type="text" name="container_type" class="form-control border-light" placeholder="Loại cont" value="{{ request('container_type') }}"></div>
     </form>
 </div>
 

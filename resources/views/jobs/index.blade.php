@@ -10,24 +10,28 @@
 
 <!-- Filters -->
 <div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
-    <div class="row g-3">
-        <div class="col-md-4">
-            <input type="text" class="form-control border-light" placeholder="Mã lô hàng, Bill no...">
+    <form action="" method="GET">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-4">
+                <input type="text" class="form-control border-light" placeholder="Mã lô hàng, Bill no...">
+            </div>
+            <div class="col-md-3">
+                <select class="form-select border-light">
+                    <option>Trạng thái: Tất cả</option>
+                    <option>Đang xử lý</option>
+                    <option>Hoàn thành</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="date" class="form-control border-light">
+            </div>
+            
+            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+                <a href="#" class="btn btn-light px-4">Xóa lọc</a>
+                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
+            </div>
         </div>
-        <div class="col-md-3">
-            <select class="form-select border-light">
-                <option>Trạng thái: Tất cả</option>
-                <option>Đang xử lý</option>
-                <option>Hoàn thành</option>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <input type="date" class="form-control border-light">
-        </div>
-        <div class="col-md-2">
-            <button class="btn btn-navy w-100">Lọc</button>
-        </div>
-    </div>
+    </form>
 </div>
 
 <!-- Data Table -->

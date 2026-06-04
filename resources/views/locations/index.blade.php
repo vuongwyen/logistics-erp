@@ -10,27 +10,33 @@
 </div>
 
 <div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
-    <form action="{{ route('locations.index') }}" method="GET" class="row g-3">
-        <div class="col-md-3"><input type="text" name="search" class="form-control border-light" placeholder="Tìm tất cả" value="{{ request('search') }}"></div>
-        <div class="col-md-2"><input type="text" name="location_code" class="form-control border-light" placeholder="Mã" value="{{ request('location_code') }}"></div>
-        <div class="col-md-2"><input type="text" name="location_name" class="form-control border-light" placeholder="Tên địa điểm" value="{{ request('location_name') }}"></div>
-        <div class="col-md-2">
-            <select name="type" class="form-select border-light">
-                <option value="">Tất cả loại</option>
-                @foreach(['port' => 'Cảng', 'depot' => 'Bãi', 'warehouse' => 'Kho', 'factory' => 'Nhà máy', 'other' => 'Khác'] as $value => $label)
-                    <option value="{{ $value }}" {{ request('type') === $value ? 'selected' : '' }}>{{ $label }}</option>
-                @endforeach
-            </select>
+    <form action="{{ route('locations.index') }}" method="GET">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-3"><input type="text" name="search" class="form-control border-light" placeholder="Tìm tất cả" value="{{ request('search') }}"></div>
+            <div class="col-md-2"><input type="text" name="location_code" class="form-control border-light" placeholder="Mã" value="{{ request('location_code') }}"></div>
+            <div class="col-md-2"><input type="text" name="location_name" class="form-control border-light" placeholder="Tên địa điểm" value="{{ request('location_name') }}"></div>
+            <div class="col-md-2">
+                <select name="type" class="form-select border-light">
+                    <option value="">Tất cả loại</option>
+                    @foreach(['port' => 'Cảng', 'depot' => 'Bãi', 'warehouse' => 'Kho', 'factory' => 'Nhà máy', 'other' => 'Khác'] as $value => $label)
+                        <option value="{{ $value }}" {{ request('type') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="status" class="form-select border-light">
+                    <option value="">Tất cả trạng thái</option>
+                    @foreach(['active' => 'Hoạt động', 'inactive' => 'Ngừng hoạt động', 'maintenance' => 'Bảo trì', 'overloaded' => 'Quá tải'] as $value => $label)
+                        <option value="{{ $value }}" {{ request('status') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            
+            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+                <a href="{{ route('locations.index') }}" class="btn btn-light px-4">Xóa lọc</a>
+                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
+            </div>
         </div>
-        <div class="col-md-2">
-            <select name="status" class="form-select border-light">
-                <option value="">Tất cả trạng thái</option>
-                @foreach(['active' => 'Hoạt động', 'inactive' => 'Ngừng hoạt động', 'maintenance' => 'Bảo trì', 'overloaded' => 'Quá tải'] as $value => $label)
-                    <option value="{{ $value }}" {{ request('status') === $value ? 'selected' : '' }}>{{ $label }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div class="col-md-1"><button type="submit" class="btn btn-navy w-100">Lọc</button></div>
     </form>
 </div>
 

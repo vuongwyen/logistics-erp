@@ -10,32 +10,33 @@
 </div>
 
 <div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
-    <form action="{{ route('drivers.index') }}" method="GET" class="row g-3">
-        <!-- <div class="col-md-5">
-            <input type="text" name="search" class="form-control border-light" placeholder="Tìm theo mã tài xế, tên, GPLX, cấp bậc..." value="{{ request('search') }}">
-        </div> -->
-        <div class="col-md-3">
-            <select name="rank" class="form-select border-light">
-                <option value="">Cấp bậc</option>
-                @foreach(\App\Support\LogisticsOptions::driverRanks() as $value => $label)
-                    <option value="{{ $value }}" {{ request('rank') === $value ? 'selected' : '' }}>{{ $label }}</option>
-                @endforeach
-            </select>
+    <form action="{{ route('drivers.index') }}" method="GET">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-3"><input type="text" name="driver_code" class="form-control border-light" placeholder="Mã tài xế" value="{{ request('driver_code') }}"></div>
+            <div class="col-md-3"><input type="text" name="full_name" class="form-control border-light" placeholder="Họ tên" value="{{ request('full_name') }}"></div>
+            <div class="col-md-3"><input type="text" name="phone" class="form-control border-light" placeholder="SĐT" value="{{ request('phone') }}"></div>
+            <div class="col-md-3"><input type="text" name="license_number" class="form-control border-light" placeholder="GPLX" value="{{ request('license_number') }}"></div>
+            <div class="col-md-3">
+                <select name="rank" class="form-select border-light">
+                    <option value="">Cấp bậc</option>
+                    @foreach(\App\Support\LogisticsOptions::driverRanks() as $value => $label)
+                        <option value="{{ $value }}" {{ request('rank') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-select border-light">
+                    <option value="">Tất cả</option>
+                    <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Đang làm việc</option>
+                    <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Nghỉ việc</option>
+                </select>
+            </div>
+            
+            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+                <a href="{{ route('drivers.index') }}" class="btn btn-light px-4">Xóa lọc</a>
+                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
+            </div>
         </div>
-        <div class="col-md-2">
-            <select name="status" class="form-select border-light">
-                <option value="">Tất cả</option>
-                <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Đang làm việc</option>
-                <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Nghỉ việc</option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-navy w-100">Lọc</button>
-        </div>
-        <div class="col-md-3"><input type="text" name="driver_code" class="form-control border-light" placeholder="Mã tài xế" value="{{ request('driver_code') }}"></div>
-        <div class="col-md-3"><input type="text" name="full_name" class="form-control border-light" placeholder="Họ tên" value="{{ request('full_name') }}"></div>
-        <div class="col-md-3"><input type="text" name="phone" class="form-control border-light" placeholder="SĐT" value="{{ request('phone') }}"></div>
-        <div class="col-md-3"><input type="text" name="license_number" class="form-control border-light" placeholder="GPLX" value="{{ request('license_number') }}"></div>
     </form>
 </div>
 

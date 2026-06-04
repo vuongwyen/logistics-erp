@@ -10,33 +10,34 @@
 </div>
 
 <div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
-    <form action="{{ route('field-staff.index') }}" method="GET" class="row g-3">
-        <!-- <div class="col-md-4">
-            <input type="text" name="search" class="form-control border-light" placeholder="Tìm theo mã, tên, chứng chỉ, khu vực..." value="{{ request('search') }}">
-        </div> -->
-        <div class="col-md-3">
-            <select name="responsible_location_id" class="form-select border-light">
-                <option value="">Tất cả khu vực</option>
-                @foreach($responsibleLocations as $location)
-                    <option value="{{ $location->id }}" {{ (string) request('responsible_location_id') === (string) $location->id ? 'selected' : '' }}>
-                        {{ $location->location_name }}
-                    </option>
-                @endforeach
-            </select>
+    <form action="{{ route('field-staff.index') }}" method="GET">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-3"><input type="text" name="staff_code" class="form-control border-light" placeholder="Mã" value="{{ request('staff_code') }}"></div>
+            <div class="col-md-3"><input type="text" name="full_name" class="form-control border-light" placeholder="Họ tên" value="{{ request('full_name') }}"></div>
+            <div class="col-md-3"><input type="text" name="phone" class="form-control border-light" placeholder="SĐT" value="{{ request('phone') }}"></div>
+            <div class="col-md-3">
+                <select name="responsible_location_id" class="form-select border-light">
+                    <option value="">Tất cả khu vực</option>
+                    @foreach($responsibleLocations as $location)
+                        <option value="{{ $location->id }}" {{ (string) request('responsible_location_id') === (string) $location->id ? 'selected' : '' }}>
+                            {{ $location->location_name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-select border-light">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Đang làm việc</option>
+                    <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Nghỉ việc</option>
+                </select>
+            </div>
+            
+            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+                <a href="{{ route('field-staff.index') }}" class="btn btn-light px-4">Xóa lọc</a>
+                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
+            </div>
         </div>
-        <div class="col-md-3">
-            <select name="status" class="form-select border-light">
-                <option value="">Tất cả trạng thái</option>
-                <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Đang làm việc</option>
-                <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Nghỉ việc</option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-navy w-100">Lọc</button>
-        </div>
-        <div class="col-md-3"><input type="text" name="staff_code" class="form-control border-light" placeholder="Mã" value="{{ request('staff_code') }}"></div>
-        <div class="col-md-3"><input type="text" name="full_name" class="form-control border-light" placeholder="Họ tên" value="{{ request('full_name') }}"></div>
-        <div class="col-md-3"><input type="text" name="phone" class="form-control border-light" placeholder="SĐT" value="{{ request('phone') }}"></div>
     </form>
 </div>
 

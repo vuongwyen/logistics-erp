@@ -12,41 +12,42 @@
 </div>
 
 <div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
-    <form action="{{ route('documents.index') }}" method="GET" class="row g-3">
-        <!-- <div class="col-md-6">
-            <input type="text" name="search" class="form-control border-light" placeholder="Tìm theo mã job, khách hàng, loại chứng từ..." value="{{ request('search') }}">
-        </div> -->
-        <div class="col-md-2">
-            <select name="document_flow" class="form-select border-light">
-                <option value="">Tất cả luồng</option>
-                <option value="input" {{ request('document_flow') === 'input' ? 'selected' : '' }}>Đầu vào</option>
-                <option value="output" {{ request('document_flow') === 'output' ? 'selected' : '' }}>Đầu ra</option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <select name="tax_stage" class="form-select border-light">
-                <option value="">Tất cả thuế</option>
-                <option value="before_tax" {{ request('tax_stage') === 'before_tax' ? 'selected' : '' }}>Trước thuế</option>
-                <option value="after_tax" {{ request('tax_stage') === 'after_tax' ? 'selected' : '' }}>Sau thuế</option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-navy w-100">Lọc</button>
-        </div>
-        <div class="col-md-2">
-            <input type="text" name="document_code" class="form-control border-light" placeholder="Mã chứng từ" value="{{ request('document_code') }}">
-        </div>
-        <div class="col-md-2">
-            <input type="text" name="doc_category" class="form-control border-light" placeholder="Loại chứng từ" value="{{ request('doc_category') }}">
-        </div>
-        <div class="col-md-2">
-            <input type="text" name="job_code" class="form-control border-light" placeholder="Mã đơn hàng" value="{{ request('job_code') }}">
-        </div>
-        <div class="col-md-3">
-            <input type="text" name="customer_name" class="form-control border-light" placeholder="Khách hàng" value="{{ request('customer_name') }}">
-        </div>
-        <div class="col-md-3">
-            <input type="text" name="uploader_name" class="form-control border-light" placeholder="Người tải" value="{{ request('uploader_name') }}">
+    <form action="{{ route('documents.index') }}" method="GET">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-2">
+                <input type="text" name="document_code" class="form-control border-light" placeholder="Mã chứng từ" value="{{ request('document_code') }}">
+            </div>
+            <div class="col-md-2">
+                <input type="text" name="doc_category" class="form-control border-light" placeholder="Loại chứng từ" value="{{ request('doc_category') }}">
+            </div>
+            <div class="col-md-2">
+                <input type="text" name="job_code" class="form-control border-light" placeholder="Mã đơn hàng" value="{{ request('job_code') }}">
+            </div>
+            <div class="col-md-2">
+                <input type="text" name="customer_name" class="form-control border-light" placeholder="Khách hàng" value="{{ request('customer_name') }}">
+            </div>
+            <div class="col-md-2">
+                <input type="text" name="uploader_name" class="form-control border-light" placeholder="Người tải" value="{{ request('uploader_name') }}">
+            </div>
+            <div class="col-md-2">
+                <select name="document_flow" class="form-select border-light">
+                    <option value="">Tất cả luồng</option>
+                    <option value="input" {{ request('document_flow') === 'input' ? 'selected' : '' }}>Đầu vào</option>
+                    <option value="output" {{ request('document_flow') === 'output' ? 'selected' : '' }}>Đầu ra</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="tax_stage" class="form-select border-light">
+                    <option value="">Tất cả thuế</option>
+                    <option value="before_tax" {{ request('tax_stage') === 'before_tax' ? 'selected' : '' }}>Trước thuế</option>
+                    <option value="after_tax" {{ request('tax_stage') === 'after_tax' ? 'selected' : '' }}>Sau thuế</option>
+                </select>
+            </div>
+            
+            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+                <a href="{{ route('documents.index') }}" class="btn btn-light px-4">Xóa lọc</a>
+                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
+            </div>
         </div>
     </form>
 </div>
