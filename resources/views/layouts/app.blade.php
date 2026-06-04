@@ -283,6 +283,13 @@
     <script src="https://npmcdn.com/flatpickr/dist/l10n/vn.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Sửa lỗi không chọn được năm (focus trap của Bootstrap Modal)
+            document.addEventListener('focusin', (e) => {
+                if (e.target.closest('.flatpickr-calendar')) {
+                    e.stopImmediatePropagation();
+                }
+            });
+
             // Khởi tạo Flatpickr cho tất cả các ô chọn ngày để đồng bộ định dạng dd/mm/yyyy
             flatpickr('input[type="date"]', {
                 locale: "vn",

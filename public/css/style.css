@@ -104,6 +104,29 @@ body {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.navbar-dark .nav-link-custom {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.navbar-dark .nav-link-custom:hover {
+    color: #fff;
+}
+
+/* Fix Flatpickr Vietnamese month text pushing year out of bounds */
+.flatpickr-current-month {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+    width: auto !important;
+    max-width: 65% !important;
+    margin-right: 5px;
+}
+.flatpickr-current-month .numInputWrapper {
+    width: 6ch !important;
+}
+
 .nav-link-custom {
     padding: 12px 25px;
     color: rgba(255, 255, 255, 0.7);
