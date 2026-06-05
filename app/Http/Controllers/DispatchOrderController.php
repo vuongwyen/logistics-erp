@@ -98,6 +98,9 @@ class DispatchOrderController extends Controller
             'endLocation',
             'creator',
             'approver',
+            'expenses.reporter',
+            'cashAdvances.requester',
+            'cashAdvances.approver',
         ]);
 
         return view('dispatch_orders.show', compact('dispatchOrder'));

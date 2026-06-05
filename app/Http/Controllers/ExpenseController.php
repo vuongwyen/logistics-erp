@@ -14,12 +14,15 @@ class ExpenseController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'shipping_job_id' => 'required|exists:shipping_jobs,id',
+            'dispatch_order_id' => 'required|exists:dispatch_orders,id',
             'expense_type' => 'required|string|max:100',
             'amount' => 'required|numeric|min:0',
             'note' => 'nullable|string|max:255',
         ]);
 
+        $dispatchOrder = \App\Models\DispatchOrder::findOrFail($validated['dispatch_order_id']);
+
+        $validated['shipping_job_id'] = $dispatchOrder->shipping_job_id;
         $validated['reported_by'] = Auth::id();
         $validated['status'] = 'approved'; // Default to approved for now
 
@@ -35,7 +38,7 @@ class ExpenseController extends Controller
             'Chi phí mới phát sinh',
             "{$reporterName} vừa báo cáo chi phí {$validated['expense_type']}: ".number_format($validated['amount']).' VNĐ',
             'fa-file-invoice-dollar',
-            route('shipping-jobs.show', $validated['shipping_job_id'])
+            route('dispatch-orders.show', $validated['dispatch_order_id'])
         ));
 
         return back()->with('success', 'Ghi nhận chi phí thành công!');

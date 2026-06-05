@@ -98,6 +98,16 @@ class DispatchOrder extends Model
         return $this->hasMany(Expense::class);
     }
 
+    public function tripSettlement()
+    {
+        return $this->hasOne(TripSettlement::class);
+    }
+
+    public function cashAdvances(): HasMany
+    {
+        return $this->hasMany(CashAdvance::class);
+    }
+
     protected function casts(): array
     {
         return [

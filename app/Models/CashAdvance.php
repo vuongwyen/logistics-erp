@@ -41,4 +41,19 @@ class CashAdvance extends Model
     {
         return $this->belongsTo(User::class, 'approved_by');
     }
+
+    protected static function booted(): void
+    {
+        static::updating(function (CashAdvance $advance) {
+            if ($advance->dispatch_order_id && $advance->dispatchOrder->tripSettlement) {
+                throw new \Exception('Không thể sửa tạm ứng của lệnh điều vận đã có quyết toán.');
+            }
+        });
+
+        static::deleting(function (CashAdvance $advance) {
+            if ($advance->dispatch_order_id && $advance->dispatchOrder->tripSettlement) {
+                throw new \Exception('Không thể xóa tạm ứng của lệnh điều vận đã có quyết toán.');
+            }
+        });
+    }
 }

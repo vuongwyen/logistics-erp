@@ -129,6 +129,12 @@
                 </a>
                 @endif
 
+                @if(Auth::user()->hasRole(['ADMIN', 'ACCOUNTANT', 'DISPATCH']))
+                <a href="{{ route('trip-settlements.index') }}" class="nav-link-custom {{ request()->routeIs('trip-settlements.*') ? 'active' : '' }}">
+                    <i class="fa fa-calculator"></i> Quyết toán chuyến
+                </a>
+                @endif
+
                 @if(Auth::user()->hasRole(['ADMIN', 'ACCOUNTANT']))
                 <div class="small text-white text-uppercase fw-bold mt-4 mb-2 px-3" style="font-size: 0.65rem; letter-spacing: 1px;">Báo cáo & Thống kê</div>
                 <a href="{{ route('reports.operational') }}" class="nav-link-custom {{ request()->routeIs('reports.operational') ? 'active' : '' }}">

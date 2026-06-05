@@ -42,4 +42,19 @@ class Expense extends Model
     {
         return $this->belongsTo(User::class, 'reported_by');
     }
+
+    protected static function booted(): void
+    {
+        static::updating(function (Expense $expense) {
+            if ($expense->dispatch_order_id && $expense->dispatchOrder->tripSettlement) {
+                throw new \Exception('Không thể sửa chi phí của lệnh điều vận đã có quyết toán.');
+            }
+        });
+
+        static::deleting(function (Expense $expense) {
+            if ($expense->dispatch_order_id && $expense->dispatchOrder->tripSettlement) {
+                throw new \Exception('Không thể xóa chi phí của lệnh điều vận đã có quyết toán.');
+            }
+        });
+    }
 }

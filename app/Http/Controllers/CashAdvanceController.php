@@ -11,12 +11,14 @@ class CashAdvanceController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'shipping_job_id' => 'required|exists:shipping_jobs,id',
-            'dispatch_order_id' => 'nullable|exists:dispatch_orders,id',
+            'dispatch_order_id' => 'required|exists:dispatch_orders,id',
             'amount' => 'required|numeric|min:0',
             'reason' => 'required|string|max:500',
         ]);
 
+        $dispatchOrder = \App\Models\DispatchOrder::findOrFail($validated['dispatch_order_id']);
+
+        $validated['shipping_job_id'] = $dispatchOrder->shipping_job_id;
         $validated['requested_by'] = Auth::id();
         $validated['status'] = 'pending';
 

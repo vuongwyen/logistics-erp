@@ -22,6 +22,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\ShippingJobController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VehicleController;
+use App\Http\Controllers\TripSettlementController;
 use Illuminate\Support\Facades\Route;
 
 // Auth Routes
@@ -155,6 +156,17 @@ Route::middleware('auth')->group(function () {
     Route::post('cash-advances', [CashAdvanceController::class, 'store'])->name('cash-advances.store');
     Route::middleware('role:ADMIN,ACCOUNTANT')->group(function () {
         Route::post('cash-advances/{cashAdvance}/approve', [CashAdvanceController::class, 'approve'])->name('cash-advances.approve');
+    });
+
+    // Finance - Trip Settlements (Quyết toán chuyến đi)
+    Route::middleware('role:ADMIN,ACCOUNTANT,DISPATCH')->group(function () {
+        Route::resource('trip-settlements', TripSettlementController::class)->only(['index', 'store', 'update', 'destroy']);
+        Route::get('trip-settlements/dispatch-order/{id}/financials', [TripSettlementController::class, 'getOrderFinancials'])->name('trip-settlements.financials');
+    });
+    
+    Route::middleware('role:ADMIN,ACCOUNTANT')->group(function () {
+        Route::post('trip-settlements/{tripSettlement}/approve', [TripSettlementController::class, 'approve'])->name('trip-settlements.approve');
+        Route::post('trip-settlements/{tripSettlement}/reject', [TripSettlementController::class, 'reject'])->name('trip-settlements.reject');
     });
 
     // Finance - Billing & Payments (ADMIN, ACCOUNTANT)
