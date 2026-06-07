@@ -98,6 +98,38 @@
             </div>
         </div>
 
+        <!-- Financial Summary Section -->
+        <div class="card border-0 rounded-4 shadow-sm mb-4">
+            <div class="card-header bg-white border-0 p-4 pb-0">
+                <h5 class="fw-bold text-navy mb-0">Tổng hợp Tài chính</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded-3 border border-success border-opacity-25">
+                            <label class="small text-muted text-uppercase fw-bold d-block mb-1">Giá Dịch Vụ / Doanh Thu</label>
+                            <span class="fs-5 fw-bold text-success">{{ number_format($serviceFee) }}đ</span>
+                            @if($shippingJob->servicePrice)
+                                <div class="small text-muted mt-1">{{ $shippingJob->servicePrice->service_name }}</div>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded-3 border border-primary border-opacity-25">
+                            <label class="small text-muted text-uppercase fw-bold d-block mb-1">Tổng Tạm Ứng (Đã chi)</label>
+                            <span class="fs-5 fw-bold text-primary">{{ number_format($shippingJob->cashAdvances->where('status', 'approved')->sum('amount')) }}đ</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded-3 border border-danger border-opacity-25">
+                            <label class="small text-muted text-uppercase fw-bold d-block mb-1">Tổng Chi Phí (Đã duyệt)</label>
+                            <span class="fs-5 fw-bold text-danger">{{ number_format($shippingJob->expenses->where('status', 'approved')->sum('amount')) }}đ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Dispatch Orders Section -->
         <div class="card border-0 rounded-4 shadow-sm">
             <div class="card-header bg-white border-0 p-4 pb-0 d-flex justify-content-between align-items-center">

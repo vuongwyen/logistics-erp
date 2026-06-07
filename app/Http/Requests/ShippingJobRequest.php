@@ -30,6 +30,7 @@ class ShippingJobRequest extends FormRequest
             'delivery_location_id' => ['required', 'exists:locations,id'],
             'cargo_type' => ['required', 'string', 'max:100'],
             'container_type' => ['nullable', 'string', 'max:50'],
+            'service_price_id' => ['nullable', 'exists:service_prices,id'],
             'container_number' => ['nullable', 'string', 'max:50'],
             'customs_declaration_no' => ['nullable', 'string', 'max:50'],
             'expected_date' => ['required', 'date'],

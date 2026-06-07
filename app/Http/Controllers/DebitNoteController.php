@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\DebitNote;
-use App\Models\ServicePrice;
 use App\Models\ShippingJob;
 use Illuminate\Http\Request;
 
@@ -17,12 +16,9 @@ class DebitNoteController extends Controller
 
         $job = ShippingJob::with(['expenses'])->findOrFail($request->shipping_job_id);
 
-        // Simple price matching logic: match service_name with container_type
-        // e.g. "Vận chuyển 20DC"
-        $serviceName = 'Vận chuyển '.$job->container_type;
-        $priceRecord = ServicePrice::where('service_name', 'like', "%$serviceName%")->first();
+        // Lấy giá dịch vụ đã chọn, nếu không thì lấy 0
+        $serviceFee = $job->servicePrice ? $job->servicePrice->unit_price : 0;
 
-        $serviceFee = $priceRecord ? $priceRecord->unit_price : 0;
         $totalExpenses = $job->expenses->where('status', 'approved')->sum('amount');
 
         $debitNote = DebitNote::firstOrNew(['shipping_job_id' => $job->id]);

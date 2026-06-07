@@ -80,7 +80,7 @@ class ShippingJobService
 
     private function generateJobCode(): string
     {
-        $date = now()->format('Ymd');
+        $date = now()->format('Ym');
         $prefix = "JOB-{$date}-";
 
         $lastJob = ShippingJob::where('job_code', 'like', "{$prefix}%")

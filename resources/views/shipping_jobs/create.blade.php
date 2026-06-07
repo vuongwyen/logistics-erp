@@ -91,6 +91,21 @@
             </div>
 
             <div class="col-md-4">
+                <label class="form-label fw-bold text-navy">Gói dịch vụ <span class="text-danger">*</span></label>
+                <select name="service_price_id" class="form-select @error('service_price_id') is-invalid @enderror" required>
+                    <option value="">-- Chọn Gói dịch vụ --</option>
+                    @foreach($servicePrices as $service)
+                        <option value="{{ $service->id }}" {{ old('service_price_id') == $service->id ? 'selected' : '' }}>
+                            {{ $service->service_name }} - {{ number_format($service->unit_price) }}đ
+                        </option>
+                    @endforeach
+                </select>
+                @error('service_price_id')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="col-md-4">
                 <label class="form-label fw-bold text-navy">Số Container</label>
                 <input type="text" name="container_number" class="form-control @error('container_number') is-invalid @enderror" value="{{ old('container_number') }}" placeholder="VD: TCNU1234567" maxlength="11" pattern="[A-Z]{4}[0-9]{7}" title="Số container phải đúng chuẩn ISO 6346: 4 chữ cái theo sau là 7 chữ số (VD: TCNU1234567)" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');">
                 @error('container_number')

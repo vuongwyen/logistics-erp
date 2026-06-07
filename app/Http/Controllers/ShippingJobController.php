@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ShippingJobRequest;
 use App\Models\Customer;
 use App\Models\Location;
+use App\Models\ServicePrice;
 use App\Models\ShippingJob;
 use App\Services\ExportService;
 use App\Services\ShippingJobService;
@@ -47,8 +48,9 @@ class ShippingJobController extends Controller
     {
         $customers = Customer::orderBy('customer_name')->get();
         $locations = Location::orderBy('location_name')->get();
+        $servicePrices = ServicePrice::orderBy('service_name')->get();
 
-        return view('shipping_jobs.create', compact('customers', 'locations'));
+        return view('shipping_jobs.create', compact('customers', 'locations', 'servicePrices'));
     }
 
     public function store(ShippingJobRequest $request)
@@ -82,17 +84,21 @@ class ShippingJobController extends Controller
             'dispatchOrders.vehicle',
             'dispatchOrders.startLocation',
             'dispatchOrders.endLocation',
+            'servicePrice',
         ]);
 
-        return view('shipping_jobs.show', compact('shippingJob'));
+        $serviceFee = $shippingJob->servicePrice ? $shippingJob->servicePrice->unit_price : 0;
+
+        return view('shipping_jobs.show', compact('shippingJob', 'serviceFee'));
     }
 
     public function edit(ShippingJob $shippingJob)
     {
         $customers = Customer::orderBy('customer_name')->get();
         $locations = Location::orderBy('location_name')->get();
+        $servicePrices = ServicePrice::orderBy('service_name')->get();
 
-        return view('shipping_jobs.edit', compact('shippingJob', 'customers', 'locations'));
+        return view('shipping_jobs.edit', compact('shippingJob', 'customers', 'locations', 'servicePrices'));
     }
 
     public function update(ShippingJobRequest $request, ShippingJob $shippingJob)

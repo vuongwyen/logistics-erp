@@ -23,10 +23,16 @@ class ShippingJob extends Model
         'delivery_location_id',
         'cargo_type',
         'container_type',
+        'service_price_id',
         'expected_date',
         'status',
         'created_by',
     ];
+
+    public function servicePrice(): BelongsTo
+    {
+        return $this->belongsTo(ServicePrice::class);
+    }
 
     public function customer(): BelongsTo
     {
