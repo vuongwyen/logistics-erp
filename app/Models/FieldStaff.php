@@ -6,6 +6,7 @@ use Database\Factories\FieldStaffFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FieldStaff extends Model
@@ -36,6 +37,12 @@ class FieldStaff extends Model
     public function responsibleLocation(): BelongsTo
     {
         return $this->belongsTo(Location::class, 'responsible_location_id');
+    }
+
+    public function responsibleLocations(): BelongsToMany
+    {
+        return $this->belongsToMany(Location::class, 'field_staff_location')
+            ->withTimestamps();
     }
 
     protected function casts(): array

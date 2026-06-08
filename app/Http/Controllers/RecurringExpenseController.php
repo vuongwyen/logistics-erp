@@ -3,22 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\RecurringExpense;
+use App\Support\VietnameseDate;
 use Illuminate\Http\Request;
 
 class RecurringExpenseController extends Controller
 {
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'category' => ['nullable', 'string', 'max:100'],
-            'amount' => ['required', 'numeric', 'min:0'],
-            'cycle' => ['required', 'in:monthly,quarterly,yearly'],
-            'effective_from' => ['nullable', 'date'],
-            'effective_to' => ['nullable', 'date', 'after_or_equal:effective_from'],
-            'status' => ['required', 'in:active,inactive'],
-            'note' => ['nullable', 'string', 'max:1000'],
-        ]);
+        $validated = $this->validatedData($request);
 
         $validated['expense_code'] = $this->generateExpenseCode();
 
@@ -27,14 +19,28 @@ class RecurringExpenseController extends Controller
         return back()->with('success', 'Đã thêm chi phí cố định.');
     }
 
-    public function edit(RecurringExpense $recurringExpense)
-    {
-        return view('recurring-expenses.edit', compact('recurringExpense'));
-    }
-
     public function update(Request $request, RecurringExpense $recurringExpense)
     {
-        $validated = $request->validate([
+        $recurringExpense->update($this->validatedData($request));
+
+        return back()->with('success', 'Đã cập nhật chi phí cố định.');
+    }
+
+    public function destroy(RecurringExpense $recurringExpense)
+    {
+        $recurringExpense->delete();
+
+        return back()->with('success', 'Đã xóa chi phí cố định.');
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function validatedData(Request $request): array
+    {
+        $request->merge(VietnameseDate::normalizedFields($request->all(), ['effective_from', 'effective_to']));
+
+        return $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'category' => ['nullable', 'string', 'max:100'],
             'amount' => ['required', 'numeric', 'min:0'],
@@ -44,17 +50,6 @@ class RecurringExpenseController extends Controller
             'status' => ['required', 'in:active,inactive'],
             'note' => ['nullable', 'string', 'max:1000'],
         ]);
-
-        $recurringExpense->update($validated);
-
-        return redirect()->route('reports.financial')->with('success', 'Đã cập nhật chi phí cố định.');
-    }
-
-    public function destroy(RecurringExpense $recurringExpense)
-    {
-        $recurringExpense->delete();
-
-        return back()->with('success', 'Đã xóa chi phí cố định.');
     }
 
     private function generateExpenseCode(): string

@@ -23,8 +23,7 @@
                         
                         <div class="mb-3">
                             <label class="form-label fw-bold">Họ tên nhân viên</label>
-                            <input type="text" id="profile_name" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $user->name) }}" required>
-                            <div id="profile_name_error" class="invalid-feedback"></div>
+                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $user->name) }}" data-validate="person-name" data-label="Họ tên nhân viên" required>
                             @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
@@ -59,11 +58,11 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Ngày sinh</label>
-                                <input type="date" name="date_of_birth" class="form-control" value="{{ old('date_of_birth', $user->date_of_birth?->format('Y-m-d')) }}" min="1950-01-01" max="{{ now()->subYears(18)->toDateString() }}" required>
+                                <input type="text" name="date_of_birth" class="form-control" value="{{ \App\Support\VietnameseDate::display(old('date_of_birth', $user->date_of_birth)) }}" placeholder="Ngày/Tháng/Năm" data-date-input data-label="Ngày sinh" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Ngày tham gia</label>
-                                <input type="date" name="joined_at" class="form-control" value="{{ old('joined_at', $user->joined_at?->format('Y-m-d') ?? now()->toDateString()) }}" min="{{ now()->subYears(10)->toDateString() }}" max="{{ now()->toDateString() }}" required>
+                                <input type="text" name="joined_at" class="form-control" value="{{ \App\Support\VietnameseDate::display(old('joined_at', $user->joined_at ?? now()->toDateString())) }}" placeholder="Ngày/Tháng/Năm" data-date-input data-label="Ngày tham gia" required>
                             </div>
                         </div>
 

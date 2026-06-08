@@ -90,12 +90,22 @@
                 </div>
                 <div class="card-body p-4">
                     @foreach($recentJobs as $job)
+                        @php
+                            $statusLabel = match($job->status) {
+                                'new' => 'Mới tạo',
+                                'processing' => 'Đang xử lý',
+                                'dispatched' => 'Đã điều xe',
+                                'completed' => 'Hoàn thành',
+                                'cancelled' => 'Đã hủy',
+                                default => 'Khác',
+                            };
+                        @endphp
                         <div class="d-flex align-items-center mb-3 p-3 bg-light rounded-3">
                             <div class="flex-grow-1">
                                 <div class="fw-bold text-navy small">{{ $job->job_code }}</div>
                                 <div class="text-muted" style="font-size: 0.75rem;">{{ $job->customer->customer_name }}</div>
                             </div>
-                            <span class="badge bg-white text-navy border small">{{ $job->status }}</span>
+                            <span class="badge bg-white text-navy border small">{{ $statusLabel }}</span>
                         </div>
                     @endforeach
                 </div>

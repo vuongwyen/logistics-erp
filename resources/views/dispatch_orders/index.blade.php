@@ -66,26 +66,52 @@
 @endif
 
 <!-- Filters -->
-<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
-    <form action="{{ route('dispatch-orders.index') }}" method="GET">
-        <div class="row g-3 align-items-center">
-            <div class="col-md-2"><input type="text" name="order_number" class="form-control border-light" placeholder="Số lệnh" value="{{ request('order_number') }}"></div>
-            <div class="col-md-2"><input type="text" name="job_code" class="form-control border-light" placeholder="Mã Job" value="{{ request('job_code') }}"></div>
-            <div class="col-md-2"><input type="text" name="driver_name" class="form-control border-light" placeholder="Tài xế" value="{{ request('driver_name') }}"></div>
-            <div class="col-md-2"><input type="text" name="plate_number" class="form-control border-light" placeholder="Biển số" value="{{ request('plate_number') }}"></div>
-            <div class="col-md-2">
-                <select name="approval_status" class="form-select border-light">
-                    <option value="">Duyệt</option>
-                    <option value="pending" {{ request('approval_status') === 'pending' ? 'selected' : '' }}>Chờ duyệt</option>
-                    <option value="approved" {{ request('approval_status') === 'approved' ? 'selected' : '' }}>Đã duyệt</option>
-                    <option value="rejected" {{ request('approval_status') === 'rejected' ? 'selected' : '' }}>Từ chối</option>
-                </select>
-            </div>
-            
-            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
-                <a href="{{ route('dispatch-orders.index') }}" class="btn btn-light px-4">Xóa lọc</a>
-                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
-            </div>
+<div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+    <form action="{{ route('dispatch-orders.index') }}" method="GET" class="row g-3 align-items-end">
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Số lệnh</label>
+            <input type="text" name="order_number" class="form-control border-light" placeholder="Số lệnh" value="{{ request('order_number') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Mã đơn hàng</label>
+            <input type="text" name="job_code" class="form-control border-light" placeholder="Mã Job" value="{{ request('job_code') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Tài xế</label>
+            <input type="text" name="driver_name" class="form-control border-light" placeholder="Tài xế" value="{{ request('driver_name') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Biển số xe</label>
+            <input type="text" name="plate_number" class="form-control border-light" placeholder="Biển số" value="{{ request('plate_number') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Trạng thái duyệt</label>
+            <select name="approval_status" class="form-select border-light">
+                <option value="">Duyệt</option>
+                <option value="pending" {{ request('approval_status') === 'pending' ? 'selected' : '' }}>Chờ duyệt</option>
+                <option value="approved" {{ request('approval_status') === 'approved' ? 'selected' : '' }}>Đã duyệt</option>
+                <option value="rejected" {{ request('approval_status') === 'rejected' ? 'selected' : '' }}>Từ chối</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Trạng thái điều vận</label>
+            <select name="dispatch_status" class="form-select border-light">
+                <option value="">Tất cả chuyến</option>
+                <option value="dispatched" {{ request('dispatch_status') === 'dispatched' ? 'selected' : '' }}>Đã điều xe</option>
+                <option value="on_way" {{ request('dispatch_status') === 'on_way' ? 'selected' : '' }}>Đang đi</option>
+                <option value="completed" {{ request('dispatch_status') === 'completed' ? 'selected' : '' }}>Hoàn thành</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Ngày đi</label>
+            <input type="text" name="planned_departure_date" class="form-control border-light" placeholder="Ngày/Tháng/Năm" value="{{ \App\Support\VietnameseDate::display(request('planned_departure_date')) }}" data-date-input data-label="Ngày đi">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Ngày về</label>
+            <input type="text" name="planned_return_date" class="form-control border-light" placeholder="Ngày/Tháng/Năm" value="{{ \App\Support\VietnameseDate::display(request('planned_return_date')) }}" data-date-input data-label="Ngày về">
+        </div>
+        <div class="col-md-2 ms-md-auto">
+            <button type="submit" class="btn btn-navy w-100">Lọc</button>
         </div>
     </form>
 </div>
@@ -163,6 +189,25 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
                                     <li><a class="dropdown-item" href="{{ route('dispatch-orders.show', $order->id) }}"><i class="fa fa-eye me-2 text-info"></i> Chi tiết</a></li>
+                                    @if(Auth::user()->hasRole(['ADMIN', 'ACCOUNTANT']) && $order->approval_status === 'pending')
+                                        <li>
+                                            <form action="{{ route('dispatch-orders.approve', $order) }}" method="POST">
+                                                @csrf
+                                                <button type="submit" class="dropdown-item text-success">
+                                                    <i class="fa fa-check me-2"></i> Duyệt lệnh
+                                                </button>
+                                            </form>
+                                        </li>
+                                        <li>
+                                            <form action="{{ route('dispatch-orders.reject', $order) }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="rejection_reason" value="Kế toán từ chối duyệt">
+                                                <button type="submit" class="dropdown-item text-danger">
+                                                    <i class="fa fa-ban me-2"></i> Từ chối
+                                                </button>
+                                            </form>
+                                        </li>
+                                    @endif
                                     @if(Auth::user()->hasRole(['ADMIN', 'DISPATCH']))
                                     <li><hr class="dropdown-divider"></li>
                                     <li>

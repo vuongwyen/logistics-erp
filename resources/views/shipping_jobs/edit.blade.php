@@ -33,7 +33,7 @@
 
             <div class="col-md-6">
                 <label class="form-label fw-bold text-navy">Ngày Dự Kiến <span class="text-danger">*</span></label>
-                <input type="date" name="expected_date" class="form-control @error('expected_date') is-invalid @enderror" value="{{ old('expected_date', $shippingJob->expected_date ? \Carbon\Carbon::parse($shippingJob->expected_date)->format('Y-m-d') : '') }}" required>
+                <input type="text" name="expected_date" class="form-control @error('expected_date') is-invalid @enderror" value="{{ \App\Support\VietnameseDate::display(old('expected_date', $shippingJob->expected_date)) }}" placeholder="Ngày/Tháng/Năm" data-date-input data-label="Ngày dự kiến" required>
                 @error('expected_date')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -105,12 +105,18 @@
 
             <div class="col-md-4">
                 <label class="form-label fw-bold text-navy">Số Container</label>
-                <input type="text" name="container_number" class="form-control" value="{{ old('container_number', $shippingJob->container_number) }}">
+                <input type="text" name="container_number" class="form-control @error('container_number') is-invalid @enderror" value="{{ old('container_number', $shippingJob->container_number) }}" maxlength="11" data-validate="container-number" data-uppercase="true" data-label="Số container">
+                @error('container_number')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
 
             <div class="col-md-6">
                 <label class="form-label fw-bold text-navy">Số Tờ Khai Hải Quan</label>
-                <input type="text" name="customs_declaration_no" class="form-control" value="{{ old('customs_declaration_no', $shippingJob->customs_declaration_no) }}">
+                <input type="text" name="customs_declaration_no" class="form-control @error('customs_declaration_no') is-invalid @enderror" value="{{ old('customs_declaration_no', $shippingJob->customs_declaration_no) }}" maxlength="12" inputmode="numeric" data-validate="customs-declaration" data-label="Số tờ khai hải quan">
+                @error('customs_declaration_no')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
 
             <div class="col-md-6">

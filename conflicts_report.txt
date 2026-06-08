@@ -1,0 +1,1221 @@
+
+--- resources/views\customers\create.blade.php:16 ---
+<<<<<<< HEAD
+            <!-- <div class="col-md-4">
+                <label class="form-label fw-bold">Mã Khách Hàng</label>
+                <input type="text" class="form-control bg-light" value="Tự sinh khi lưu" disabled>
+                <div class="form-text">Quy định: KH-YYMM-XXX, không chỉnh sửa thủ công.</div>
+            </div> -->
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Tên Khách Hàng <span class="text-danger">*</span></label>
+                <input type="text" name="customer_name" class="form-control @error('customer_name') is-invalid @enderror" value="{{ old('customer_name') }}" required onblur="this.value = this.value.trim().replace(/\s+/g, ' ').replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });">
+=======
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Tên Khách Hàng <span class="text-danger">*</span></label>
+                <input type="text" name="customer_name" class="form-control @error('customer_name') is-invalid @enderror" value="{{ old('customer_name') }}" data-validate="person-name" data-label="Tên khách hàng" required>
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\customers\create.blade.php:43 ---
+<<<<<<< HEAD
+                <input type="text" name="tax_code" class="form-control @error('tax_code') is-invalid @enderror" value="{{ old('tax_code') }}" maxlength="10" inputmode="numeric" required oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+=======
+                <input type="text" name="tax_code" class="form-control @error('tax_code') is-invalid @enderror" value="{{ old('tax_code') }}" maxlength="10" inputmode="numeric" data-validate="tax-code" data-label="Mã số thuế" required>
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\customers\create.blade.php:63 ---
+<<<<<<< HEAD
+                <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}" maxlength="10" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+=======
+                <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}" maxlength="10" inputmode="numeric" data-validate="phone-vn" data-label="Số điện thoại">
+                @error('phone')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\customers\create.blade.php:78 ---
+<<<<<<< HEAD
+                <input type="text" name="contact_person" class="form-control @error('contact_person') is-invalid @enderror" value="{{ old('contact_person') }}" placeholder="Nhập tên người liên hệ">
+=======
+                <input type="text" name="contact_person" class="form-control @error('contact_person') is-invalid @enderror" value="{{ old('contact_person') }}" placeholder="VD: Nguyễn Văn A">
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\customers\edit.blade.php:65 ---
+<<<<<<< HEAD
+                <input type="text" name="contact_person" class="form-control @error('contact_person') is-invalid @enderror" value="{{ old('contact_person', $customer->contact_person) }}" placeholder="Nhập tên người liên hệ">
+=======
+                <input type="text" name="contact_person" class="form-control @error('contact_person') is-invalid @enderror" value="{{ old('contact_person', $customer->contact_person) }}">
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\customers\index.blade.php:11 ---
+<<<<<<< HEAD
+<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
+    <form action="{{ route('customers.index') }}" method="GET">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-2"><input type="text" name="customer_code" class="form-control border-light" placeholder="Mã KH" value="{{ request('customer_code') }}"></div>
+            <div class="col-md-2"><input type="text" name="customer_name" class="form-control border-light" placeholder="Tên KH" value="{{ request('customer_name') }}"></div>
+            <div class="col-md-2"><input type="text" name="tax_code" class="form-control border-light" placeholder="MST" value="{{ request('tax_code') }}"></div>
+            <div class="col-md-2"><input type="text" name="email" class="form-control border-light" placeholder="Email" value="{{ request('email') }}"></div>
+            <div class="col-md-2"><input type="text" name="contact_person" class="form-control border-light" placeholder="Người liên hệ" value="{{ request('contact_person') }}"></div>
+            <div class="col-md-2"><input type="text" name="phone" class="form-control border-light" placeholder="SĐT" value="{{ request('phone') }}"></div>
+
+            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+                <a href="{{ route('customers.index') }}" class="btn btn-light px-4">Xóa lọc</a>
+                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
+            </div>
+        </div>
+=======
+<div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+    <form action="{{ route('customers.index') }}" method="GET" class="row g-3 align-items-end">
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Mã khách hàng</label>
+            <input type="text" name="customer_code" class="form-control border-light" placeholder="Mã KH" value="{{ request('customer_code') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Tên khách hàng</label>
+            <input type="text" name="customer_name" class="form-control border-light" placeholder="Tên KH" value="{{ request('customer_name') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Mã số thuế</label>
+            <input type="text" name="tax_code" class="form-control border-light" placeholder="10 chữ số" value="{{ request('tax_code') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Email</label>
+            <input type="text" name="email" class="form-control border-light" placeholder="Email" value="{{ request('email') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Người liên hệ</label>
+            <input type="text" name="contact_person" class="form-control border-light" placeholder="Người liên hệ" value="{{ request('contact_person') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Số điện thoại</label>
+            <input type="text" name="phone" class="form-control border-light" placeholder="10 số" value="{{ request('phone') }}">
+        </div>
+        <div class="col-md-2 ms-md-auto">
+            <button type="submit" class="btn btn-navy w-100">Lọc</button>
+        </div>
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\dispatch_orders\index.blade.php:68 ---
+<<<<<<< HEAD
+<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
+    <form action="{{ route('dispatch-orders.index') }}" method="GET">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-2"><input type="text" name="order_number" class="form-control border-light" placeholder="Số lệnh" value="{{ request('order_number') }}"></div>
+            <div class="col-md-2"><input type="text" name="job_code" class="form-control border-light" placeholder="Mã Job" value="{{ request('job_code') }}"></div>
+            <div class="col-md-2"><input type="text" name="driver_name" class="form-control border-light" placeholder="Tài xế" value="{{ request('driver_name') }}"></div>
+            <div class="col-md-2"><input type="text" name="plate_number" class="form-control border-light" placeholder="Biển số" value="{{ request('plate_number') }}"></div>
+            <div class="col-md-2">
+                <select name="approval_status" class="form-select border-light">
+                    <option value="">Duyệt</option>
+                    <option value="pending" {{ request('approval_status') === 'pending' ? 'selected' : '' }}>Chờ duyệt</option>
+                    <option value="approved" {{ request('approval_status') === 'approved' ? 'selected' : '' }}>Đã duyệt</option>
+                    <option value="rejected" {{ request('approval_status') === 'rejected' ? 'selected' : '' }}>Từ chối</option>
+                </select>
+            </div>
+
+            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+                <a href="{{ route('dispatch-orders.index') }}" class="btn btn-light px-4">Xóa lọc</a>
+                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
+            </div>
+=======
+<div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+    <form action="{{ route('dispatch-orders.index') }}" method="GET" class="row g-3 align-items-end">
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Số lệnh</label>
+            <input type="text" name="order_number" class="form-control border-light" placeholder="Số lệnh" value="{{ request('order_number') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Mã đơn hàng</label>
+            <input type="text" name="job_code" class="form-control border-light" placeholder="Mã Job" value="{{ request('job_code') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Tài xế</label>
+            <input type="text" name="driver_name" class="form-control border-light" placeholder="Tài xế" value="{{ request('driver_name') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Biển số xe</label>
+            <input type="text" name="plate_number" class="form-control border-light" placeholder="Biển số" value="{{ request('plate_number') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Trạng thái duyệt</label>
+            <select name="approval_status" class="form-select border-light">
+                <option value="">Duyệt</option>
+                <option value="pending" {{ request('approval_status') === 'pending' ? 'selected' : '' }}>Chờ duyệt</option>
+                <option value="approved" {{ request('approval_status') === 'approved' ? 'selected' : '' }}>Đã duyệt</option>
+                <option value="rejected" {{ request('approval_status') === 'rejected' ? 'selected' : '' }}>Từ chối</option>
+            </select>
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\documents\index.blade.php:13 ---
+<<<<<<< HEAD
+<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
+    <form action="{{ route('documents.index') }}" method="GET">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-2">
+                <input type="text" name="document_code" class="form-control border-light" placeholder="Mã chứng từ" value="{{ request('document_code') }}">
+            </div>
+            <div class="col-md-2">
+                <input type="text" name="doc_category" class="form-control border-light" placeholder="Loại chứng từ" value="{{ request('doc_category') }}">
+            </div>
+            <div class="col-md-2">
+                <input type="text" name="job_code" class="form-control border-light" placeholder="Mã đơn hàng" value="{{ request('job_code') }}">
+            </div>
+            <div class="col-md-2">
+                <input type="text" name="customer_name" class="form-control border-light" placeholder="Khách hàng" value="{{ request('customer_name') }}">
+            </div>
+            <div class="col-md-2">
+                <input type="text" name="uploader_name" class="form-control border-light" placeholder="Người tải" value="{{ request('uploader_name') }}">
+            </div>
+            <div class="col-md-2">
+                <select name="document_flow" class="form-select border-light">
+                    <option value="">Tất cả luồng</option>
+                    <option value="input" {{ request('document_flow') === 'input' ? 'selected' : '' }}>Đầu vào</option>
+                    <option value="output" {{ request('document_flow') === 'output' ? 'selected' : '' }}>Đầu ra</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="tax_stage" class="form-select border-light">
+                    <option value="">Tất cả thuế</option>
+                    <option value="before_tax" {{ request('tax_stage') === 'before_tax' ? 'selected' : '' }}>Trước thuế</option>
+                    <option value="after_tax" {{ request('tax_stage') === 'after_tax' ? 'selected' : '' }}>Sau thuế</option>
+                </select>
+            </div>
+
+            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+                <a href="{{ route('documents.index') }}" class="btn btn-light px-4">Xóa lọc</a>
+                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
+            </div>
+=======
+<div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+    <form action="{{ route('documents.index') }}" method="GET" class="row g-3 align-items-end">
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Mã chứng từ</label>
+            <input type="text" name="document_code" class="form-control border-light" placeholder="Mã chứng từ" value="{{ request('document_code') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Loại chứng từ</label>
+            <input type="text" name="doc_category" class="form-control border-light" placeholder="Loại chứng từ" value="{{ request('doc_category') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Mã đơn hàng</label>
+            <input type="text" name="job_code" class="form-control border-light" placeholder="Mã đơn hàng" value="{{ request('job_code') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Khách hàng</label>
+            <input type="text" name="customer_name" class="form-control border-light" placeholder="Khách hàng" value="{{ request('customer_name') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Luồng chứng từ</label>
+            <select name="document_flow" class="form-select border-light">
+                <option value="">Tất cả luồng</option>
+                <option value="input" {{ request('document_flow') === 'input' ? 'selected' : '' }}>Đầu vào</option>
+                <option value="output" {{ request('document_flow') === 'output' ? 'selected' : '' }}>Đầu ra</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Giai đoạn thuế</label>
+            <select name="tax_stage" class="form-select border-light">
+                <option value="">Tất cả thuế</option>
+                <option value="before_tax" {{ request('tax_stage') === 'before_tax' ? 'selected' : '' }}>Trước thuế</option>
+                <option value="after_tax" {{ request('tax_stage') === 'after_tax' ? 'selected' : '' }}>Sau thuế</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Người tải</label>
+            <input type="text" name="uploader_name" class="form-control border-light" placeholder="Người tải" value="{{ request('uploader_name') }}">
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\documents\index.blade.php:146 ---
+<<<<<<< HEAD
+                            </button>
+=======
+                            </a>
+                            @if(Auth::user()->hasRole(['ADMIN', 'ACCOUNTANT', 'DOCUMENT']))
+                                <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#documentEditModal" onclick='prepareDocumentEdit(@json($document))'>
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <form action="{{ route('documents.destroy', $document) }}" method="POST" id="delete-form-{{ $document->id }}" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="handleDelete('{{ $document->id }}', 'Xóa chứng từ {{ $document->document_code }}?')">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </form>
+                            @endif
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\drivers\index.blade.php:7 ---
+<<<<<<< HEAD
+
+    <x-export-buttons />
+</div>
+
+<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
+    <form action="{{ route('drivers.index') }}" method="GET">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-3"><input type="text" name="driver_code" class="form-control border-light" placeholder="Mã tài xế" value="{{ request('driver_code') }}"></div>
+            <div class="col-md-3"><input type="text" name="full_name" class="form-control border-light" placeholder="Họ tên" value="{{ request('full_name') }}"></div>
+            <div class="col-md-3"><input type="text" name="phone" class="form-control border-light" placeholder="SĐT" value="{{ request('phone') }}"></div>
+            <div class="col-md-3"><input type="text" name="license_number" class="form-control border-light" placeholder="GPLX" value="{{ request('license_number') }}"></div>
+            <div class="col-md-3">
+                <select name="rank" class="form-select border-light">
+                    <option value="">Cấp bậc</option>
+                    @foreach(\App\Support\LogisticsOptions::driverRanks() as $value => $label)
+                        <option value="{{ $value }}" {{ request('rank') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-select border-light">
+                    <option value="">Tất cả</option>
+                    <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Đang làm việc</option>
+                    <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Nghỉ việc</option>
+                </select>
+            </div>
+
+            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+                <a href="{{ route('drivers.index') }}" class="btn btn-light px-4">Xóa lọc</a>
+                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
+            </div>
+        </div>
+=======
+    <x-export-buttons />
+</div>
+
+<div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+    <form action="{{ route('drivers.index') }}" method="GET" class="row g-3 align-items-end">
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Mã tài xế</label>
+            <input type="text" name="driver_code" class="form-control border-light" placeholder="Mã tài xế" value="{{ request('driver_code') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Họ tên</label>
+            <input type="text" name="full_name" class="form-control border-light" placeholder="Họ tên" value="{{ request('full_name') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Số điện thoại</label>
+            <input type="text" name="phone" class="form-control border-light" placeholder="10 số" value="{{ request('phone') }}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-bold text-muted">Cấp bậc</label>
+            <select name="rank" class="form-select border-light">
+                <option value="">Cấp bậc</option>
+                @foreach(\App\Support\LogisticsOptions::driverRanks() as $value => $label)
+                    <option value="{{ $value }}" {{ request('rank') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Trạng thái</label>
+            <select name="status" class="form-select border-light">
+                <option value="">Tất cả</option>
+                <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Đang làm việc</option>
+                <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Nghỉ việc</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-bold text-muted">Số GPLX</label>
+            <input type="text" name="license_number" class="form-control border-light" placeholder="GPLX" value="{{ request('license_number') }}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-bold text-muted">Ngày sinh</label>
+            <input type="text" name="date_of_birth" class="form-control border-light" placeholder="Ngày/Tháng/Năm" value="{{ \App\Support\VietnameseDate::display(request('date_of_birth')) }}" data-date-input data-label="Ngày sinh">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-bold text-muted">Thời hạn hợp đồng</label>
+            <input type="text" name="contract_expiry" class="form-control border-light" placeholder="Ngày/Tháng/Năm" value="{{ \App\Support\VietnameseDate::display(request('contract_expiry')) }}" data-date-input data-label="Thời hạn hợp đồng">
+        </div>
+        <div class="col-md-2 ms-md-auto">
+            <button type="submit" class="btn btn-navy w-100">Lọc</button>
+        </div>
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\drivers\index.blade.php:186 ---
+<<<<<<< HEAD
+                            <input type="text" name="full_name" id="full_name" class="form-control bg-light border-0" required oninput="formatName(this)">
+                            <div class="invalid-feedback" id="full_name_error" style="display: none;"></div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Số Điện Thoại</label>
+                            <input type="text" name="phone" id="phone" class="form-control bg-light border-0" maxlength="10" inputmode="numeric" required oninput="formatPhone(this)">
+                            <div class="invalid-feedback" id="phone_error" style="display: none;"></div>
+=======
+                            <input type="text" name="full_name" id="full_name" class="form-control bg-light border-0" data-validate="person-name" data-label="Họ và tên" required>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Số Điện Thoại</label>
+                            <input type="text" name="phone" id="phone" class="form-control bg-light border-0" maxlength="10" inputmode="numeric" data-validate="phone-vn" data-label="Số điện thoại" required>
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\drivers\index.blade.php:290 ---
+<<<<<<< HEAD
+
+        let today = new Date();
+        let adultDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+
+        if (window.setDateValue) {
+            setDateValue('date_of_birth', adultDate);
+            setDateValue('start_date', today);
+            setDateValue('contract_expiry', today);
+        }
+=======
+        removeTemporaryDriverUserOptions();
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\field_assignments\index.blade.php:36 ---
+<<<<<<< HEAD
+<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
+    <form action="{{ route('field-assignments.index') }}" method="GET">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-2">
+                <input type="text" name="assignment_code" class="form-control border-light" placeholder="Mã phiếu" value="{{ request('assignment_code') }}">
+            </div>
+            <div class="col-md-2">
+                <input type="text" name="job_code" class="form-control border-light" placeholder="Mã đơn hàng" value="{{ request('job_code') }}">
+            </div>
+            <div class="col-md-2">
+                <input type="text" name="field_staff_name" class="form-control border-light" placeholder="Nhân viên" value="{{ request('field_staff_name') }}">
+            </div>
+            <div class="col-md-2">
+                <input type="text" name="location_name" class="form-control border-light" placeholder="Vị trí" value="{{ request('location_name') }}">
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="assigned_date" class="form-control border-light" value="{{ request('assigned_date') }}">
+            </div>
+            <div class="col-md-2">
+                <select name="status" class="form-select border-light">
+                    <option value="">Trạng thái</option>
+                    @foreach($statusLabels as $status => $label)
+                        <option value="{{ $status }}" {{ request('status') === $status ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+                <a href="{{ route('field-assignments.index') }}" class="btn btn-light px-4">Xóa lọc</a>
+                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
+            </div>
+=======
+<div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+    <form action="{{ route('field-assignments.index') }}" method="GET" class="row g-3 align-items-end">
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Mã phiếu</label>
+            <input type="text" name="assignment_code" class="form-control border-light" placeholder="Mã phiếu" value="{{ request('assignment_code') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Mã đơn hàng</label>
+            <input type="text" name="job_code" class="form-control border-light" placeholder="Mã đơn hàng" value="{{ request('job_code') }}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-bold text-muted">Nhân viên hiện trường</label>
+            <input type="text" name="field_staff_name" class="form-control border-light" placeholder="Nhân viên" value="{{ request('field_staff_name') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Vị trí thực hiện</label>
+            <input type="text" name="location_name" class="form-control border-light" placeholder="Vị trí" value="{{ request('location_name') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Ngày thực hiện</label>
+            <input type="text" name="assigned_date" class="form-control border-light" placeholder="Ngày/Tháng/Năm" value="{{ \App\Support\VietnameseDate::display(request('assigned_date')) }}" data-date-input data-label="Ngày thực hiện">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Trạng thái phiếu</label>
+            <select name="status" class="form-select border-light">
+                <option value="">Trạng thái</option>
+                @foreach($statusLabels as $status => $label)
+                    <option value="{{ $status }}" {{ request('status') === $status ? 'selected' : '' }}>{{ $label }}</option>
+                @endforeach
+            </select>
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\field_staff\index.blade.php:7 ---
+<<<<<<< HEAD
+
+    <x-export-buttons />
+</div>
+
+<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
+    <form action="{{ route('field-staff.index') }}" method="GET">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-3"><input type="text" name="staff_code" class="form-control border-light" placeholder="Mã" value="{{ request('staff_code') }}"></div>
+            <div class="col-md-3"><input type="text" name="full_name" class="form-control border-light" placeholder="Họ tên" value="{{ request('full_name') }}"></div>
+            <div class="col-md-3"><input type="text" name="phone" class="form-control border-light" placeholder="SĐT" value="{{ request('phone') }}"></div>
+            <div class="col-md-3">
+                <select name="responsible_location_id" class="form-select border-light">
+                    <option value="">Tất cả khu vực</option>
+                    @foreach($responsibleLocations as $location)
+                        <option value="{{ $location->id }}" {{ (string) request('responsible_location_id') === (string) $location->id ? 'selected' : '' }}>
+                            {{ $location->location_name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-select border-light">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Đang làm việc</option>
+                    <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Nghỉ việc</option>
+                </select>
+            </div>
+
+            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+                <a href="{{ route('field-staff.index') }}" class="btn btn-light px-4">Xóa lọc</a>
+                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="d-flex justify-content-end mb-4">
+=======
+    <x-export-buttons />
+</div>
+
+<div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+    <form action="{{ route('field-staff.index') }}" method="GET" class="row g-3 align-items-end">
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Mã nhân viên</label>
+            <input type="text" name="staff_code" class="form-control border-light" placeholder="Mã" value="{{ request('staff_code') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Họ tên</label>
+            <input type="text" name="full_name" class="form-control border-light" placeholder="Họ tên" value="{{ request('full_name') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Số điện thoại</label>
+            <input type="text" name="phone" class="form-control border-light" placeholder="10 số" value="{{ request('phone') }}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-bold text-muted">Khu vực phụ trách</label>
+            <select name="responsible_location_id" class="form-select border-light">
+                <option value="">Tất cả khu vực</option>
+                @foreach($responsibleLocations as $location)
+                    <option value="{{ $location->id }}" {{ (string) request('responsible_location_id') === (string) $location->id ? 'selected' : '' }}>
+                        {{ $location->location_name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Ngày sinh</label>
+            <input type="text" name="date_of_birth" class="form-control border-light" placeholder="Ngày/Tháng/Năm" value="{{ \App\Support\VietnameseDate::display(request('date_of_birth')) }}" data-date-input data-label="Ngày sinh">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Trạng thái</label>
+            <select name="status" class="form-select border-light">
+                <option value="">Tất cả trạng thái</option>
+                <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Đang làm việc</option>
+                <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Nghỉ việc</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Chứng chỉ</label>
+            <input type="text" name="certificates" class="form-control border-light" placeholder="Chứng chỉ" value="{{ request('certificates') }}">
+        </div>
+        <div class="col-md-2 ms-md-auto">
+            <button type="submit" class="btn btn-navy w-100">Lọc</button>
+        </div>
+    </form>
+</div>
+
+<div class="d-flex justify-content-end mb-3">
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\field_staff\index.blade.php:193 ---
+<<<<<<< HEAD
+                            <label class="form-label fw-semibold">Họ và tên <span class="text-danger">*</span></label>
+                            <input type="text" name="full_name" id="full_name" class="form-control bg-light border-0" required maxlength="100" placeholder="Nhập họ và tên" oninput="formatName(this)">
+                            <div class="invalid-feedback" id="full_name_error" style="display: none;"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Số điện thoại <span class="text-danger">*</span></label>
+                            <input type="text" name="phone" id="phone" class="form-control bg-light border-0" maxlength="10" inputmode="numeric" required placeholder="VD: 0912345678" oninput="formatPhone(this)">
+                            <div class="invalid-feedback" id="phone_error" style="display: none;"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Ngày sinh <span class="text-danger">*</span></label>
+                            <input type="date" name="date_of_birth" id="date_of_birth" class="form-control bg-light border-0" required>
+=======
+                            <label class="form-label fw-semibold">Họ và tên</label>
+                            <input type="text" name="full_name" id="full_name" class="form-control bg-light border-0" data-validate="person-name" data-label="Họ và tên" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Số điện thoại</label>
+                            <input type="text" name="phone" id="phone" class="form-control bg-light border-0" maxlength="10" inputmode="numeric" data-validate="phone-vn" data-label="Số điện thoại" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Ngày sinh</label>
+                            <input type="text" name="date_of_birth" id="date_of_birth" class="form-control bg-light border-0" placeholder="Ngày/Tháng/Năm" data-date-input data-label="Ngày sinh" required>
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\field_staff\index.blade.php:232 ---
+<<<<<<< HEAD
+                            <select name="responsible_location_id" id="responsible_location_id" class="form-select bg-light border-0" required>
+                                <option value="">Chọn kho/bãi</option>
+=======
+                            <select name="responsible_location_ids[]" id="responsible_location_ids" class="form-select bg-light border-0" multiple data-validate data-label="Khu vực phụ trách" required>
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\field_staff\index.blade.php:245 ---
+<<<<<<< HEAD
+                            <input type="text" onfocus="(this.type='date')" onblur="(this.value == '' ? this.type='text' : this.type='date')" placeholder="VD: {{ now()->format('d/m/Y') }}" name="start_date" id="start_date" class="form-control bg-light border-0" min="{{ now()->subYears(10)->toDateString() }}" max="{{ now()->toDateString() }}">
+=======
+                            <input type="text" name="start_date" id="start_date" class="form-control bg-light border-0" placeholder="Ngày/Tháng/Năm" data-date-input data-label="Ngày bắt đầu làm việc">
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\field_staff\index.blade.php:279 ---
+<<<<<<< HEAD
+    document.addEventListener("DOMContentLoaded", function() {
+        if (typeof flatpickr !== 'undefined') {
+            flatpickr("#date_of_birth", { dateFormat: "d/m/Y", allowInput: true });
+            flatpickr("#start_date", { dateFormat: "d/m/Y", allowInput: true });
+        }
+    });
+
+    function dateOnly(value) {
+        return value ? value.split('T')[0].split(' ')[0] : '';
+    }
+
+    function setDateValue(id, date) {
+        if (typeof flatpickr !== 'undefined') {
+            let instance = flatpickr("#" + id, { dateFormat: "d/m/Y" });
+            instance.setDate(date);
+        }
+=======
+    function removeTemporaryFieldUserOptions() {
+        document.querySelectorAll('#user_id option[data-temporary-linked-user="true"]').forEach((option) => option.remove());
+    }
+
+    function ensureFieldUserOption(staff) {
+        const select = document.getElementById('user_id');
+        removeTemporaryFieldUserOptions();
+
+        if (!staff.user_id || !staff.user) {
+            select.value = '';
+            return;
+        }
+
+        if (!Array.from(select.options).some((option) => option.value === String(staff.user_id))) {
+            const option = new Option(`${staff.user.name} - ${staff.user.username || staff.user.email}`, staff.user_id, true, true);
+            option.dataset.temporaryLinkedUser = 'true';
+            select.add(option);
+        }
+
+        select.value = String(staff.user_id);
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\field_staff\index.blade.php:325 ---
+<<<<<<< HEAD
+
+        let today = new Date();
+        let adultDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+
+        if (window.setDateValue) {
+            setDateValue('date_of_birth', adultDate);
+            setDateValue('start_date', today);
+        }
+=======
+        removeTemporaryFieldUserOptions();
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\locations\index.blade.php:7 ---
+<<<<<<< HEAD
+
+    <x-export-buttons />
+</div>
+
+<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
+    <form action="{{ route('locations.index') }}" method="GET">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-3"><input type="text" name="search" class="form-control border-light" placeholder="Tìm tất cả" value="{{ request('search') }}"></div>
+            <div class="col-md-2"><input type="text" name="location_code" class="form-control border-light" placeholder="Mã" value="{{ request('location_code') }}"></div>
+            <div class="col-md-2"><input type="text" name="location_name" class="form-control border-light" placeholder="Tên địa điểm" value="{{ request('location_name') }}"></div>
+            <div class="col-md-2">
+                <select name="type" class="form-select border-light">
+                    <option value="">Tất cả loại</option>
+                    @foreach(['port' => 'Cảng', 'depot' => 'Bãi', 'warehouse' => 'Kho', 'factory' => 'Nhà máy', 'other' => 'Khác'] as $value => $label)
+                        <option value="{{ $value }}" {{ request('type') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="status" class="form-select border-light">
+                    <option value="">Tất cả trạng thái</option>
+                    @foreach(['active' => 'Hoạt động', 'inactive' => 'Ngừng hoạt động', 'maintenance' => 'Bảo trì', 'overloaded' => 'Quá tải'] as $value => $label)
+                        <option value="{{ $value }}" {{ request('status') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+                <a href="{{ route('locations.index') }}" class="btn btn-light px-4">Xóa lọc</a>
+                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
+            </div>
+        </div>
+=======
+    <x-export-buttons />
+</div>
+
+<div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+    <form action="{{ route('locations.index') }}" method="GET" class="row g-3 align-items-end">
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Mã địa điểm</label>
+            <input type="text" name="location_code" class="form-control border-light" placeholder="Mã" value="{{ request('location_code') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Tên địa điểm</label>
+            <input type="text" name="location_name" class="form-control border-light" placeholder="Tên địa điểm" value="{{ request('location_name') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Tỉnh / Thành phố</label>
+            <input type="text" name="province" class="form-control border-light" placeholder="Tỉnh thành" value="{{ request('province') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Loại địa điểm</label>
+            <select name="type" class="form-select border-light">
+                <option value="">Tất cả loại</option>
+                @foreach(['port' => 'Cảng', 'depot' => 'Bãi', 'warehouse' => 'Kho', 'factory' => 'Nhà máy', 'other' => 'Khác'] as $value => $label)
+                    <option value="{{ $value }}" {{ request('type') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Trạng thái địa điểm</label>
+            <select name="status" class="form-select border-light">
+                <option value="">Tất cả trạng thái</option>
+                @foreach(['active' => 'Hoạt động', 'inactive' => 'Ngừng hoạt động', 'maintenance' => 'Bảo trì', 'overloaded' => 'Quá tải'] as $value => $label)
+                    <option value="{{ $value }}" {{ request('status') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-2"><button type="submit" class="btn btn-navy w-100">Lọc</button></div>
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\locations\index.blade.php:183 ---
+<<<<<<< HEAD
+                        <!-- <div class="col-md-4">
+=======
+                        <div class="col-md-4" id="locationCodeGroup">
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\reports\financial.blade.php:140 ---
+<<<<<<< HEAD
+                                        <td>
+                                            {{ match($expense->cycle) {
+                                                'monthly' => 'Hàng tháng',
+                                                'quarterly' => 'Hàng quý',
+                                                'yearly' => 'Hàng năm',
+                                                default => $expense->cycle
+                                            } }}
+                                        </td>
+                                        <td class="text-end fw-bold">{{ number_format($expense->amount) }}đ</td>
+                                        <td class="text-center no-print">
+                                            <div class="d-flex justify-content-center gap-1">
+                                                <a href="{{ route('recurring-expenses.edit', $expense) }}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                                <form action="{{ route('recurring-expenses.destroy', $expense) }}" method="POST" onsubmit="return confirm('Xóa chi phí cố định này?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+=======
+                                        <td>{{ $cycleLabels[$expense->cycle] ?? $expense->cycle }}</td>
+                                        <td class="text-end fw-bold">{{ number_format($expense->amount) }}đ</td>
+                                        <td class="text-center no-print">
+                                            <button type="button" class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#recurringExpenseModal" onclick='prepareRecurringEdit(@json($expense))'>
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <form action="{{ route('recurring-expenses.destroy', $expense) }}" method="POST" class="d-inline" onsubmit="return confirm('Xóa chi phí cố định này?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </form>
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\service_prices\index.blade.php:10 ---
+<<<<<<< HEAD
+<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
+    <form action="{{ route('service-prices.index') }}" method="GET">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-3"><input type="text" name="package_code" class="form-control border-light" placeholder="Mã gói" value="{{ request('package_code') }}"></div>
+            <div class="col-md-3"><input type="text" name="service_name" class="form-control border-light" placeholder="Dịch vụ" value="{{ request('service_name') }}"></div>
+            <div class="col-md-3">
+                <select name="unit" class="form-select border-light">
+                    <option value="">Đơn vị</option>
+                    @foreach(\App\Support\LogisticsOptions::serviceUnits() as $value => $label)
+                        <option value="{{ $value }}" {{ request('unit') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="is_tax_included" class="form-select border-light">
+                    <option value="">Tất cả thuế</option>
+                    <option value="1" {{ request('is_tax_included') === '1' ? 'selected' : '' }}>Đã gồm thuế</option>
+                    <option value="0" {{ request('is_tax_included') === '0' ? 'selected' : '' }}>Chưa gồm thuế</option>
+                </select>
+            </div>
+
+            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+                <a href="{{ route('service-prices.index') }}" class="btn btn-light px-4">Xóa lọc</a>
+                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
+            </div>
+=======
+<div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+    <form action="{{ route('service-prices.index') }}" method="GET" class="row g-3 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label small fw-bold text-muted">Mã gói</label>
+            <input type="text" name="package_code" class="form-control border-light" placeholder="Mã gói" value="{{ request('package_code') }}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-bold text-muted">Tên dịch vụ</label>
+            <input type="text" name="service_name" class="form-control border-light" placeholder="Dịch vụ" value="{{ request('service_name') }}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-bold text-muted">Đơn vị tính</label>
+            <select name="unit" class="form-select border-light">
+                <option value="">Đơn vị</option>
+                @foreach(\App\Support\LogisticsOptions::serviceUnits() as $value => $label)
+                    <option value="{{ $value }}" {{ request('unit') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                @endforeach
+            </select>
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\service_prices\index.blade.php:149 ---
+<<<<<<< HEAD
+                        <!-- <div class="col-md-12">
+=======
+                        <div class="col-md-12" id="packageCodeGroup">
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\service_prices\index.blade.php:170 ---
+<<<<<<< HEAD
+                            <label class="form-label fw-semibold">Đơn Giá (VNĐ)</label>
+                            <input type="number" name="unit_price" id="unit_price" class="form-control bg-light border-0" min="1000" required>
+=======
+                            <label class="form-label fw-semibold">Đơn Giá (VNĐ) <span class="text-danger">*</span></label>
+                            <input type="number" name="unit_price" id="unit_price" class="form-control bg-light border-0" data-validate required>
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\shipping_jobs\create.blade.php:109 ---
+<<<<<<< HEAD
+                <input type="text" name="container_number" class="form-control @error('container_number') is-invalid @enderror" value="{{ old('container_number') }}" placeholder="VD: TCNU1234567" maxlength="11" pattern="[A-Z]{4}[0-9]{7}" title="Số container phải đúng chuẩn ISO 6346: 4 chữ cái theo sau là 7 chữ số (VD: TCNU1234567)" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');">
+=======
+                <input type="text" name="container_number" class="form-control @error('container_number') is-invalid @enderror" value="{{ old('container_number') }}" placeholder="VD: TCNU1234567" maxlength="11" data-validate="container-number" data-uppercase="true" data-label="Số container">
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\shipping_jobs\index.blade.php:7 ---
+<<<<<<< HEAD
+
+=======
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\shipping_jobs\index.blade.php:15 ---
+<<<<<<< HEAD
+<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
+    <form action="{{ route('shipping-jobs.index') }}" method="GET">
+        <div class="row g-3 align-items-center">
+            <div class="col-lg-2 col-md-6">
+                <select name="customer_id" class="form-select border-light">
+                    <option value="">Tất cả khách hàng</option>
+                    @foreach($customers as $customer)
+                        <option value="{{ $customer->id }}" {{ (string) request('customer_id') === (string) $customer->id ? 'selected' : '' }}>
+                            {{ $customer->customer_name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-lg-2 col-md-4">
+                <select name="status" class="form-select border-light">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Đang xử lý</option>
+                    <option value="new" {{ request('status') == 'new' ? 'selected' : '' }}>Mới tạo</option>
+                    <option value="dispatched" {{ request('status') == 'dispatched' ? 'selected' : '' }}>Đã điều xe</option>
+                    <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Hoàn thành</option>
+                    <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Đã hủy</option>
+                </select>
+            </div>
+            <div class="col-lg-2 col-md-4">
+                <input type="date" name="date_from" class="form-control border-light" value="{{ request('date_from') }}" title="Từ ngày dự kiến">
+            </div>
+            <div class="col-lg-2 col-md-4">
+                <input type="date" name="date_to" class="form-control border-light" value="{{ request('date_to') }}" title="Đến ngày dự kiến">
+            </div>
+            <div class="col-lg-2 col-md-4"><input type="text" name="job_code" class="form-control border-light" placeholder="Mã Job" value="{{ request('job_code') }}"></div>
+            <div class="col-md-2"><input type="text" name="container_number" class="form-control border-light" placeholder="Số Cont" value="{{ request('container_number') }}"></div>
+            <div class="col-md-2"><input type="text" name="customs_declaration_no" class="form-control border-light" placeholder="Tờ khai" value="{{ request('customs_declaration_no') }}"></div>
+            <div class="col-md-2"><input type="text" name="cargo_type" class="form-control border-light" placeholder="Hàng hóa" value="{{ request('cargo_type') }}"></div>
+            <div class="col-md-2"><input type="text" name="container_type" class="form-control border-light" placeholder="Loại cont" value="{{ request('container_type') }}"></div>
+
+            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+                <a href="{{ route('shipping-jobs.index') }}" class="btn btn-light px-4">Xóa lọc</a>
+                <button type="submit" class="btn btn-navy px-4">Lọc</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="d-flex justify-content-end mb-4">
+    @if(Auth::user()->hasRole(['ADMIN', 'SALES']))
+    <a href="{{ route('shipping-jobs.create') }}" class="btn btn-navy px-4 fw-bold">
+        <i class="fa fa-plus me-2"></i> TẠO ĐƠN HÀNG MỚI
+    </a>
+    @endif
+=======
+<div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+    <form action="{{ route('shipping-jobs.index') }}" method="GET" class="row g-3 align-items-end">
+        <div class="col-lg-2 col-md-4">
+            <label class="form-label small fw-bold text-muted">Mã đơn hàng</label>
+            <input type="text" name="job_code" class="form-control border-light" placeholder="Mã Job" value="{{ request('job_code') }}">
+        </div>
+        <div class="col-lg-2 col-md-6">
+            <label class="form-label small fw-bold text-muted">Khách hàng</label>
+            <select name="customer_id" class="form-select border-light">
+                <option value="">Tất cả khách hàng</option>
+                @foreach($customers as $customer)
+                    <option value="{{ $customer->id }}" {{ (string) request('customer_id') === (string) $customer->id ? 'selected' : '' }}>
+                        {{ $customer->customer_name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-lg-2 col-md-4">
+            <label class="form-label small fw-bold text-muted">Trạng thái đơn hàng</label>
+            <select name="status" class="form-select border-light">
+                <option value="">Tất cả trạng thái</option>
+                <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Đang xử lý</option>
+                <option value="new" {{ request('status') == 'new' ? 'selected' : '' }}>Mới tạo</option>
+                <option value="dispatched" {{ request('status') == 'dispatched' ? 'selected' : '' }}>Đã điều xe</option>
+                <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Hoàn thành</option>
+                <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Đã hủy</option>
+            </select>
+        </div>
+        <div class="col-lg-2 col-md-4">
+            <label class="form-label small fw-bold text-muted">Hạn xử lý từ ngày</label>
+            <input type="text" name="date_from" class="form-control border-light" value="{{ \App\Support\VietnameseDate::display(request('date_from')) }}" placeholder="Ngày/Tháng/Năm" data-date-input data-label="Hạn xử lý từ ngày">
+        </div>
+        <div class="col-lg-2 col-md-4">
+            <label class="form-label small fw-bold text-muted">Hạn xử lý đến ngày</label>
+            <input type="text" name="date_to" class="form-control border-light" value="{{ \App\Support\VietnameseDate::display(request('date_to')) }}" placeholder="Ngày/Tháng/Năm" data-date-input data-label="Hạn xử lý đến ngày">
+        </div>
+        <div class="col-lg-2 col-md-4">
+            <label class="form-label small fw-bold text-muted">Ngày tạo đơn</label>
+            <input type="text" name="created_date" class="form-control border-light" value="{{ \App\Support\VietnameseDate::display(request('created_date')) }}" placeholder="Ngày/Tháng/Năm" data-date-input data-label="Ngày tạo đơn">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Số container</label>
+            <input type="text" name="container_number" class="form-control border-light" placeholder="TCNU1234567" value="{{ request('container_number') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Tờ khai hải quan</label>
+            <input type="text" name="customs_declaration_no" class="form-control border-light" placeholder="12 chữ số" value="{{ request('customs_declaration_no') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Loại hàng hóa</label>
+            <input type="text" name="cargo_type" class="form-control border-light" placeholder="Hàng hóa" value="{{ request('cargo_type') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Loại container</label>
+            <input type="text" name="container_type" class="form-control border-light" placeholder="Loại cont" value="{{ request('container_type') }}">
+        </div>
+        <div class="col-md-2 ms-md-auto">
+            <button type="submit" class="btn btn-navy w-100">Lọc</button>
+        </div>
+        <div class="col-md-2">
+            <a href="{{ route('shipping-jobs.index') }}" class="btn btn-light w-100">Xóa lọc</a>
+        </div>
+    </form>
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\shipping_jobs\show.blade.php:303 ---
+<<<<<<< HEAD
+                                    @php
+                                        $fileExt = pathinfo($doc->file_url, PATHINFO_EXTENSION);
+                                        $fileUrl = route('documents.show', $doc);
+                                    @endphp
+                                    <button type="button" class="btn btn-link text-white p-1" data-bs-toggle="modal" data-bs-target="#previewModal" onclick="previewDocument('{{ $fileUrl }}', '{{ $doc->doc_category }}', '{{ $fileExt }}')">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
+                                    <form action="{{ route('documents.destroy', $doc->id) }}" method="POST" id="delete-doc-{{ $doc->id }}" class="d-none">
+                                        @csrf @method('DELETE')
+                                    </form>
+                                    <button type="button" class="btn btn-link text-danger p-1" onclick="handleDelete('delete-doc-{{ $doc->id }}', 'Xóa chứng từ này?')">
+                                        <i class="fa fa-trash-alt"></i>
+                                    </button>
+=======
+                                    <a href="{{ route('documents.show', $doc) }}" target="_blank" class="btn btn-link text-white p-1">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                    @if(Auth::user()->hasRole(['ADMIN', 'ACCOUNTANT', 'DOCUMENT']))
+                                        <form action="{{ route('documents.destroy', $doc->id) }}" method="POST" id="delete-doc-{{ $doc->id }}" class="d-none">
+                                            @csrf @method('DELETE')
+                                        </form>
+                                        <button type="button" class="btn btn-link text-danger p-1" onclick="handleDelete('delete-doc-{{ $doc->id }}', 'Xóa chứng từ này?')">
+                                            <i class="fa fa-trash-alt"></i>
+                                        </button>
+                                    @endif
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\users\create.blade.php:22 ---
+<<<<<<< HEAD
+                            <label class="form-label fw-bold">Họ tên nhân viên</label>
+                            <input type="text" id="profile_name" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
+                            <div id="profile_name_error" class="invalid-feedback"></div>
+=======
+                            <label class="form-label fw-bold">Họ tên nhân viên <span class="text-danger">*</span></label>
+                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" data-validate="person-name" data-label="Họ tên nhân viên" required>
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\users\create.blade.php:34 ---
+<<<<<<< HEAD
+                            <label class="form-label fw-bold">Email đăng nhập</label>
+                            <input type="email" id="profile_email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required>
+                            <div id="profile_email_error" class="invalid-feedback"></div>
+=======
+                            <label class="form-label fw-bold">Email đăng nhập <span class="text-danger">*</span></label>
+                            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" data-validate data-label="Email đăng nhập" required>
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\users\create.blade.php:47 ---
+<<<<<<< HEAD
+                                <label class="form-label fw-bold">Bộ phận / Phòng ban</label>
+                                <select id="department" name="department" class="form-select @error('department') is-invalid @enderror" required>
+                                    <option value="">-- Chọn bộ phận --</option>
+=======
+                                <label class="form-label fw-bold">Chức vụ <span class="text-danger">*</span></label>
+                                <select name="position" class="form-select" required>
+                                    <option value="">Chọn chức vụ</option>
+                                    @foreach($positions as $value => $label)
+                                        <option value="{{ $value }}" {{ old('position') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Bộ phận / phòng ban <span class="text-danger">*</span></label>
+                                <select name="department" class="form-select" required>
+                                    <option value="">Chọn bộ phận</option>
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\users\create.blade.php:79 ---
+<<<<<<< HEAD
+                                <label class="form-label fw-bold">Ngày sinh</label>
+                                <input type="date" name="date_of_birth" class="form-control" value="{{ old('date_of_birth', now()->subYears(18)->toDateString()) }}" min="1950-01-01" max="{{ now()->subYears(18)->toDateString() }}" required>
+=======
+                                <label class="form-label fw-bold">Ngày sinh <span class="text-danger">*</span></label>
+                                <input type="text" name="date_of_birth" class="form-control" value="{{ \App\Support\VietnameseDate::display(old('date_of_birth')) }}" placeholder="Ngày/Tháng/Năm" data-date-input data-label="Ngày sinh" required>
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\users\create.blade.php:184 ---
+<<<<<<< HEAD
+                                <label class="form-label fw-bold">Mật khẩu</label>
+                                <div class="input-group">
+                                    <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" required>
+                                    <button class="btn btn-outline-secondary toggle-password" type="button" tabindex="-1">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div id="password-requirements" class="mt-2 small d-none">
+                                    <div class="text-muted mb-1 fw-semibold">Yêu cầu mật khẩu:</div>
+                                    <ul class="list-unstyled mb-0" style="font-size: 0.8rem;">
+                                        <li id="req_length" class="text-danger"><i class="fa fa-times-circle me-1"></i> Tối thiểu 8 ký tự</li>
+                                        <li id="req_lower" class="text-danger"><i class="fa fa-times-circle me-1"></i> Có chữ thường (a-z)</li>
+                                        <li id="req_upper" class="text-danger"><i class="fa fa-times-circle me-1"></i> Có chữ hoa (A-Z)</li>
+                                        <li id="req_number" class="text-danger"><i class="fa fa-times-circle me-1"></i> Có số (0-9)</li>
+                                        <li id="req_special" class="text-danger"><i class="fa fa-times-circle me-1"></i> Có ký tự đặc biệt</li>
+                                    </ul>
+                                </div>
+                                @error('password') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Xác nhận mật khẩu</label>
+                                <div class="input-group">
+                                    <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" required>
+                                    <button class="btn btn-outline-secondary toggle-password" type="button" tabindex="-1">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div id="password-match-msg" class="form-text mt-2" style="display: none;"></div>
+=======
+                                <label class="form-label fw-bold">Mật khẩu <span class="text-danger">*</span></label>
+                                <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" data-validate required>
+                                <div class="form-text">Tối thiểu 8 ký tự, có chữ hoa, chữ thường, chữ số và ký tự đặc biệt.</div>
+                                @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Xác nhận mật khẩu <span class="text-danger">*</span></label>
+                                <input type="password" name="password_confirmation" class="form-control" data-validate required>
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\users\edit.blade.php:25 ---
+<<<<<<< HEAD
+                            <input type="text" id="profile_name" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $user->name) }}" required>
+                            <div id="profile_name_error" class="invalid-feedback"></div>
+=======
+                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $user->name) }}" data-validate="person-name" data-label="Họ tên nhân viên" required>
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\users\edit.blade.php:65 ---
+<<<<<<< HEAD
+                                <input type="date" name="date_of_birth" class="form-control" value="{{ old('date_of_birth', $user->date_of_birth?->format('Y-m-d')) }}" min="1950-01-01" max="{{ now()->subYears(18)->toDateString() }}" required>
+=======
+                                <input type="text" name="date_of_birth" class="form-control" value="{{ \App\Support\VietnameseDate::display(old('date_of_birth', $user->date_of_birth)) }}" placeholder="Ngày/Tháng/Năm" data-date-input data-label="Ngày sinh" required>
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\users\index.blade.php:16 ---
+<<<<<<< HEAD
+    <div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
+        <form action="{{ route('users.index') }}" method="GET" id="search_form">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-2"><input type="text" name="employee_code" class="form-control border-light" placeholder="Mã" value="{{ request('employee_code') }}"></div>
+                <div class="col-md-2"><input type="text" name="name" class="form-control border-light" placeholder="Họ tên" value="{{ request('name') }}"></div>
+                <div class="col-md-2">
+                    <input type="text" id="search_email" name="email" class="form-control border-light" placeholder="Email" value="{{ request('email') }}">
+                    <div id="search_email_error" class="invalid-feedback position-absolute"></div>
+                </div>
+                <div class="col-md-2"><input type="text" name="position" class="form-control border-light" placeholder="Chức vụ" value="{{ request('position') }}"></div>
+                <div class="col-md-2"><input type="text" name="department" class="form-control border-light" placeholder="Bộ phận" value="{{ request('department') }}"></div>
+                <div class="col-md-2">
+                    <select name="role_id" class="form-select border-light">
+                        <option value="">Vai trò</option>
+                        @foreach($roles as $role)
+                            <option value="{{ $role->id }}" {{ (string) request('role_id') === (string) $role->id ? 'selected' : '' }}>{{ $role->role_name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+                    <a href="{{ route('users.index') }}" class="btn btn-light px-4">Xóa lọc</a>
+                    <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
+                </div>
+=======
+    <div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+        <form action="{{ route('users.index') }}" method="GET" class="row g-3 align-items-end">
+            <div class="col-md-2">
+                <label class="form-label small fw-bold text-muted">Mã nhân sự</label>
+                <input type="text" name="employee_code" class="form-control border-light" placeholder="Mã" value="{{ request('employee_code') }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold text-muted">Họ tên</label>
+                <input type="text" name="name" class="form-control border-light" placeholder="Họ tên" value="{{ request('name') }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold text-muted">Email</label>
+                <input type="text" name="email" class="form-control border-light" placeholder="Email" value="{{ request('email') }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold text-muted">Chức vụ</label>
+                <input type="text" name="position" class="form-control border-light" placeholder="Chức vụ" value="{{ request('position') }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold text-muted">Bộ phận</label>
+                <input type="text" name="department" class="form-control border-light" placeholder="Bộ phận" value="{{ request('department') }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold text-muted">Vai trò</label>
+                <select name="role_id" class="form-select border-light">
+                    <option value="">Vai trò</option>
+                    @foreach($roles as $role)
+                        <option value="{{ $role->id }}" {{ (string) request('role_id') === (string) $role->id ? 'selected' : '' }}>{{ $role->role_name }}</option>
+                    @endforeach
+                </select>
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\vehicles\index.blade.php:7 ---
+<<<<<<< HEAD
+
+    <x-export-buttons />
+</div>
+
+<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
+    <form action="{{ route('vehicles.index') }}" method="GET">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-3"><input type="text" name="plate_number" class="form-control border-light" placeholder="Biển số" value="{{ request('plate_number') }}"></div>
+            <div class="col-md-3">
+                <select name="status" class="form-select border-light">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="available" {{ request('status') === 'available' ? 'selected' : '' }}>Sẵn sàng</option>
+                    <option value="busy" {{ request('status') === 'busy' ? 'selected' : '' }}>Đang chạy</option>
+                    <option value="maintenance" {{ request('status') === 'maintenance' ? 'selected' : '' }}>Bảo trì</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="vehicle_type" class="form-select border-light">
+                    <option value="">Loại xe</option>
+                    @foreach(\App\Support\LogisticsOptions::vehicleTypes() as $value => $label)
+                        <option value="{{ $value }}" {{ request('vehicle_type') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="payload" class="form-select border-light">
+                    <option value="">Tải trọng</option>
+                    @foreach(\App\Support\LogisticsOptions::payloads() as $value => $label)
+                        <option value="{{ $value }}" {{ request('payload') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+                <a href="{{ route('vehicles.index') }}" class="btn btn-light px-4">Xóa lọc</a>
+                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
+            </div>
+=======
+    <x-export-buttons />
+</div>
+
+<div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+    <form action="{{ route('vehicles.index') }}" method="GET" class="row g-3 align-items-end">
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Biển số</label>
+            <input type="text" name="plate_number" class="form-control border-light" placeholder="15B2-923.15" value="{{ request('plate_number') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Loại xe</label>
+            <select name="vehicle_type" class="form-select border-light">
+                <option value="">Loại xe</option>
+                @foreach(\App\Support\LogisticsOptions::vehicleTypes() as $value => $label)
+                    <option value="{{ $value }}" {{ request('vehicle_type') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Tải trọng</label>
+            <select name="payload" class="form-select border-light">
+                <option value="">Tải trọng</option>
+                @foreach(\App\Support\LogisticsOptions::payloads() as $value => $label)
+                    <option value="{{ $value }}" {{ request('payload') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-bold text-muted">Trạng thái xe</label>
+            <select name="status" class="form-select border-light">
+                <option value="">Tất cả trạng thái</option>
+                <option value="available" {{ request('status') === 'available' ? 'selected' : '' }}>Sẵn sàng</option>
+                <option value="busy" {{ request('status') === 'busy' ? 'selected' : '' }}>Đang chạy</option>
+                <option value="maintenance" {{ request('status') === 'maintenance' ? 'selected' : '' }}>Bảo trì</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Hạn đăng kiểm</label>
+            <input type="text" name="registration_expiry" class="form-control border-light" placeholder="Ngày/Tháng/Năm" value="{{ \App\Support\VietnameseDate::display(request('registration_expiry')) }}" data-date-input data-label="Hạn đăng kiểm">
+        </div>
+        <div class="col-md-1">
+            <button type="submit" class="btn btn-navy w-100">Lọc</button>
+>>>>>>> upstream/quyen-branch
+
+--- resources/views\vehicles\index.blade.php:203 ---
+<<<<<<< HEAD
+                            <input type="text" name="plate_number" id="plate_number" class="form-control bg-light border-0 @error('plate_number') is-invalid @enderror" placeholder="VD: 51C-123.45" required oninput="formatLicensePlate(this)">
+                            <div class="invalid-feedback" id="plate_number_error" style="display: none;"></div>
+                            @error('plate_number')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+=======
+                            <input type="text" name="plate_number" id="plate_number" class="form-control bg-light border-0" placeholder="VD: 15B2-923.15" data-validate="plate-number" data-uppercase="true" data-label="Biển số xe" required>
+>>>>>>> upstream/quyen-branch

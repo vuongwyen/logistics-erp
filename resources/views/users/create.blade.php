@@ -14,30 +14,37 @@
     </div>
 
     <div class="row justify-content-center">
-        <div class="col-lg-6">
+        <div class="col-lg-8">
             <div class="card border-0 rounded-4 shadow-sm">
                 <div class="card-body p-4">
                     <form action="{{ route('users.store') }}" method="POST" id="user_form">
                         @csrf
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Họ tên nhân viên</label>
-                            <input type="text" id="profile_name" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
-                            <div id="profile_name_error" class="invalid-feedback"></div>
+                            <label class="form-label fw-bold">Họ tên nhân viên <span class="text-danger">*</span></label>
+                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" data-validate="person-name" data-label="Họ tên nhân viên" required>
                             @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Email đăng nhập</label>
-                            <input type="email" id="profile_email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required>
-                            <div id="profile_email_error" class="invalid-feedback"></div>
+                            <label class="form-label fw-bold">Email đăng nhập <span class="text-danger">*</span></label>
+                            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" data-validate data-label="Email đăng nhập" required>
                             @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Bộ phận / Phòng ban</label>
-                                <select id="department" name="department" class="form-select @error('department') is-invalid @enderror" required>
-                                    <option value="">-- Chọn bộ phận --</option>
+                                <label class="form-label fw-bold">Chức vụ <span class="text-danger">*</span></label>
+                                <select name="position" class="form-select" required>
+                                    <option value="">Chọn chức vụ</option>
+                                    @foreach($positions as $value => $label)
+                                        <option value="{{ $value }}" {{ old('position') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Bộ phận / phòng ban <span class="text-danger">*</span></label>
+                                <select name="department" class="form-select" required>
+                                    <option value="">Chọn bộ phận</option>
                                     @foreach($departments as $value => $label)
                                         <option value="{{ $value }}" {{ old('department') === $value ? 'selected' : '' }}>{{ $label }}</option>
                                     @endforeach
@@ -52,21 +59,21 @@
                                 @error('position') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Ngày sinh</label>
-                                <input type="date" name="date_of_birth" class="form-control" value="{{ old('date_of_birth', now()->subYears(18)->toDateString()) }}" min="1950-01-01" max="{{ now()->subYears(18)->toDateString() }}" required>
+                                <label class="form-label fw-bold">Ngày sinh <span class="text-danger">*</span></label>
+                                <input type="text" name="date_of_birth" class="form-control" value="{{ \App\Support\VietnameseDate::display(old('date_of_birth')) }}" placeholder="Ngày/Tháng/Năm" data-date-input data-label="Ngày sinh" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Ngày tham gia</label>
-                                <input type="date" name="joined_at" class="form-control" value="{{ old('joined_at', now()->toDateString()) }}" min="{{ now()->subYears(10)->toDateString() }}" max="{{ now()->toDateString() }}" required>
+                                <label class="form-label fw-bold">Ngày tham gia <span class="text-danger">*</span></label>
+                                <input type="text" name="joined_at" class="form-control" value="{{ \App\Support\VietnameseDate::display(old('joined_at', now()->toDateString())) }}" placeholder="Ngày/Tháng/Năm" data-date-input data-label="Ngày tham gia" required>
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Vai trò hệ thống</label>
-                            <select name="role_id" class="form-select @error('role_id') is-invalid @enderror" required>
+                            <label class="form-label fw-bold">Vai trò hệ thống <span class="text-danger">*</span></label>
+                            <select name="role_id" id="role_id" class="form-select @error('role_id') is-invalid @enderror" data-role-select required>
                                 <option value="">Chọn vai trò...</option>
                                 @foreach($roles as $role)
-                                    <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
+                                    <option value="{{ $role->id }}" data-role-code="{{ $role->role_code }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
                                         {{ $role->role_name }} ({{ $role->role_code }})
                                     </option>
                                 @endforeach
@@ -74,36 +81,92 @@
                             @error('role_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
+                        <div class="border rounded-3 p-3 mb-3 d-none" data-profile-section="DRIVER">
+                            <div class="fw-bold text-navy mb-3">Thông tin profile tài xế</div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Số điện thoại <span class="text-danger">*</span></label>
+                                    <input type="text" name="driver_phone" class="form-control @error('driver_phone') is-invalid @enderror" value="{{ old('driver_phone') }}" maxlength="10" inputmode="numeric" data-validate="phone-vn" data-label="Số điện thoại tài xế" data-profile-required>
+                                    @error('driver_phone') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Số bằng lái <span class="text-danger">*</span></label>
+                                    <input type="text" name="driver_license_number" class="form-control @error('driver_license_number') is-invalid @enderror" value="{{ old('driver_license_number') }}" data-validate data-label="Số bằng lái" data-profile-required>
+                                    @error('driver_license_number') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Ngày bắt đầu</label>
+                                    <input type="text" name="driver_start_date" class="form-control @error('driver_start_date') is-invalid @enderror" value="{{ \App\Support\VietnameseDate::display(old('driver_start_date', old('joined_at', now()->toDateString()))) }}" placeholder="Ngày/Tháng/Năm" data-date-input data-label="Ngày bắt đầu tài xế">
+                                    @error('driver_start_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Cấp bậc</label>
+                                    <select name="driver_rank" class="form-select @error('driver_rank') is-invalid @enderror">
+                                        <option value="">Chọn cấp bậc</option>
+                                        @foreach(\App\Support\LogisticsOptions::driverRanks() as $value => $label)
+                                            <option value="{{ $value }}" {{ old('driver_rank') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('driver_rank') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Hạn hợp đồng</label>
+                                    <input type="text" name="driver_contract_expiry" class="form-control @error('driver_contract_expiry') is-invalid @enderror" value="{{ \App\Support\VietnameseDate::display(old('driver_contract_expiry')) }}" placeholder="Ngày/Tháng/Năm" data-date-input data-label="Hạn hợp đồng tài xế">
+                                    @error('driver_contract_expiry') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Ghi chú</label>
+                                    <textarea name="driver_note" class="form-control" rows="2">{{ old('driver_note') }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border rounded-3 p-3 mb-3 d-none" data-profile-section="FIELD">
+                            <div class="fw-bold text-navy mb-3">Thông tin profile nhân viên hiện trường</div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Số điện thoại <span class="text-danger">*</span></label>
+                                    <input type="text" name="field_phone" class="form-control @error('field_phone') is-invalid @enderror" value="{{ old('field_phone') }}" maxlength="10" inputmode="numeric" data-validate="phone-vn" data-label="Số điện thoại nhân viên hiện trường" data-profile-required>
+                                    @error('field_phone') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Ngày bắt đầu</label>
+                                    <input type="text" name="field_start_date" class="form-control @error('field_start_date') is-invalid @enderror" value="{{ \App\Support\VietnameseDate::display(old('field_start_date', old('joined_at', now()->toDateString()))) }}" placeholder="Ngày/Tháng/Năm" data-date-input data-label="Ngày bắt đầu nhân viên hiện trường">
+                                    @error('field_start_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Khu vực phụ trách <span class="text-danger">*</span></label>
+                                    <select name="field_responsible_location_ids[]" class="form-select @error('field_responsible_location_ids') is-invalid @enderror" multiple data-profile-required>
+                                        @foreach($responsibleLocations as $location)
+                                            <option value="{{ $location->id }}" {{ in_array($location->id, old('field_responsible_location_ids', [])) ? 'selected' : '' }}>
+                                                {{ $location->location_name }} - {{ $location->province }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('field_responsible_location_ids') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                                    @error('field_responsible_location_ids.*') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Chứng chỉ</label>
+                                    <textarea name="field_certificates" class="form-control" rows="2">{{ old('field_certificates') }}</textarea>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Ghi chú</label>
+                                    <textarea name="field_note" class="form-control" rows="2">{{ old('field_note') }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Mật khẩu</label>
-                                <div class="input-group">
-                                    <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" required>
-                                    <button class="btn btn-outline-secondary toggle-password" type="button" tabindex="-1">
-                                        <i class="fa fa-eye"></i>
-                                    </button>
-                                </div>
-                                <div id="password-requirements" class="mt-2 small d-none">
-                                    <div class="text-muted mb-1 fw-semibold">Yêu cầu mật khẩu:</div>
-                                    <ul class="list-unstyled mb-0" style="font-size: 0.8rem;">
-                                        <li id="req_length" class="text-danger"><i class="fa fa-times-circle me-1"></i> Tối thiểu 8 ký tự</li>
-                                        <li id="req_lower" class="text-danger"><i class="fa fa-times-circle me-1"></i> Có chữ thường (a-z)</li>
-                                        <li id="req_upper" class="text-danger"><i class="fa fa-times-circle me-1"></i> Có chữ hoa (A-Z)</li>
-                                        <li id="req_number" class="text-danger"><i class="fa fa-times-circle me-1"></i> Có số (0-9)</li>
-                                        <li id="req_special" class="text-danger"><i class="fa fa-times-circle me-1"></i> Có ký tự đặc biệt</li>
-                                    </ul>
-                                </div>
-                                @error('password') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                                <label class="form-label fw-bold">Mật khẩu <span class="text-danger">*</span></label>
+                                <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" data-validate required>
+                                <div class="form-text">Tối thiểu 8 ký tự, có chữ hoa, chữ thường, chữ số và ký tự đặc biệt.</div>
+                                @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Xác nhận mật khẩu</label>
-                                <div class="input-group">
-                                    <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" required>
-                                    <button class="btn btn-outline-secondary toggle-password" type="button" tabindex="-1">
-                                        <i class="fa fa-eye"></i>
-                                    </button>
-                                </div>
-                                <div id="password-match-msg" class="form-text mt-2" style="display: none;"></div>
+                                <label class="form-label fw-bold">Xác nhận mật khẩu <span class="text-danger">*</span></label>
+                                <input type="password" name="password_confirmation" class="form-control" data-validate required>
                             </div>
                         </div>
 
@@ -116,6 +179,34 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const roleSelect = document.querySelector('[data-role-select]');
+        const profileSections = document.querySelectorAll('[data-profile-section]');
+
+        const syncProfileSections = () => {
+            const roleCode = roleSelect?.selectedOptions?.[0]?.dataset?.roleCode || '';
+
+            profileSections.forEach((section) => {
+                const isActive = section.dataset.profileSection === roleCode;
+                section.classList.toggle('d-none', !isActive);
+                section.querySelectorAll('[data-profile-required]').forEach((field) => {
+                    if (isActive) {
+                        field.setAttribute('required', 'required');
+                    } else {
+                        field.removeAttribute('required');
+                    }
+                });
+            });
+        };
+
+        roleSelect?.addEventListener('change', syncProfileSections);
+        syncProfileSections();
+    });
+</script>
+@endpush
 @endsection
 
 @push('scripts')

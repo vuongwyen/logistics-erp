@@ -118,6 +118,12 @@ class DispatchOrder extends Model
             'approved_at' => 'datetime',
             'rejected_at' => 'datetime',
             'loading_percent' => 'integer',
+            'current_latitude' => 'decimal:7',
+            'current_longitude' => 'decimal:7',
+            'fuel_quota' => 'decimal:2',
+            'fuel_price_quota' => 'decimal:2',
+            'actual_fuel_liters' => 'decimal:2',
+            'toll_quota' => 'decimal:2',
         ];
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\DriverRequest;
 use App\Models\Driver;
+use App\Models\User;
 use App\Services\DriverService;
 use App\Services\ExportService;
 use Illuminate\Http\Request;
@@ -34,8 +35,13 @@ class DriverController extends Controller
         }
 
         $drivers = $this->driverService->getAll($request->all());
+        $driverUsers = User::query()
+            ->whereHas('role', fn ($query) => $query->where('role_code', 'DRIVER'))
+            ->whereDoesntHave('driver', fn ($query) => $query->withTrashed())
+            ->orderBy('name')
+            ->get();
 
-        return view('drivers.index', compact('drivers'));
+        return view('drivers.index', compact('drivers', 'driverUsers'));
     }
 
     public function store(DriverRequest $request)

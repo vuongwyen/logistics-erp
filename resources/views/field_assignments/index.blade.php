@@ -34,37 +34,39 @@
     </div>
 </div>
 
-<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
-    <form action="{{ route('field-assignments.index') }}" method="GET">
-        <div class="row g-3 align-items-center">
-            <div class="col-md-2">
-                <input type="text" name="assignment_code" class="form-control border-light" placeholder="Mã phiếu" value="{{ request('assignment_code') }}">
-            </div>
-            <div class="col-md-2">
-                <input type="text" name="job_code" class="form-control border-light" placeholder="Mã đơn hàng" value="{{ request('job_code') }}">
-            </div>
-            <div class="col-md-2">
-                <input type="text" name="field_staff_name" class="form-control border-light" placeholder="Nhân viên" value="{{ request('field_staff_name') }}">
-            </div>
-            <div class="col-md-2">
-                <input type="text" name="location_name" class="form-control border-light" placeholder="Vị trí" value="{{ request('location_name') }}">
-            </div>
-            <div class="col-md-2">
-                <input type="date" name="assigned_date" class="form-control border-light" value="{{ request('assigned_date') }}">
-            </div>
-            <div class="col-md-2">
-                <select name="status" class="form-select border-light">
-                    <option value="">Trạng thái</option>
-                    @foreach($statusLabels as $status => $label)
-                        <option value="{{ $status }}" {{ request('status') === $status ? 'selected' : '' }}>{{ $label }}</option>
-                    @endforeach
-                </select>
-            </div>
-            
-            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
-                <a href="{{ route('field-assignments.index') }}" class="btn btn-light px-4">Xóa lọc</a>
-                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
-            </div>
+<div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+    <form action="{{ route('field-assignments.index') }}" method="GET" class="row g-3 align-items-end">
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Mã phiếu</label>
+            <input type="text" name="assignment_code" class="form-control border-light" placeholder="Mã phiếu" value="{{ request('assignment_code') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Mã đơn hàng</label>
+            <input type="text" name="job_code" class="form-control border-light" placeholder="Mã đơn hàng" value="{{ request('job_code') }}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-bold text-muted">Nhân viên hiện trường</label>
+            <input type="text" name="field_staff_name" class="form-control border-light" placeholder="Nhân viên" value="{{ request('field_staff_name') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Vị trí thực hiện</label>
+            <input type="text" name="location_name" class="form-control border-light" placeholder="Vị trí" value="{{ request('location_name') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Ngày thực hiện</label>
+            <input type="text" name="assigned_date" class="form-control border-light" placeholder="Ngày/Tháng/Năm" value="{{ \App\Support\VietnameseDate::display(request('assigned_date')) }}" data-date-input data-label="Ngày thực hiện">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Trạng thái phiếu</label>
+            <select name="status" class="form-select border-light">
+                <option value="">Trạng thái</option>
+                @foreach($statusLabels as $status => $label)
+                    <option value="{{ $status }}" {{ request('status') === $status ? 'selected' : '' }}>{{ $label }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-2 ms-md-auto">
+            <button type="submit" class="btn btn-navy w-100">Lọc</button>
         </div>
     </form>
 </div>
@@ -125,7 +127,7 @@
                         </td>
                         <td class="text-center">
                             <div class="d-inline-flex align-items-center gap-2">
-                                @if($assignment->status !== 'completed' && $assignment->status !== 'cancelled')
+                                @if(Auth::user()->hasRole(['ADMIN', 'DISPATCH']) && $assignment->status !== 'completed' && $assignment->status !== 'cancelled')
                                     <form action="{{ route('field-assignments.update-status', $assignment) }}" method="POST">
                                         @csrf
                                         @method('PATCH')

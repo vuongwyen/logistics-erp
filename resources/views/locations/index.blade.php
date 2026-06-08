@@ -5,38 +5,42 @@
 @section('content')
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
     <h4 class="fw-bold mb-0">Danh mục Địa điểm (Kho/Cảng/Bãi)</h4>
-    
     <x-export-buttons />
 </div>
 
-<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
-    <form action="{{ route('locations.index') }}" method="GET">
-        <div class="row g-3 align-items-center">
-            <div class="col-md-3"><input type="text" name="search" class="form-control border-light" placeholder="Tìm tất cả" value="{{ request('search') }}"></div>
-            <div class="col-md-2"><input type="text" name="location_code" class="form-control border-light" placeholder="Mã" value="{{ request('location_code') }}"></div>
-            <div class="col-md-2"><input type="text" name="location_name" class="form-control border-light" placeholder="Tên địa điểm" value="{{ request('location_name') }}"></div>
-            <div class="col-md-2">
-                <select name="type" class="form-select border-light">
-                    <option value="">Tất cả loại</option>
-                    @foreach(['port' => 'Cảng', 'depot' => 'Bãi', 'warehouse' => 'Kho', 'factory' => 'Nhà máy', 'other' => 'Khác'] as $value => $label)
-                        <option value="{{ $value }}" {{ request('type') === $value ? 'selected' : '' }}>{{ $label }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-md-2">
-                <select name="status" class="form-select border-light">
-                    <option value="">Tất cả trạng thái</option>
-                    @foreach(['active' => 'Hoạt động', 'inactive' => 'Ngừng hoạt động', 'maintenance' => 'Bảo trì', 'overloaded' => 'Quá tải'] as $value => $label)
-                        <option value="{{ $value }}" {{ request('status') === $value ? 'selected' : '' }}>{{ $label }}</option>
-                    @endforeach
-                </select>
-            </div>
-            
-            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
-                <a href="{{ route('locations.index') }}" class="btn btn-light px-4">Xóa lọc</a>
-                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
-            </div>
+<div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+    <form action="{{ route('locations.index') }}" method="GET" class="row g-3 align-items-end">
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Mã địa điểm</label>
+            <input type="text" name="location_code" class="form-control border-light" placeholder="Mã" value="{{ request('location_code') }}">
         </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Tên địa điểm</label>
+            <input type="text" name="location_name" class="form-control border-light" placeholder="Tên địa điểm" value="{{ request('location_name') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Tỉnh / Thành phố</label>
+            <input type="text" name="province" class="form-control border-light" placeholder="Tỉnh thành" value="{{ request('province') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Loại địa điểm</label>
+            <select name="type" class="form-select border-light">
+                <option value="">Tất cả loại</option>
+                @foreach(['port' => 'Cảng', 'depot' => 'Bãi', 'warehouse' => 'Kho', 'factory' => 'Nhà máy', 'other' => 'Khác'] as $value => $label)
+                    <option value="{{ $value }}" {{ request('type') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Trạng thái địa điểm</label>
+            <select name="status" class="form-select border-light">
+                <option value="">Tất cả trạng thái</option>
+                @foreach(['active' => 'Hoạt động', 'inactive' => 'Ngừng hoạt động', 'maintenance' => 'Bảo trì', 'overloaded' => 'Quá tải'] as $value => $label)
+                    <option value="{{ $value }}" {{ request('status') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-2"><button type="submit" class="btn btn-navy w-100">Lọc</button></div>
     </form>
 </div>
 
@@ -47,6 +51,11 @@
 </div>
 
 <!-- Data Table -->
+<div class="d-flex justify-content-end mb-3">
+    <button class="btn btn-navy px-4 fw-bold" data-bs-toggle="modal" data-bs-target="#locationModal" onclick="prepareAdd()">
+        <i class="fa fa-plus me-2"></i> THÊM ĐỊA ĐIỂM
+    </button>
+</div>
 <div class="card border-0 rounded-4 shadow-sm overflow-hidden">
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
@@ -120,7 +129,7 @@
         </table>
     </div>
     <div class="p-4 border-top">
-        {{ $locations->links('pagination::bootstrap-5') }}
+        {{ $locations->appends(request()->query())->links('pagination::bootstrap-5') }}
     </div>
 </div>
 
@@ -137,13 +146,13 @@
                 </div>
                 <div class="modal-body p-4 pt-0">
                     <div class="row g-3">
-                        <!-- <div class="col-md-4">
+                        <div class="col-md-4" id="locationCodeGroup">
                             <label class="form-label fw-semibold">Mã địa điểm</label>
                             <input type="text" id="location_code" class="form-control bg-light border-0" value="Tự sinh theo loại" disabled>
                         </div> -->
                         <div class="col-md-8">
                             <label class="form-label fw-semibold">Tên Địa Điểm</label>
-                            <input type="text" name="location_name" id="location_name" class="form-control bg-light border-0" required>
+                            <input type="text" name="location_name" id="location_name" class="form-control bg-light border-0" data-validate data-label="Tên địa điểm" required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Loại địa điểm</label>
@@ -157,7 +166,7 @@
                         </div>
                         <div class="col-md-12">
                             <label class="form-label fw-semibold">Địa chỉ chi tiết</label>
-                            <input type="text" name="address" id="address" class="form-control bg-light border-0" required>
+                            <input type="text" name="address" id="address" class="form-control bg-light border-0" data-validate data-label="Địa chỉ chi tiết" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Tỉnh / Thành phố</label>
@@ -199,6 +208,7 @@
         document.getElementById('methodField').innerHTML = '';
         document.getElementById('locationForm').reset();
         document.getElementById('location_code').value = 'Tự sinh theo loại';
+        document.getElementById('locationCodeGroup').classList.add('d-none');
         document.getElementById('status').value = 'active';
     }
 
@@ -206,6 +216,7 @@
         document.getElementById('modalTitle').innerText = 'Chỉnh Sửa Địa Điểm';
         document.getElementById('locationForm').action = `/locations/${location.id}`;
         document.getElementById('methodField').innerHTML = '@method("PUT")';
+        document.getElementById('locationCodeGroup').classList.remove('d-none');
         
         document.getElementById('location_name').value = location.location_name;
         document.getElementById('location_code').value = location.location_code || '---';

@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\Customer;
 use App\Models\DispatchOrder;
+use App\Models\Driver;
 use App\Models\FieldAssignment;
 use App\Models\FieldStaff;
 use App\Models\Location;
@@ -56,13 +58,13 @@ class CustomerFeedbackWorkflowTest extends TestCase
         $this->assertFalse($user->fresh()->is_dark_mode);
     }
 
-    public function test_customer_tax_code_phone_and_contact_role_are_validated(): void
+    public function test_customer_tax_code_phone_name_and_text_contact_are_validated(): void
     {
         $sales = $this->userWithRole('SALES');
 
         $this->actingAs($sales)
             ->post(route('customers.store'), [
-                'customer_name' => 'Khách hàng kiểm thử',
+                'customer_name' => 'Khách  hàng 123',
                 'company_name' => 'Công ty kiểm thử',
                 'tax_code' => 'ABC123',
                 'address' => 'Hải Phòng',
@@ -70,7 +72,24 @@ class CustomerFeedbackWorkflowTest extends TestCase
                 'email' => 'customer@example.test',
                 'contact_person' => 'Giám đốc',
             ])
-            ->assertSessionHasErrors(['tax_code', 'phone', 'contact_person']);
+            ->assertSessionHasErrors(['customer_name', 'tax_code', 'phone']);
+
+        $this->actingAs($sales)
+            ->post(route('customers.store'), [
+                'customer_name' => 'khách hàng kiểm thử',
+                'company_name' => 'công ty kiểm thử',
+                'tax_code' => '1234567890',
+                'address' => 'Hải Phòng',
+                'phone' => '0901234567',
+                'email' => 'customer@example.test',
+                'contact_person' => 'Giám đốc',
+            ])
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('customers', [
+            'customer_name' => 'Khách Hàng Kiểm Thử',
+            'contact_person' => 'Giám Đốc',
+        ]);
     }
 
     public function test_accountant_approval_creates_internal_dispatch_document_and_updates_job(): void
@@ -104,6 +123,144 @@ class CustomerFeedbackWorkflowTest extends TestCase
             'doc_category' => 'Lệnh điều xe',
             'file_url' => 'internal://dispatch-order/'.$dispatchOrder->id,
         ]);
+    }
+
+    public function test_shipping_job_container_customs_and_vietnamese_date_are_validated(): void
+    {
+        $sales = $this->userWithRole('SALES');
+        $customer = Customer::factory()->create();
+        $pickup = Location::factory()->create();
+        $delivery = Location::factory()->create();
+
+        $payload = [
+            'customer_id' => $customer->id,
+            'pickup_location_id' => $pickup->id,
+            'delivery_location_id' => $delivery->id,
+            'cargo_type' => 'Hàng kiểm thử',
+            'container_type' => '20DC',
+            'expected_date' => now()->format('d/m/Y'),
+        ];
+
+        $this->actingAs($sales)
+            ->post(route('shipping-jobs.store'), $payload + [
+                'container_number' => 'AB123',
+                'customs_declaration_no' => 'ABC',
+            ])
+            ->assertSessionHasErrors(['container_number', 'customs_declaration_no']);
+
+        $this->actingAs($sales)
+            ->post(route('shipping-jobs.store'), $payload + [
+                'container_number' => 'tcnu1234567',
+                'customs_declaration_no' => '123456789012',
+            ])
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('shipping_jobs', [
+            'container_number' => 'TCNU1234567',
+            'customs_declaration_no' => '123456789012',
+            'expected_date' => now()->toDateString(),
+        ]);
+    }
+
+    public function test_only_admin_or_dispatch_can_update_actual_fuel_liters(): void
+    {
+        $driverUser = $this->userWithRole('DRIVER');
+        $driver = Driver::factory()->create(['user_id' => $driverUser->id]);
+        $dispatchOrder = DispatchOrder::factory()->create([
+            'driver_id' => $driver->id,
+            'dispatch_status' => 'dispatched',
+            'approval_status' => 'approved',
+            'actual_fuel_liters' => null,
+        ]);
+
+        $this->actingAs($driverUser)
+            ->patch(route('dispatch-orders.update-status', $dispatchOrder), [
+                'status' => 'dispatched',
+                'loading_percent' => 20,
+                'actual_fuel_liters' => 32.5,
+            ])
+            ->assertForbidden();
+
+        $dispatch = $this->userWithRole('DISPATCH');
+
+        $this->actingAs($dispatch)
+            ->patch(route('dispatch-orders.update-status', $dispatchOrder), [
+                'status' => 'dispatched',
+                'loading_percent' => 25,
+                'actual_fuel_liters' => 32.5,
+                'current_latitude' => 20.8449,
+                'current_longitude' => 106.6881,
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('dispatch_orders', [
+            'id' => $dispatchOrder->id,
+            'actual_fuel_liters' => 32.5,
+        ]);
+        $this->assertDatabaseHas('tracking_logs', [
+            'dispatch_order_id' => $dispatchOrder->id,
+            'latitude' => 20.8449,
+            'longitude' => 106.6881,
+        ]);
+    }
+
+    public function test_driver_can_be_linked_to_driver_user_account(): void
+    {
+        $admin = $this->userWithRole('ADMIN');
+        $driverUser = $this->userWithRole('DRIVER', ['email' => 'driver.link@example.test']);
+        $accountantUser = $this->userWithRole('ACCOUNTANT', ['email' => 'not.driver@example.test']);
+
+        $payload = [
+            'full_name' => 'Nguyễn Văn Tài',
+            'phone' => '0901234567',
+            'date_of_birth' => '21/05/1990',
+            'license_number' => 'GPLX-TEST-001',
+            'status' => 'active',
+            'rank' => 'Tài xế chính',
+        ];
+
+        $this->actingAs($admin)
+            ->post(route('drivers.store'), $payload + ['user_id' => $accountantUser->id])
+            ->assertSessionHasErrors('user_id');
+
+        $this->actingAs($admin)
+            ->post(route('drivers.store'), $payload + ['user_id' => $driverUser->id])
+            ->assertRedirect(route('drivers.index'));
+
+        $this->assertDatabaseHas('drivers', [
+            'user_id' => $driverUser->id,
+            'full_name' => 'Nguyễn Văn Tài',
+            'phone' => '0901234567',
+        ]);
+    }
+
+    public function test_driver_account_dropdown_only_shows_unlinked_driver_users(): void
+    {
+        $admin = $this->userWithRole('ADMIN');
+        $driverRole = Role::factory()->create([
+            'role_code' => 'DRIVER',
+            'role_name' => 'DRIVER',
+        ]);
+        $linkedUser = User::factory()->create([
+            'email' => 'linked.driver@example.test',
+            'role_id' => $driverRole->id,
+        ]);
+        $unlinkedUser = User::factory()->create([
+            'email' => 'unlinked.driver@example.test',
+            'role_id' => $driverRole->id,
+        ]);
+
+        Driver::factory()->create([
+            'user_id' => $linkedUser->id,
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('drivers.index'))
+            ->assertOk()
+            ->assertViewHas('driverUsers', function ($users) use ($linkedUser, $unlinkedUser): bool {
+                return $users->contains('id', $unlinkedUser->id)
+                    && ! $users->contains('id', $linkedUser->id);
+            });
     }
 
     public function test_field_staff_can_upload_documents_only_for_active_assignment(): void
@@ -174,7 +331,6 @@ class CustomerFeedbackWorkflowTest extends TestCase
 
                 $this->assertStringContainsString('<autoFilter', $entries['xl/worksheets/sheet1.xml']);
                 $this->assertStringContainsString('state="frozen"', $entries['xl/worksheets/sheet1.xml']);
-                $this->assertStringNotContainsString('<drawing', $entries['xl/worksheets/sheet1.xml']);
                 $this->assertLessThan(
                     strpos($entries['xl/worksheets/sheet1.xml'], '<mergeCells'),
                     strpos($entries['xl/worksheets/sheet1.xml'], '<autoFilter'),

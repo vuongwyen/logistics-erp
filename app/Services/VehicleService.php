@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Vehicle;
+use App\Support\VietnameseDate;
 
 class VehicleService
 {
@@ -30,6 +31,10 @@ class VehicleService
 
         if (! empty($filters['payload'])) {
             $query->where('payload', $filters['payload']);
+        }
+
+        if (! empty($filters['registration_expiry'])) {
+            $query->whereDate('registration_expiry', VietnameseDate::toDatabase($filters['registration_expiry']));
         }
 
         return $query->latest()->paginate($perPage);

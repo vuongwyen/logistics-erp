@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Document;
 use App\Models\FieldAssignment;
 use App\Services\ExportService;
+use App\Support\VietnameseDate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
@@ -37,6 +38,7 @@ class DocumentController extends Controller
             ->when($request->filled('job_code'), fn ($query) => $query->whereHas('shippingJob', fn ($jobQuery) => $jobQuery->where('job_code', 'like', "%{$request->input('job_code')}%")))
             ->when($request->filled('customer_name'), fn ($query) => $query->whereHas('shippingJob.customer', fn ($customerQuery) => $customerQuery->where('customer_name', 'like', "%{$request->input('customer_name')}%")))
             ->when($request->filled('uploader_name'), fn ($query) => $query->whereHas('uploader', fn ($userQuery) => $userQuery->where('name', 'like', "%{$request->input('uploader_name')}%")))
+            ->when($request->filled('created_date'), fn ($query) => $query->whereDate('created_at', VietnameseDate::toDatabase($request->input('created_date'))))
             ->latest();
 
         if ($request->filled('export')) {
@@ -108,6 +110,29 @@ class DocumentController extends Controller
         return back()->with('error', 'Không tìm thấy file tải lên.');
     }
 
+    public function update(Request $request, Document $document)
+    {
+        $validated = $request->validate([
+            'doc_category' => ['required', 'string', 'max:100'],
+            'document_flow' => ['required', Rule::in(['input', 'output'])],
+            'tax_stage' => ['required', Rule::in(['before_tax', 'after_tax'])],
+            'note' => ['nullable', 'string', 'max:255'],
+            'file' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
+        ]);
+
+        if ($request->hasFile('file')) {
+            if (! $document->isInternalDispatchOrder()) {
+                Storage::disk('public')->delete($document->file_url);
+            }
+
+            $validated['file_url'] = $request->file('file')->store('documents/'.$document->shipping_job_id, 'public');
+        }
+
+        $document->update($validated);
+
+        return back()->with('success', 'Đã cập nhật chứng từ.');
+    }
+
     public function show(Document $document)
     {
         if ($document->isInternalDispatchOrder()) {
@@ -127,7 +152,11 @@ class DocumentController extends Controller
     public function destroy($id)
     {
         $document = Document::findOrFail($id);
-        Storage::disk('public')->delete($document->file_url);
+
+        if (! $document->isInternalDispatchOrder()) {
+            Storage::disk('public')->delete($document->file_url);
+        }
+
         $document->delete();
 
         return back()->with('success', 'Đã xóa chứng từ.');

@@ -6,8 +6,17 @@
 @php
     $loadingPercent = (int) ($dispatchOrder->loading_percent ?? 0);
     $progressClass = $loadingPercent >= 100 ? 'bg-success' : ($loadingPercent >= 70 ? 'bg-info' : ($loadingPercent >= 35 ? 'bg-warning' : 'bg-danger'));
-    $mapLat = $dispatchOrder->current_latitude ?? 10.7769;
-    $mapLng = $dispatchOrder->current_longitude ?? 106.7009;
+    $mapLat = $dispatchOrder->current_latitude ?? 20.8449;
+    $mapLng = $dispatchOrder->current_longitude ?? 106.6881;
+    $routePoints = $dispatchOrder->trackingLogs
+        ->filter(fn($log) => filled($log->latitude) && filled($log->longitude))
+        ->sortBy('created_at')
+        ->map(fn($log) => [
+            'lat' => (float) $log->latitude,
+            'lng' => (float) $log->longitude,
+            'label' => $log->created_at->format('d/m/Y') . ' - ' . $log->status_update,
+        ])
+        ->values();
 @endphp
 
 <div class="mb-4 d-flex justify-content-between align-items-center">
@@ -89,6 +98,35 @@
                             <div class="col-md-6">
                                 <label class="small text-muted text-uppercase fw-bold">Địa điểm kết thúc</label>
                                 <div class="fw-bold text-navy">{{ $dispatchOrder->endLocation->location_name ?? $dispatchOrder->shippingJob->deliveryLocation->location_name }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="p-3 bg-light rounded-3 border h-100">
+                                    <label class="small text-muted text-uppercase fw-bold">Định mức nhiên liệu</label>
+                                    <div class="fw-bold text-navy fs-6">
+                                        {{ $dispatchOrder->fuel_quota !== null ? number_format((float) $dispatchOrder->fuel_quota, 1) . ' lít' : '---' }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="p-3 bg-light rounded-3 border h-100">
+                                    <label class="small text-muted text-uppercase fw-bold">Định mức giá dầu</label>
+                                    <div class="fw-bold text-navy fs-6">
+                                        {{ $dispatchOrder->fuel_price_quota !== null ? number_format((float) $dispatchOrder->fuel_price_quota) . ' VNĐ/lít' : '---' }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="p-3 bg-light rounded-3 border h-100">
+                                    <label class="small text-muted text-uppercase fw-bold">Định mức cầu đường</label>
+                                    <div class="fw-bold text-navy fs-6">
+                                        {{ $dispatchOrder->toll_quota !== null ? number_format((float) $dispatchOrder->toll_quota) . ' VNĐ' : '---' }}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -255,7 +293,7 @@
             </div>
             <div class="card-body p-4">
                 <div class="timeline-custom">
-                    @forelse($dispatchOrder->trackingLogs()->with('updater')->orderBy('created_at', 'desc')->get() as $log)
+                    @forelse($dispatchOrder->trackingLogs->sortByDesc('created_at') as $log)
                         <div class="timeline-item d-flex gap-3 mb-4">
                             <div class="timeline-marker text-primary pt-1">
                                 <i class="fa fa-circle-dot"></i>
@@ -278,6 +316,10 @@
                                     {{ $log->created_at->format('d/m/Y') }}
                                     <span class="mx-1">•</span> 
                                     Cập nhật bởi: {{ $log->updater->name }}
+                                    @if(filled($log->latitude) && filled($log->longitude))
+                                        <span class="mx-1">•</span>
+                                        Tọa độ: {{ $log->latitude }}, {{ $log->longitude }}
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -404,15 +446,19 @@
                                 <input type="range" name="loading_percent" class="form-range" min="0" max="100" value="{{ $loadingPercent }}" oninput="document.getElementById('loadingValue').innerText = this.value + '%'">
                                 <div class="small fw-bold text-navy" id="loadingValue">{{ $loadingPercent }}%</div>
                             </div>
-                            <div class="col-6">
-                                <input type="number" step="0.0000001" name="current_latitude" class="form-control form-control-sm" value="{{ $dispatchOrder->current_latitude }}" placeholder="Vĩ độ">
-                            </div>
-                            <div class="col-6">
-                                <input type="number" step="0.0000001" name="current_longitude" class="form-control form-control-sm" value="{{ $dispatchOrder->current_longitude }}" placeholder="Kinh độ">
-                            </div>
+                            <input type="hidden" name="current_latitude" value="{{ $dispatchOrder->current_latitude }}">
+                            <input type="hidden" name="current_longitude" value="{{ $dispatchOrder->current_longitude }}">
                             <div class="col-12">
-                                <input type="number" step="0.1" name="actual_fuel_liters" class="form-control form-control-sm" value="{{ $dispatchOrder->actual_fuel_liters }}" placeholder="Tổng dầu thực tế (lít)">
+                                <button type="button" class="btn btn-sm btn-outline-navy w-100" data-current-location>
+                                    <i class="fa fa-location-crosshairs me-1"></i> Cập nhật vị trí hiện tại
+                                </button>
+                                <div class="small text-muted mt-1" data-location-status></div>
                             </div>
+                            @if(Auth::user()->hasRole(['ADMIN', 'DISPATCH']))
+                                <div class="col-12">
+                                    <input type="number" step="0.1" name="actual_fuel_liters" class="form-control form-control-sm" value="{{ $dispatchOrder->actual_fuel_liters }}" placeholder="Tổng dầu thực tế (lít)">
+                                </div>
+                            @endif
                             <div class="col-12">
                                 <button type="submit" class="btn btn-sm btn-outline-navy w-100 fw-bold">Cập nhật tiến độ</button>
                             </div>
@@ -479,6 +525,17 @@
     L.marker([{{ $mapLat }}, {{ $mapLng }}]).addTo(dispatchMap)
         .bindPopup(@json($dispatchOrder->vehicle->plate_number.' - '.$dispatchOrder->driver->full_name))
         .openPopup();
+    const routePoints = @json($routePoints);
+    if (routePoints.length > 0) {
+        const latLngs = routePoints.map((point) => [point.lat, point.lng]);
+        L.polyline(latLngs, { color: '#1a237e', weight: 4 }).addTo(dispatchMap);
+        routePoints.forEach((point) => {
+            L.circleMarker([point.lat, point.lng], { radius: 5, color: '#0891b2', fillOpacity: 0.8 })
+                .addTo(dispatchMap)
+                .bindPopup(point.label);
+        });
+        dispatchMap.fitBounds(latLngs, { padding: [24, 24] });
+    }
 </script>
 
 <!-- Modal Thêm Chi Phí -->

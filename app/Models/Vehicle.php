@@ -25,4 +25,11 @@ class Vehicle extends Model
     {
         return $this->hasMany(DispatchOrder::class);
     }
+
+    protected function casts(): array
+    {
+        return [
+            'registration_expiry' => 'date',
+        ];
+    }
 }

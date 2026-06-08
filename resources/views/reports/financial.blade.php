@@ -3,6 +3,13 @@
 @section('title', 'Báo cáo Tài chính - NT Logistics')
 
 @section('content')
+@php
+    $cycleLabels = [
+        'monthly' => 'Hàng tháng',
+        'quarterly' => 'Hàng quý',
+        'yearly' => 'Hàng năm',
+    ];
+@endphp
 <div class="container-fluid py-4">
     <div class="row mb-4">
         <div class="col-12">
@@ -108,7 +115,7 @@
             <div class="card border-0 rounded-4 shadow-sm">
                 <div class="card-header bg-white border-0 p-4 pb-0 d-flex justify-content-between align-items-center">
                     <h6 class="fw-bold text-navy mb-0">Chi phí đầu vào cố định</h6>
-                    <button class="btn btn-sm btn-navy no-print" data-bs-toggle="modal" data-bs-target="#recurringExpenseModal">
+                    <button class="btn btn-sm btn-navy no-print" data-bs-toggle="modal" data-bs-target="#recurringExpenseModal" onclick="prepareRecurringAdd()">
                         <i class="fa fa-plus me-1"></i> Thêm chi phí
                     </button>
                 </div>
@@ -131,28 +138,19 @@
                                         <td class="fw-bold text-navy">{{ $expense->expense_code }}</td>
                                         <td>{{ $expense->name }}</td>
                                         <td>{{ $expense->category ?? '---' }}</td>
-                                        <td>
-                                            {{ match($expense->cycle) {
-                                                'monthly' => 'Hàng tháng',
-                                                'quarterly' => 'Hàng quý',
-                                                'yearly' => 'Hàng năm',
-                                                default => $expense->cycle
-                                            } }}
-                                        </td>
+                                        <td>{{ $cycleLabels[$expense->cycle] ?? $expense->cycle }}</td>
                                         <td class="text-end fw-bold">{{ number_format($expense->amount) }}đ</td>
                                         <td class="text-center no-print">
-                                            <div class="d-flex justify-content-center gap-1">
-                                                <a href="{{ route('recurring-expenses.edit', $expense) }}" class="btn btn-sm btn-outline-primary">
-                                                    <i class="fa fa-edit"></i>
-                                                </a>
-                                                <form action="{{ route('recurring-expenses.destroy', $expense) }}" method="POST" onsubmit="return confirm('Xóa chi phí cố định này?')">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                        <i class="fa fa-trash"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
+                                            <button type="button" class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#recurringExpenseModal" onclick='prepareRecurringEdit(@json($expense))'>
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <form action="{{ route('recurring-expenses.destroy', $expense) }}" method="POST" class="d-inline" onsubmit="return confirm('Xóa chi phí cố định này?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 @empty
@@ -221,29 +219,30 @@
 <div class="modal fade" id="recurringExpenseModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 rounded-4 shadow">
-            <form action="{{ route('recurring-expenses.store') }}" method="POST">
+            <form id="recurringExpenseForm" action="{{ route('recurring-expenses.store') }}" method="POST">
                 @csrf
+                <div id="recurringMethodField"></div>
                 <div class="modal-header bg-navy text-white border-0 rounded-top-4 p-4">
-                    <h5 class="modal-title fw-bold">Thêm chi phí cố định</h5>
+                    <h5 class="modal-title fw-bold" id="recurringModalTitle">Thêm chi phí cố định</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-muted">Tên chi phí</label>
-                            <input type="text" name="name" class="form-control" required>
+                            <input type="text" name="name" id="recurring_name" class="form-control" data-validate required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-muted">Nhóm chi phí</label>
-                            <input type="text" name="category" class="form-control" placeholder="VD: Văn phòng, kho bãi">
+                            <input type="text" name="category" id="recurring_category" class="form-control" placeholder="VD: Văn phòng, kho bãi">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold small text-muted">Số tiền</label>
-                            <input type="number" name="amount" class="form-control" required>
+                            <input type="number" name="amount" id="recurring_amount" class="form-control" data-validate required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold small text-muted">Chu kỳ</label>
-                            <select name="cycle" class="form-select" required>
+                            <select name="cycle" id="recurring_cycle" class="form-select" data-validate required>
                                 <option value="monthly">Hàng tháng</option>
                                 <option value="quarterly">Hàng quý</option>
                                 <option value="yearly">Hàng năm</option>
@@ -251,22 +250,22 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold small text-muted">Trạng thái</label>
-                            <select name="status" class="form-select" required>
+                            <select name="status" id="recurring_status" class="form-select" data-validate required>
                                 <option value="active">Đang sử dụng</option>
                                 <option value="inactive">Tạm ngưng</option>
                             </select>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-muted">Hiệu lực từ</label>
-                            <input type="date" name="effective_from" class="form-control">
+                            <input type="text" name="effective_from" id="recurring_effective_from" class="form-control" placeholder="Ngày/Tháng/Năm" data-date-input data-label="Hiệu lực từ">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-muted">Hiệu lực đến</label>
-                            <input type="date" name="effective_to" class="form-control">
+                            <input type="text" name="effective_to" id="recurring_effective_to" class="form-control" placeholder="Ngày/Tháng/Năm" data-date-input data-label="Hiệu lực đến">
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-bold small text-muted">Ghi chú</label>
-                            <textarea name="note" class="form-control" rows="2"></textarea>
+                            <textarea name="note" id="recurring_note" class="form-control" rows="2"></textarea>
                         </div>
                     </div>
                 </div>
@@ -281,6 +280,31 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    function prepareRecurringAdd() {
+        document.getElementById('recurringModalTitle').innerText = 'Thêm chi phí cố định';
+        document.getElementById('recurringExpenseForm').action = "{{ route('recurring-expenses.store') }}";
+        document.getElementById('recurringMethodField').innerHTML = '';
+        document.getElementById('recurringExpenseForm').reset();
+    }
+
+    function dateOnly(value) {
+        return value ? value.split('T')[0].split(' ')[0] : '';
+    }
+
+    function prepareRecurringEdit(expense) {
+        document.getElementById('recurringModalTitle').innerText = 'Sửa chi phí cố định';
+        document.getElementById('recurringExpenseForm').action = `/recurring-expenses/${expense.id}`;
+        document.getElementById('recurringMethodField').innerHTML = '@method("PUT")';
+        document.getElementById('recurring_name').value = expense.name || '';
+        document.getElementById('recurring_category').value = expense.category || '';
+        document.getElementById('recurring_amount').value = expense.amount || 0;
+        document.getElementById('recurring_cycle').value = expense.cycle || 'monthly';
+        document.getElementById('recurring_status').value = expense.status || 'active';
+        document.getElementById('recurring_effective_from').value = expense.effective_from ? isoToDate(dateOnly(expense.effective_from)) : '';
+        document.getElementById('recurring_effective_to').value = expense.effective_to ? isoToDate(dateOnly(expense.effective_to)) : '';
+        document.getElementById('recurring_note').value = expense.note || '';
+    }
+
     // Revenue Chart
     const revCtx = document.getElementById('revenueChart').getContext('2d');
     new Chart(revCtx, {

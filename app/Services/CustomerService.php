@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\Customer;
+use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Str;
 
 class CustomerService
 {
@@ -39,6 +41,7 @@ class CustomerService
      */
     public function create(array $data)
     {
+        $data = $this->normalizeCustomerData($data);
         if (empty($data['company_name'])) {
             $data['company_name'] = $data['customer_name'];
         }
@@ -54,10 +57,10 @@ class CustomerService
                     $parts[] = str_pad($sequence + 1, 3, '0', STR_PAD_LEFT);
                     $data['customer_code'] = implode('-', $parts);
                 }
-                
+
                 return Customer::create($data);
-            } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
-                if (!str_contains($e->getMessage(), 'customers_customer_code_unique')) {
+            } catch (UniqueConstraintViolationException $e) {
+                if (! str_contains($e->getMessage(), 'customers_customer_code_unique')) {
                     throw $e;
                 }
                 $attempts++;
@@ -74,6 +77,7 @@ class CustomerService
     public function update(Customer $customer, array $data)
     {
         unset($data['customer_code']);
+        $data = $this->normalizeCustomerData($data);
 
         if (empty($data['company_name']) && ! empty($data['customer_name'])) {
             $data['company_name'] = $data['customer_name'];
@@ -109,5 +113,24 @@ class CustomerService
         }
 
         return $prefix.$newSequence;
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private function normalizeCustomerData(array $data): array
+    {
+        foreach (['customer_name', 'company_name', 'contact_person'] as $field) {
+            if (! empty($data[$field]) && is_string($data[$field])) {
+                $data[$field] = Str::of($data[$field])
+                    ->squish()
+                    ->lower()
+                    ->title()
+                    ->value();
+            }
+        }
+
+        return $data;
     }
 }

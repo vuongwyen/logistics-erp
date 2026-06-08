@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Support\LogisticsOptions;
+use App\Support\VietnameseDate;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -15,6 +16,11 @@ class FieldAssignmentRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge(VietnameseDate::normalizedFields($this->all(), ['assigned_date']));
     }
 
     /**

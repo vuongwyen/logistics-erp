@@ -9,20 +9,34 @@
 </div>
 
 <!-- Filters -->
-<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
-    <form action="{{ route('customers.index') }}" method="GET">
-        <div class="row g-3 align-items-center">
-            <div class="col-md-2"><input type="text" name="customer_code" class="form-control border-light" placeholder="Mã KH" value="{{ request('customer_code') }}"></div>
-            <div class="col-md-2"><input type="text" name="customer_name" class="form-control border-light" placeholder="Tên KH" value="{{ request('customer_name') }}"></div>
-            <div class="col-md-2"><input type="text" name="tax_code" class="form-control border-light" placeholder="MST" value="{{ request('tax_code') }}"></div>
-            <div class="col-md-2"><input type="text" name="email" class="form-control border-light" placeholder="Email" value="{{ request('email') }}"></div>
-            <div class="col-md-2"><input type="text" name="contact_person" class="form-control border-light" placeholder="Người liên hệ" value="{{ request('contact_person') }}"></div>
-            <div class="col-md-2"><input type="text" name="phone" class="form-control border-light" placeholder="SĐT" value="{{ request('phone') }}"></div>
-            
-            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
-                <a href="{{ route('customers.index') }}" class="btn btn-light px-4">Xóa lọc</a>
-                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
-            </div>
+<div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+    <form action="{{ route('customers.index') }}" method="GET" class="row g-3 align-items-end">
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Mã khách hàng</label>
+            <input type="text" name="customer_code" class="form-control border-light" placeholder="Mã KH" value="{{ request('customer_code') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Tên khách hàng</label>
+            <input type="text" name="customer_name" class="form-control border-light" placeholder="Tên KH" value="{{ request('customer_name') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Mã số thuế</label>
+            <input type="text" name="tax_code" class="form-control border-light" placeholder="10 chữ số" value="{{ request('tax_code') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Email</label>
+            <input type="text" name="email" class="form-control border-light" placeholder="Email" value="{{ request('email') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Người liên hệ</label>
+            <input type="text" name="contact_person" class="form-control border-light" placeholder="Người liên hệ" value="{{ request('contact_person') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Số điện thoại</label>
+            <input type="text" name="phone" class="form-control border-light" placeholder="10 số" value="{{ request('phone') }}">
+        </div>
+        <div class="col-md-2 ms-md-auto">
+            <button type="submit" class="btn btn-navy w-100">Lọc</button>
         </div>
     </form>
 </div>
@@ -34,6 +48,11 @@
 </div>
 
 <!-- Data Table -->
+<div class="d-flex justify-content-end mb-3">
+    <a href="{{ route('customers.create') }}" class="btn btn-navy px-4 fw-bold">
+        <i class="fa fa-plus me-2"></i> THÊM KHÁCH HÀNG
+    </a>
+</div>
 <div class="card border-0 rounded-4 shadow-sm overflow-hidden">
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">

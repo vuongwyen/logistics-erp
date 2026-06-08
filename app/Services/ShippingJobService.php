@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\ShippingJob;
+use App\Support\VietnameseDate;
 use Illuminate\Support\Facades\Auth;
 
 class ShippingJobService
@@ -49,11 +50,15 @@ class ShippingJobService
         }
 
         if (! empty($filters['date_from'])) {
-            $query->whereDate('expected_date', '>=', $filters['date_from']);
+            $query->whereDate('expected_date', '>=', VietnameseDate::toDatabase($filters['date_from']));
         }
 
         if (! empty($filters['date_to'])) {
-            $query->whereDate('expected_date', '<=', $filters['date_to']);
+            $query->whereDate('expected_date', '<=', VietnameseDate::toDatabase($filters['date_to']));
+        }
+
+        if (! empty($filters['created_date'])) {
+            $query->whereDate('created_at', VietnameseDate::toDatabase($filters['created_date']));
         }
 
         return $query->paginate($perPage);

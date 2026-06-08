@@ -24,7 +24,7 @@ class ExportService
      */
     public function download(string $format, string $title, string $periodLabel, array $sheets, array $options = []): StreamedResponse
     {
-        // Backward compatibility: If $sheets is an array of strings (headers), 
+        // Backward compatibility: If $sheets is an array of strings (headers),
         // it means the caller passed $headers as 4th param and $rows as 5th param.
         if (isset($sheets[0]) && is_string($sheets[0])) {
             $sheets = [
@@ -536,7 +536,7 @@ class ExportService
         $content .= "0.03 0.64 0.62 rg\n335 469 172 2 re f\n";
         $content .= $this->pdfCenteredText(421, 452, $this->pdfLimit($this->ascii(mb_strtoupper($sheetName)), 500), 12, '0.19 0.22 0.30');
 
-        $tableTop = 424;
+        $tableTop = 444;
         $left = 35;
         $width = 772;
         $rowHeight = 18;

@@ -2,17 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Location;
 use App\Models\Role;
 use App\Models\User;
+use App\Services\DriverService;
 use App\Services\ExportService;
+use App\Services\FieldStaffService;
 use App\Support\LogisticsOptions;
+use App\Support\VietnameseDate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
+    public function __construct(
+        private DriverService $driverService,
+        private FieldStaffService $fieldStaffService
+    ) {}
+
     public function index()
     {
         $query = User::with('role');
@@ -42,6 +52,14 @@ class UserController extends Controller
 
         if (request()->filled('role_id')) {
             $query->where('role_id', request('role_id'));
+        }
+
+        if (request()->filled('date_of_birth')) {
+            $query->whereDate('date_of_birth', VietnameseDate::toDatabase(request('date_of_birth')));
+        }
+
+        if (request()->filled('joined_at')) {
+            $query->whereDate('joined_at', VietnameseDate::toDatabase(request('joined_at')));
         }
 
         if (request()->filled('export')) {
@@ -78,8 +96,12 @@ class UserController extends Controller
         $roles = $rolesQuery->get();
         $positions = LogisticsOptions::positions();
         $departments = LogisticsOptions::departments();
+        $responsibleLocations = Location::query()
+            ->whereIn('type', ['depot', 'warehouse'])
+            ->orderBy('location_name')
+            ->get();
 
-        return view('users.create', compact('roles', 'positions', 'departments'));
+        return view('users.create', compact('roles', 'positions', 'departments', 'responsibleLocations'));
     }
 
     public function store(Request $request)
@@ -88,7 +110,23 @@ class UserController extends Controller
         $department = $request->input('department');
         $validPositions = $map[$department] ?? [];
 
-        $request->validate([
+        $request->merge(VietnameseDate::normalizedFields($request->all(), [
+            'date_of_birth',
+            'joined_at',
+            'driver_start_date',
+            'driver_contract_expiry',
+            'field_start_date',
+        ]));
+
+        $request->merge([
+            'driver_phone' => is_string($request->input('driver_phone')) ? trim($request->input('driver_phone')) : $request->input('driver_phone'),
+            'field_phone' => is_string($request->input('field_phone')) ? trim($request->input('field_phone')) : $request->input('field_phone'),
+        ]);
+
+        $role = Role::find($request->integer('role_id'));
+        $roleCode = $role?->role_code;
+
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->numbers()->symbols()],
@@ -97,40 +135,61 @@ class UserController extends Controller
             'position' => ['required', Rule::in($validPositions)],
             'date_of_birth' => 'required|date|before:today',
             'joined_at' => 'required|date|after_or_equal:'.now()->subYears(10)->toDateString().'|before_or_equal:today',
-            'department.required' => 'Vui lòng chọn bộ phận / phòng ban.',
-            'department.in' => 'Bộ phận không hợp lệ.',
-            'position.required' => 'Vui lòng chọn chức vụ.',
-            'position.in' => 'Chức vụ không hợp lệ đối với phòng ban đã chọn.',
-            'password.required' => 'Vui lòng nhập mật khẩu.',
-            'password.confirmed' => 'Mật khẩu xác nhận không khớp.',
-            'password.min' => 'Mật khẩu phải có ít nhất 8 ký tự.',
-            'password.mixed' => 'Mật khẩu phải chứa cả chữ hoa và chữ thường.',
-            'password.numbers' => 'Mật khẩu phải chứa ít nhất một chữ số.',
-            'password.symbols' => 'Mật khẩu phải chứa ít nhất một ký tự đặc biệt.',
-        ]);
+            ...$this->profileRules($roleCode),
+        ], $this->validationMessages());
 
         // Extra check for DISPATCH
         if (auth()->user()->hasRole('DISPATCH')) {
-            $role = Role::findOrFail($request->role_id);
             if (! in_array($role->role_code, ['DRIVER', 'FIELD'])) {
                 abort(403, 'Bạn chỉ được phép tạo tài khoản Tài xế hoặc Hiện trường.');
             }
         }
 
-        User::create([
-            'name' => $request->name,
-            'full_name' => $request->name,
-            'employee_code' => $this->generateEmployeeCode(),
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role_id' => $request->role_id,
-            'username' => strstr($request->email, '@', true),
-            'status' => 1,
-            'position' => $request->position,
-            'department' => $request->department,
-            'date_of_birth' => $request->date_of_birth,
-            'joined_at' => $request->joined_at,
-        ]);
+        DB::transaction(function () use ($roleCode, $validated): void {
+            $user = User::create([
+                'name' => $validated['name'],
+                'full_name' => $validated['name'],
+                'employee_code' => $this->generateEmployeeCode(),
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'role_id' => $validated['role_id'],
+                'username' => strstr($validated['email'], '@', true),
+                'status' => 1,
+                'position' => $validated['position'],
+                'department' => $validated['department'],
+                'date_of_birth' => $validated['date_of_birth'],
+                'joined_at' => $validated['joined_at'],
+            ]);
+
+            if ($roleCode === 'DRIVER') {
+                $this->driverService->create([
+                    'user_id' => $user->id,
+                    'full_name' => $validated['name'],
+                    'phone' => $validated['driver_phone'],
+                    'date_of_birth' => $validated['date_of_birth'],
+                    'license_number' => $validated['driver_license_number'],
+                    'status' => 'active',
+                    'start_date' => ($validated['driver_start_date'] ?? null) ?: $validated['joined_at'],
+                    'rank' => $validated['driver_rank'] ?? null,
+                    'contract_expiry' => $validated['driver_contract_expiry'] ?? null,
+                    'note' => $validated['driver_note'] ?? null,
+                ]);
+            }
+
+            if ($roleCode === 'FIELD') {
+                $this->fieldStaffService->create([
+                    'user_id' => $user->id,
+                    'full_name' => $validated['name'],
+                    'phone' => $validated['field_phone'],
+                    'date_of_birth' => $validated['date_of_birth'],
+                    'responsible_location_ids' => $validated['field_responsible_location_ids'],
+                    'start_date' => ($validated['field_start_date'] ?? null) ?: $validated['joined_at'],
+                    'status' => 'active',
+                    'certificates' => $validated['field_certificates'] ?? null,
+                    'note' => $validated['field_note'] ?? null,
+                ]);
+            }
+        });
 
         return redirect()->route('users.index')->with('success', 'Tạo tài khoản nhân viên thành công!');
     }
@@ -168,6 +227,8 @@ class UserController extends Controller
         $department = $request->input('department');
         $validPositions = $map[$department] ?? [];
 
+        $request->merge(VietnameseDate::normalizedFields($request->all(), ['date_of_birth', 'joined_at']));
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
@@ -176,12 +237,7 @@ class UserController extends Controller
             'position' => ['required', Rule::in($validPositions)],
             'date_of_birth' => 'required|date|before:today',
             'joined_at' => 'required|date|after_or_equal:'.now()->subYears(10)->toDateString().'|before_or_equal:today',
-        ], [
-            'department.required' => 'Vui lòng chọn bộ phận / phòng ban.',
-            'department.in' => 'Bộ phận không hợp lệ.',
-            'position.required' => 'Vui lòng chọn chức vụ.',
-            'position.in' => 'Chức vụ không hợp lệ đối với phòng ban đã chọn.',
-        ]);
+        ], $this->validationMessages());
 
         // Extra check for DISPATCH role selection
         if (auth()->user()->hasRole('DISPATCH')) {
@@ -203,16 +259,7 @@ class UserController extends Controller
         ]);
 
         if ($request->filled('password')) {
-            $request->validate(
-                ['password' => ['confirmed', Password::min(8)->mixedCase()->numbers()->symbols()]],
-                [
-                    'password.confirmed' => 'Mật khẩu xác nhận không khớp.',
-                    'password.min' => 'Mật khẩu phải có ít nhất 8 ký tự.',
-                    'password.mixed' => 'Mật khẩu phải chứa cả chữ hoa và chữ thường.',
-                    'password.numbers' => 'Mật khẩu phải chứa ít nhất một chữ số.',
-                    'password.symbols' => 'Mật khẩu phải chứa ít nhất một ký tự đặc biệt.',
-                ]
-            );
+            $request->validate(['password' => ['confirmed', Password::min(8)->mixedCase()->numbers()->symbols()]], $this->validationMessages());
             $user->update(['password' => Hash::make($request->password)]);
         }
 
@@ -255,5 +302,78 @@ class UserController extends Controller
         }
 
         return $prefix.$newSequence;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function profileRules(?string $roleCode): array
+    {
+        if ($roleCode === 'DRIVER') {
+            return [
+                'driver_phone' => ['required', 'regex:/^0\d{9}$/'],
+                'driver_license_number' => ['required', 'string', 'max:50', 'unique:drivers,license_number'],
+                'driver_start_date' => ['nullable', 'date'],
+                'driver_rank' => ['nullable', Rule::in(array_keys(LogisticsOptions::driverRanks()))],
+                'driver_contract_expiry' => ['nullable', 'date'],
+                'driver_note' => ['nullable', 'string', 'max:1000'],
+            ];
+        }
+
+        if ($roleCode === 'FIELD') {
+            return [
+                'field_phone' => ['required', 'regex:/^0\d{9}$/'],
+                'field_responsible_location_ids' => ['required', 'array', 'min:1'],
+                'field_responsible_location_ids.*' => [
+                    'required',
+                    'integer',
+                    Rule::exists('locations', 'id')->where(fn ($query) => $query->whereIn('type', ['depot', 'warehouse'])),
+                ],
+                'field_start_date' => ['nullable', 'date'],
+                'field_certificates' => ['nullable', 'string', 'max:1000'],
+                'field_note' => ['nullable', 'string', 'max:1000'],
+            ];
+        }
+
+        return [];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function validationMessages(): array
+    {
+        return [
+            'name.required' => 'Vui lòng nhập họ tên nhân viên.',
+            'email.required' => 'Vui lòng nhập email đăng nhập.',
+            'email.email' => 'Email đăng nhập không đúng định dạng.',
+            'email.unique' => 'Email này đã tồn tại.',
+            'password.required' => 'Vui lòng nhập mật khẩu.',
+            'password.confirmed' => 'Xác nhận mật khẩu không khớp.',
+            'password.min' => 'Mật khẩu phải có tối thiểu 8 ký tự.',
+            'password.mixed' => 'Mật khẩu phải có cả chữ hoa và chữ thường.',
+            'password.numbers' => 'Mật khẩu phải có ít nhất một chữ số.',
+            'password.symbols' => 'Mật khẩu phải có ít nhất một ký tự đặc biệt.',
+            'role_id.required' => 'Vui lòng chọn vai trò hệ thống.',
+            'position.required' => 'Vui lòng chọn chức vụ.',
+            'department.required' => 'Vui lòng chọn bộ phận/phòng ban.',
+            'date_of_birth.required' => 'Vui lòng nhập ngày sinh.',
+            'date_of_birth.date' => 'Ngày sinh phải đúng định dạng ngày/tháng/năm.',
+            'date_of_birth.before' => 'Ngày sinh phải nhỏ hơn ngày hiện tại.',
+            'joined_at.required' => 'Vui lòng nhập ngày tham gia.',
+            'joined_at.date' => 'Ngày tham gia phải đúng định dạng ngày/tháng/năm.',
+            'joined_at.after_or_equal' => 'Ngày tham gia chỉ được trong vòng 10 năm gần đây.',
+            'joined_at.before_or_equal' => 'Ngày tham gia không được là ngày trong tương lai.',
+            'driver_phone.required' => 'Vui lòng nhập số điện thoại tài xế.',
+            'driver_phone.regex' => 'Số điện thoại tài xế phải gồm đúng 10 số và bắt đầu bằng 0.',
+            'driver_license_number.required' => 'Vui lòng nhập số bằng lái.',
+            'driver_license_number.unique' => 'Số bằng lái này đã tồn tại.',
+            'driver_rank.in' => 'Cấp bậc tài xế không hợp lệ.',
+            'field_phone.required' => 'Vui lòng nhập số điện thoại nhân viên hiện trường.',
+            'field_phone.regex' => 'Số điện thoại nhân viên hiện trường phải gồm đúng 10 số và bắt đầu bằng 0.',
+            'field_responsible_location_ids.required' => 'Vui lòng chọn ít nhất một khu vực phụ trách.',
+            'field_responsible_location_ids.min' => 'Vui lòng chọn ít nhất một khu vực phụ trách.',
+            'field_responsible_location_ids.*.exists' => 'Khu vực phụ trách phải là kho hoặc bãi hợp lệ.',
+        ];
     }
 }

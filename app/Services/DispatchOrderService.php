@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\DispatchOrder;
 use App\Models\ShippingJob;
+use App\Support\VietnameseDate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -61,6 +62,14 @@ class DispatchOrderService
             $query->whereHas('shippingJob', fn ($sub) => $sub->where('job_code', 'like', "%{$filters['job_code']}%"));
         }
 
+        if (! empty($filters['planned_departure_date'])) {
+            $query->whereDate('planned_departure_date', VietnameseDate::toDatabase($filters['planned_departure_date']));
+        }
+
+        if (! empty($filters['planned_return_date'])) {
+            $query->whereDate('planned_return_date', VietnameseDate::toDatabase($filters['planned_return_date']));
+        }
+
         return $query->paginate($perPage);
     }
 
@@ -83,6 +92,8 @@ class DispatchOrderService
             $dispatchOrder->trackingLogs()->create([
                 'status_update' => 'pending_approval',
                 'updated_by' => Auth::id(),
+                'latitude' => $data['current_latitude'] ?? null,
+                'longitude' => $data['current_longitude'] ?? null,
             ]);
 
             return $dispatchOrder;

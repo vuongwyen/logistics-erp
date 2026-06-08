@@ -8,31 +8,35 @@
     <x-export-buttons />
 </div>
 
-<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
-    <form action="{{ route('service-prices.index') }}" method="GET">
-        <div class="row g-3 align-items-center">
-            <div class="col-md-3"><input type="text" name="package_code" class="form-control border-light" placeholder="Mã gói" value="{{ request('package_code') }}"></div>
-            <div class="col-md-3"><input type="text" name="service_name" class="form-control border-light" placeholder="Dịch vụ" value="{{ request('service_name') }}"></div>
-            <div class="col-md-3">
-                <select name="unit" class="form-select border-light">
-                    <option value="">Đơn vị</option>
-                    @foreach(\App\Support\LogisticsOptions::serviceUnits() as $value => $label)
-                        <option value="{{ $value }}" {{ request('unit') === $value ? 'selected' : '' }}>{{ $label }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-md-3">
-                <select name="is_tax_included" class="form-select border-light">
-                    <option value="">Tất cả thuế</option>
-                    <option value="1" {{ request('is_tax_included') === '1' ? 'selected' : '' }}>Đã gồm thuế</option>
-                    <option value="0" {{ request('is_tax_included') === '0' ? 'selected' : '' }}>Chưa gồm thuế</option>
-                </select>
-            </div>
-
-            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
-                <a href="{{ route('service-prices.index') }}" class="btn btn-light px-4">Xóa lọc</a>
-                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
-            </div>
+<div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+    <form action="{{ route('service-prices.index') }}" method="GET" class="row g-3 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label small fw-bold text-muted">Mã gói</label>
+            <input type="text" name="package_code" class="form-control border-light" placeholder="Mã gói" value="{{ request('package_code') }}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-bold text-muted">Tên dịch vụ</label>
+            <input type="text" name="service_name" class="form-control border-light" placeholder="Dịch vụ" value="{{ request('service_name') }}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-bold text-muted">Đơn vị tính</label>
+            <select name="unit" class="form-select border-light">
+                <option value="">Đơn vị</option>
+                @foreach(\App\Support\LogisticsOptions::serviceUnits() as $value => $label)
+                    <option value="{{ $value }}" {{ request('unit') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Thuế</label>
+            <select name="is_tax_included" class="form-select border-light">
+                <option value="">Tất cả thuế</option>
+                <option value="1" {{ request('is_tax_included') === '1' ? 'selected' : '' }}>Đã gồm thuế</option>
+                <option value="0" {{ request('is_tax_included') === '0' ? 'selected' : '' }}>Chưa gồm thuế</option>
+            </select>
+        </div>
+        <div class="col-md-1">
+            <button type="submit" class="btn btn-navy w-100">Lọc</button>
         </div>
     </form>
 </div>
@@ -44,6 +48,11 @@
 </div>
 
 <!-- Data Table -->
+<div class="d-flex justify-content-end mb-3">
+    <button class="btn btn-navy px-4 fw-bold" data-bs-toggle="modal" data-bs-target="#priceModal" onclick="prepareAdd()">
+        <i class="fa fa-plus me-2"></i> THÊM BIỂU GIÁ
+    </button>
+</div>
 <div class="card border-0 rounded-4 shadow-sm overflow-hidden">
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
@@ -93,7 +102,7 @@
         </table>
     </div>
     <div class="p-4 border-top">
-        {{ $servicePrices->links('pagination::bootstrap-5') }}
+        {{ $servicePrices->appends(request()->query())->links('pagination::bootstrap-5') }}
     </div>
 </div>
 
@@ -110,25 +119,25 @@
                 </div>
                 <div class="modal-body p-4 pt-0">
                     <div class="row g-3">
-                        <!-- <div class="col-md-12">
+                        <div class="col-md-12" id="packageCodeGroup">
                             <label class="form-label fw-semibold">Mã gói</label>
                             <input type="text" id="package_code" class="form-control bg-light border-0" placeholder="Tự sinh khi lưu" disabled>
-                        </div> -->
+                        </div>
                         <div class="col-md-12">
-                            <label class="form-label fw-semibold">Tên Dịch Vụ</label>
-                            <input type="text" name="service_name" id="service_name" class="form-control bg-light border-0" placeholder="VD: Vận chuyển Cont 20'..." required>
+                            <label class="form-label fw-semibold">Tên Dịch Vụ <span class="text-danger">*</span></label>
+                            <input type="text" name="service_name" id="service_name" class="form-control bg-light border-0" placeholder="VD: Vận chuyển Cont 20'..." data-validate required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">Đơn Vị Tính</label>
-                            <select name="unit" id="unit" class="form-select bg-light border-0" required>
+                            <label class="form-label fw-semibold">Đơn Vị Tính <span class="text-danger">*</span></label>
+                            <select name="unit" id="unit" class="form-select bg-light border-0" data-validate required>
                                 @foreach(\App\Support\LogisticsOptions::serviceUnits() as $value => $label)
                                     <option value="{{ $value }}">{{ $label }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">Đơn Giá (VNĐ)</label>
-                            <input type="number" name="unit_price" id="unit_price" class="form-control bg-light border-0" min="1000" required>
+                            <label class="form-label fw-semibold">Đơn Giá (VNĐ) <span class="text-danger">*</span></label>
+                            <input type="number" name="unit_price" id="unit_price" class="form-control bg-light border-0" data-validate required>
                         </div>
                         <div class="col-md-12">
                             <div class="form-check form-switch">
@@ -154,12 +163,14 @@
         document.getElementById('priceForm').action = "{{ route('service-prices.store') }}";
         document.getElementById('methodField').innerHTML = '';
         document.getElementById('priceForm').reset();
+        document.getElementById('packageCodeGroup').classList.add('d-none');
     }
 
     function prepareEdit(price) {
         document.getElementById('modalTitle').innerText = 'Chỉnh Sửa Biểu Giá';
         document.getElementById('priceForm').action = `/service-prices/${price.id}`;
         document.getElementById('methodField').innerHTML = '@method("PUT")';
+        document.getElementById('packageCodeGroup').classList.remove('d-none');
         
         document.getElementById('package_code').value = price.package_code || '';
         document.getElementById('service_name').value = price.service_name;

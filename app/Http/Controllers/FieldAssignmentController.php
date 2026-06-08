@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Notifications\LogisticsNotification;
 use App\Services\ExportService;
 use App\Support\LogisticsOptions;
+use App\Support\VietnameseDate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 
@@ -60,7 +61,7 @@ class FieldAssignmentController extends Controller
         }
 
         if ($request->filled('assigned_date')) {
-            $query->whereDate('assigned_date', $request->date('assigned_date'));
+            $query->whereDate('assigned_date', VietnameseDate::toDatabase($request->input('assigned_date')));
         }
 
         if ($request->filled('export')) {
@@ -115,10 +116,7 @@ class FieldAssignmentController extends Controller
             'status' => ['required', 'in:assigned,completed,cancelled'],
         ]);
 
-        if ($request->user()->hasRole('FIELD')) {
-            abort_unless($fieldAssignment->field_staff_id === ($request->user()->fieldStaff?->id ?? 0), 403);
-            abort_unless($validated['status'] === 'completed', 403);
-        }
+        abort_unless($request->user()->hasRole(['ADMIN', 'DISPATCH']), 403);
 
         $fieldAssignment->update([
             'status' => $validated['status'],

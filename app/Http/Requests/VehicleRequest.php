@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Support\LogisticsOptions;
+use App\Support\VietnameseDate;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -11,6 +12,15 @@ class VehicleRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge(VietnameseDate::normalizedFields($this->all(), ['registration_expiry']));
+
+        if ($this->filled('plate_number')) {
+            $this->merge(['plate_number' => strtoupper((string) $this->input('plate_number'))]);
+        }
     }
 
     public function rules(): array

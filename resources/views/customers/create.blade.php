@@ -14,14 +14,9 @@
     <form action="{{ route('customers.store') }}" method="POST">
         @csrf
         <div class="row g-4">
-            <!-- <div class="col-md-4">
-                <label class="form-label fw-bold">Mã Khách Hàng</label>
-                <input type="text" class="form-control bg-light" value="Tự sinh khi lưu" disabled>
-                <div class="form-text">Quy định: KH-YYMM-XXX, không chỉnh sửa thủ công.</div>
-            </div> -->
             <div class="col-md-6">
                 <label class="form-label fw-bold">Tên Khách Hàng <span class="text-danger">*</span></label>
-                <input type="text" name="customer_name" class="form-control @error('customer_name') is-invalid @enderror" value="{{ old('customer_name') }}" required onblur="this.value = this.value.trim().replace(/\s+/g, ' ').replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });">
+                <input type="text" name="customer_name" class="form-control @error('customer_name') is-invalid @enderror" value="{{ old('customer_name') }}" data-validate="person-name" data-label="Tên khách hàng" required>
                 @error('customer_name')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -35,7 +30,7 @@
             </div>
             <div class="col-md-4">
                 <label class="form-label fw-bold">Mã Số Thuế <span class="text-danger">*</span></label>
-                <input type="text" name="tax_code" class="form-control @error('tax_code') is-invalid @enderror" value="{{ old('tax_code') }}" maxlength="10" inputmode="numeric" required oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                <input type="text" name="tax_code" class="form-control @error('tax_code') is-invalid @enderror" value="{{ old('tax_code') }}" maxlength="10" inputmode="numeric" data-validate="tax-code" data-label="Mã số thuế" required>
                 @error('tax_code')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -51,7 +46,10 @@
 
             <div class="col-md-4">
                 <label class="form-label fw-bold">Số điện thoại liên hệ</label>
-                <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}" maxlength="10" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}" maxlength="10" inputmode="numeric" data-validate="phone-vn" data-label="Số điện thoại">
+                @error('phone')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
             <div class="col-md-4">
                 <label class="form-label fw-bold">Email</label>
@@ -59,7 +57,7 @@
             </div>
             <div class="col-md-4">
                 <label class="form-label fw-bold">Người liên hệ</label>
-                <input type="text" name="contact_person" class="form-control @error('contact_person') is-invalid @enderror" value="{{ old('contact_person') }}" placeholder="Nhập tên người liên hệ">
+                <input type="text" name="contact_person" class="form-control @error('contact_person') is-invalid @enderror" value="{{ old('contact_person') }}" placeholder="VD: Nguyễn Văn A">
                 @error('contact_person')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror

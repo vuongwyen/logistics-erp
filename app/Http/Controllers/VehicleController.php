@@ -25,7 +25,7 @@ class VehicleController extends Controller
                 $vehicle->plate_number,
                 $vehicle->vehicle_type,
                 $vehicle->payload,
-                $vehicle->registration_expiry,
+                $vehicle->registration_expiry?->format('d/m/Y'),
                 $vehicle->status,
                 $vehicle->note,
             ])->all());

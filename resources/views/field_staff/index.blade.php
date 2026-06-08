@@ -5,43 +5,57 @@
 @section('content')
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
     <h4 class="fw-bold mb-0">Quản lý Nhân viên hiện trường</h4>
-    
     <x-export-buttons />
 </div>
 
-<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
-    <form action="{{ route('field-staff.index') }}" method="GET">
-        <div class="row g-3 align-items-center">
-            <div class="col-md-3"><input type="text" name="staff_code" class="form-control border-light" placeholder="Mã" value="{{ request('staff_code') }}"></div>
-            <div class="col-md-3"><input type="text" name="full_name" class="form-control border-light" placeholder="Họ tên" value="{{ request('full_name') }}"></div>
-            <div class="col-md-3"><input type="text" name="phone" class="form-control border-light" placeholder="SĐT" value="{{ request('phone') }}"></div>
-            <div class="col-md-3">
-                <select name="responsible_location_id" class="form-select border-light">
-                    <option value="">Tất cả khu vực</option>
-                    @foreach($responsibleLocations as $location)
-                        <option value="{{ $location->id }}" {{ (string) request('responsible_location_id') === (string) $location->id ? 'selected' : '' }}>
-                            {{ $location->location_name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-md-3">
-                <select name="status" class="form-select border-light">
-                    <option value="">Tất cả trạng thái</option>
-                    <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Đang làm việc</option>
-                    <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Nghỉ việc</option>
-                </select>
-            </div>
-            
-            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
-                <a href="{{ route('field-staff.index') }}" class="btn btn-light px-4">Xóa lọc</a>
-                <button type="submit" class="btn btn-navy px-4">Tìm kiếm</button>
-            </div>
+<div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+    <form action="{{ route('field-staff.index') }}" method="GET" class="row g-3 align-items-end">
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Mã nhân viên</label>
+            <input type="text" name="staff_code" class="form-control border-light" placeholder="Mã" value="{{ request('staff_code') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Họ tên</label>
+            <input type="text" name="full_name" class="form-control border-light" placeholder="Họ tên" value="{{ request('full_name') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Số điện thoại</label>
+            <input type="text" name="phone" class="form-control border-light" placeholder="10 số" value="{{ request('phone') }}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-bold text-muted">Khu vực phụ trách</label>
+            <select name="responsible_location_id" class="form-select border-light">
+                <option value="">Tất cả khu vực</option>
+                @foreach($responsibleLocations as $location)
+                    <option value="{{ $location->id }}" {{ (string) request('responsible_location_id') === (string) $location->id ? 'selected' : '' }}>
+                        {{ $location->location_name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Ngày sinh</label>
+            <input type="text" name="date_of_birth" class="form-control border-light" placeholder="Ngày/Tháng/Năm" value="{{ \App\Support\VietnameseDate::display(request('date_of_birth')) }}" data-date-input data-label="Ngày sinh">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Trạng thái</label>
+            <select name="status" class="form-select border-light">
+                <option value="">Tất cả trạng thái</option>
+                <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Đang làm việc</option>
+                <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Nghỉ việc</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-bold text-muted">Chứng chỉ</label>
+            <input type="text" name="certificates" class="form-control border-light" placeholder="Chứng chỉ" value="{{ request('certificates') }}">
+        </div>
+        <div class="col-md-2 ms-md-auto">
+            <button type="submit" class="btn btn-navy w-100">Lọc</button>
         </div>
     </form>
 </div>
 
-<div class="d-flex justify-content-end mb-4">
+<div class="d-flex justify-content-end mb-3">
     <button class="btn btn-navy px-4 fw-bold" data-bs-toggle="modal" data-bs-target="#fieldStaffModal" onclick="prepareAdd()">
         <i class="fa fa-plus me-2"></i> THÊM NHÂN VIÊN
     </button>
@@ -68,9 +82,7 @@
                             <div class="fw-bold text-navy">{{ $staff->staff_code }}</div>
                             <div class="small">{{ $staff->full_name }}</div>
                             <div class="small text-muted">
-                                {{ $staff->phone ?: 'Chưa có số điện thoại' }}
-                                <span class="mx-1">•</span>
-                                Vào làm: {{ $staff->start_date?->format('d/m/Y') ?? '---' }}
+                                Ngày sinh: {{ $staff->date_of_birth?->format('d/m/Y') ?? '---' }}
                             </div>
                         </td>
                         <td>
@@ -78,7 +90,13 @@
                             <div class="small text-muted">{{ $staff->date_of_birth?->format('d/m/Y') ?? '---' }}</div>
                         </td>
                         <td>
-                            @if($staff->responsibleLocation)
+                            @if($staff->responsibleLocations->isNotEmpty())
+                                <div class="d-flex flex-wrap gap-1">
+                                    @foreach($staff->responsibleLocations as $location)
+                                        <span class="badge bg-light text-dark border">{{ $location->location_name }}</span>
+                                    @endforeach
+                                </div>
+                            @elseif($staff->responsibleLocation)
                                 <div class="fw-semibold">{{ $staff->responsibleLocation->location_name }}</div>
                                 <div class="small text-muted">{{ $staff->responsibleLocation->province }}</div>
                             @else
@@ -116,7 +134,7 @@
         </table>
     </div>
     <div class="p-4 border-top">
-        {{ $fieldStaff->links('pagination::bootstrap-5') }}
+        {{ $fieldStaff->appends(request()->query())->links('pagination::bootstrap-5') }}
     </div>
 </div>
 
@@ -133,18 +151,16 @@
                 <div class="modal-body p-4 pt-0">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">Họ và tên <span class="text-danger">*</span></label>
-                            <input type="text" name="full_name" id="full_name" class="form-control bg-light border-0" required maxlength="100" placeholder="Nhập họ và tên" oninput="formatName(this)">
-                            <div class="invalid-feedback" id="full_name_error" style="display: none;"></div>
+                            <label class="form-label fw-semibold">Họ và tên</label>
+                            <input type="text" name="full_name" id="full_name" class="form-control bg-light border-0" data-validate="person-name" data-label="Họ và tên" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">Số điện thoại <span class="text-danger">*</span></label>
-                            <input type="text" name="phone" id="phone" class="form-control bg-light border-0" maxlength="10" inputmode="numeric" required placeholder="VD: 0912345678" oninput="formatPhone(this)">
-                            <div class="invalid-feedback" id="phone_error" style="display: none;"></div>
+                            <label class="form-label fw-semibold">Số điện thoại</label>
+                            <input type="text" name="phone" id="phone" class="form-control bg-light border-0" maxlength="10" inputmode="numeric" data-validate="phone-vn" data-label="Số điện thoại" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">Ngày sinh <span class="text-danger">*</span></label>
-                            <input type="date" name="date_of_birth" id="date_of_birth" class="form-control bg-light border-0" required>
+                            <label class="form-label fw-semibold">Ngày sinh</label>
+                            <input type="text" name="date_of_birth" id="date_of_birth" class="form-control bg-light border-0" placeholder="Ngày/Tháng/Năm" data-date-input data-label="Ngày sinh" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Tài khoản liên kết</label>
@@ -159,8 +175,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Khu vực phụ trách <span class="text-danger">*</span></label>
-                            <select name="responsible_location_id" id="responsible_location_id" class="form-select bg-light border-0" required>
-                                <option value="">Chọn kho/bãi</option>
+                            <select name="responsible_location_ids[]" id="responsible_location_ids" class="form-select bg-light border-0" multiple data-validate data-label="Khu vực phụ trách" required>
                                 @foreach($responsibleLocations as $location)
                                     <option value="{{ $location->id }}">{{ $location->location_name }} - {{ $location->province }}</option>
                                 @endforeach
@@ -168,7 +183,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Ngày bắt đầu làm việc</label>
-                            <input type="text" onfocus="(this.type='date')" onblur="(this.value == '' ? this.type='text' : this.type='date')" placeholder="VD: {{ now()->format('d/m/Y') }}" name="start_date" id="start_date" class="form-control bg-light border-0" min="{{ now()->subYears(10)->toDateString() }}" max="{{ now()->toDateString() }}">
+                            <input type="text" name="start_date" id="start_date" class="form-control bg-light border-0" placeholder="Ngày/Tháng/Năm" data-date-input data-label="Ngày bắt đầu làm việc">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Trạng thái <span class="text-danger">*</span></label>
@@ -198,22 +213,26 @@
 
 @push('scripts')
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        if (typeof flatpickr !== 'undefined') {
-            flatpickr("#date_of_birth", { dateFormat: "d/m/Y", allowInput: true });
-            flatpickr("#start_date", { dateFormat: "d/m/Y", allowInput: true });
-        }
-    });
-
-    function dateOnly(value) {
-        return value ? value.split('T')[0].split(' ')[0] : '';
+    function removeTemporaryFieldUserOptions() {
+        document.querySelectorAll('#user_id option[data-temporary-linked-user="true"]').forEach((option) => option.remove());
     }
 
-    function setDateValue(id, date) {
-        if (typeof flatpickr !== 'undefined') {
-            let instance = flatpickr("#" + id, { dateFormat: "d/m/Y" });
-            instance.setDate(date);
+    function ensureFieldUserOption(staff) {
+        const select = document.getElementById('user_id');
+        removeTemporaryFieldUserOptions();
+
+        if (!staff.user_id || !staff.user) {
+            select.value = '';
+            return;
         }
+
+        if (!Array.from(select.options).some((option) => option.value === String(staff.user_id))) {
+            const option = new Option(`${staff.user.name} - ${staff.user.username || staff.user.email}`, staff.user_id, true, true);
+            option.dataset.temporaryLinkedUser = 'true';
+            select.add(option);
+        }
+
+        select.value = String(staff.user_id);
     }
 
     function prepareAdd() {
@@ -221,14 +240,7 @@
         document.getElementById('fieldStaffForm').action = "{{ route('field-staff.store') }}";
         document.getElementById('methodField').innerHTML = '';
         document.getElementById('fieldStaffForm').reset();
-
-        let today = new Date();
-        let adultDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
-        
-        if (window.setDateValue) {
-            setDateValue('date_of_birth', adultDate);
-            setDateValue('start_date', today);
-        }
+        removeTemporaryFieldUserOptions();
     }
 
 
@@ -240,10 +252,16 @@
 
         document.getElementById('full_name').value = staff.full_name;
         document.getElementById('phone').value = staff.phone || '';
-        document.getElementById('date_of_birth').value = dateOnly(staff.date_of_birth);
-        document.getElementById('user_id').value = staff.user_id || '';
-        document.getElementById('responsible_location_id').value = staff.responsible_location_id || '';
-        document.getElementById('start_date').value = dateOnly(staff.start_date);
+        document.getElementById('date_of_birth').value = isoToDate(dateOnly(staff.date_of_birth));
+        ensureFieldUserOption(staff);
+        const selectedLocations = (staff.responsible_locations || []).map((location) => String(location.id));
+        if (selectedLocations.length === 0 && staff.responsible_location_id) {
+            selectedLocations.push(String(staff.responsible_location_id));
+        }
+        Array.from(document.getElementById('responsible_location_ids').options).forEach((option) => {
+            option.selected = selectedLocations.includes(option.value);
+        });
+        document.getElementById('start_date').value = isoToDate(dateOnly(staff.start_date));
         document.getElementById('status').value = staff.status;
         document.getElementById('certificates').value = staff.certificates || '';
         document.getElementById('note').value = staff.note || '';

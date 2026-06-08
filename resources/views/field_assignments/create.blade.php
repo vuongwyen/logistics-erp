@@ -19,7 +19,7 @@
                 <div class="card-body p-4">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-bold text-navy">Đơn hàng liên kết</label>
+                            <label class="form-label fw-bold text-navy">Đơn hàng liên kết <span class="text-danger">*</span></label>
                             <select name="shipping_job_id" class="form-select @error('shipping_job_id') is-invalid @enderror" required>
                                 <option value="">Chọn đơn hàng</option>
                                 @foreach($shippingJobs as $job)
@@ -31,7 +31,7 @@
                             @error('shipping_job_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold text-navy">Nhân viên được điều</label>
+                            <label class="form-label fw-bold text-navy">Nhân viên được điều <span class="text-danger">*</span></label>
                             <select name="field_staff_id" class="form-select @error('field_staff_id') is-invalid @enderror" required>
                                 <option value="">Chọn nhân viên hiện trường</option>
                                 @foreach($fieldStaff as $staff)
@@ -43,7 +43,7 @@
                             @error('field_staff_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold text-navy">Vị trí thực hiện</label>
+                            <label class="form-label fw-bold text-navy">Vị trí thực hiện <span class="text-danger">*</span></label>
                             <select name="location_id" class="form-select @error('location_id') is-invalid @enderror" required>
                                 <option value="">Chọn vị trí</option>
                                 @foreach($locations as $location)
@@ -55,12 +55,12 @@
                             @error('location_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold text-navy">Ngày thực hiện</label>
-                            <input type="date" name="assigned_date" class="form-control @error('assigned_date') is-invalid @enderror" value="{{ old('assigned_date', now()->toDateString()) }}" required>
+                            <label class="form-label fw-bold text-navy">Ngày thực hiện <span class="text-danger">*</span></label>
+                            <input type="text" name="assigned_date" class="form-control @error('assigned_date') is-invalid @enderror" value="{{ \App\Support\VietnameseDate::display(old('assigned_date', now()->toDateString())) }}" placeholder="Ngày/Tháng/Năm" data-date-input data-label="Ngày thực hiện" required>
                             @error('assigned_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-12">
-                            <label class="form-label fw-bold text-navy">Nhiệm vụ cần làm</label>
+                            <label class="form-label fw-bold text-navy">Nhiệm vụ cần làm <span class="text-danger">*</span></label>
                             <div class="row g-2">
                                 @foreach($tasks as $taskValue => $taskLabel)
                                     <div class="col-md-6">

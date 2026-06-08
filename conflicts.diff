@@ -1,0 +1,2312 @@
+﻿diff --cc app/Http/Controllers/DispatchOrderController.php
+index a7a8a27,8f15f48..0000000
+--- a/app/Http/Controllers/DispatchOrderController.php
++++ b/app/Http/Controllers/DispatchOrderController.php
+diff --cc app/Http/Controllers/ProfileController.php
+index 3f8153e,cde87a6..0000000
+--- a/app/Http/Controllers/ProfileController.php
++++ b/app/Http/Controllers/ProfileController.php
+diff --cc app/Http/Controllers/RecurringExpenseController.php
+index 95d1295,1788bb8..0000000
+--- a/app/Http/Controllers/RecurringExpenseController.php
++++ b/app/Http/Controllers/RecurringExpenseController.php
+diff --cc app/Http/Controllers/UserController.php
+index 996009c,6c6f55b..0000000
+--- a/app/Http/Controllers/UserController.php
++++ b/app/Http/Controllers/UserController.php
+@@@ -172,16 -225,11 +224,20 @@@ class UserController extends Controlle
+              'name' => 'required|string|max:255',
+              'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
+              'role_id' => 'required|exists:roles,id',
+ -            'position' => 'required|in:'.implode(',', array_keys(LogisticsOptions::positions())),
+ -            'department' => 'required|in:'.implode(',', array_keys(LogisticsOptions::departments())),
+ +            'department' => ['required', Rule::in(array_keys($map))],
+ +            'position' => ['required', Rule::in($validPositions)],
+              'date_of_birth' => 'required|date|before:today',
+              'joined_at' => 'required|date|after_or_equal:'.now()->subYears(10)->toDateString().'|before_or_equal:today',
+++<<<<<<< HEAD
+ +        ], [
+ +            'department.required' => 'Vui l├▓ng chß╗ìn bß╗Ö phß║¡n / ph├▓ng ban.',
+ +            'department.in' => 'Bß╗Ö phß║¡n kh├┤ng hß╗úp lß╗ç.',
+ +            'position.required' => 'Vui l├▓ng chß╗ìn chß╗⌐c vß╗Ñ.',
+ +            'position.in' => 'Chß╗⌐c vß╗Ñ kh├┤ng hß╗úp lß╗ç ─æß╗æi vß╗¢i ph├▓ng ban ─æ├ú chß╗ìn.',
+ +        ]);
+++=======
++         ], $this->validationMessages());
+++>>>>>>> upstream/quyen-branch
+  
+          // Extra check for DISPATCH role selection
+          if (auth()->user()->hasRole('DISPATCH')) {
+@@@ -203,16 -251,7 +259,20 @@@
+          ]);
+  
+          if ($request->filled('password')) {
+++<<<<<<< HEAD
+ +            $request->validate(
+ +                ['password' => ['confirmed', Password::min(8)->mixedCase()->numbers()->symbols()]],
+ +                [
+ +                    'password.confirmed' => 'Mß║¡t khß║⌐u x├íc nhß║¡n kh├┤ng khß╗¢p.',
+ +                    'password.min' => 'Mß║¡t khß║⌐u phß║úi c├│ ├¡t nhß║Ñt 8 k├╜ tß╗▒.',
+ +                    'password.mixed' => 'Mß║¡t khß║⌐u phß║úi chß╗⌐a cß║ú chß╗» hoa v├á chß╗» th╞░ß╗¥ng.',
+ +                    'password.numbers' => 'Mß║¡t khß║⌐u phß║úi chß╗⌐a ├¡t nhß║Ñt mß╗Öt chß╗» sß╗æ.',
+ +                    'password.symbols' => 'Mß║¡t khß║⌐u phß║úi chß╗⌐a ├¡t nhß║Ñt mß╗Öt k├╜ tß╗▒ ─æß║╖c biß╗çt.',
+ +                ]
+ +            );
+++=======
++             $request->validate(['password' => ['confirmed', Password::min(8)->mixedCase()->numbers()->symbols()]], $this->validationMessages());
+++>>>>>>> upstream/quyen-branch
+              $user->update(['password' => Hash::make($request->password)]);
+          }
+  
+diff --cc app/Http/Requests/CustomerRequest.php
+index ee84785,2b375cc..0000000
+--- a/app/Http/Requests/CustomerRequest.php
++++ b/app/Http/Requests/CustomerRequest.php
+diff --cc app/Http/Requests/ShippingJobRequest.php
+index beebbfc,c351525..0000000
+--- a/app/Http/Requests/ShippingJobRequest.php
++++ b/app/Http/Requests/ShippingJobRequest.php
+diff --cc app/Services/CustomerService.php
+index d2fb039,f9cc9f0..0000000
+--- a/app/Services/CustomerService.php
++++ b/app/Services/CustomerService.php
+diff --cc app/Services/ExportService.php
+index b30e9b5,04f311c..0000000
+--- a/app/Services/ExportService.php
++++ b/app/Services/ExportService.php
+@@@ -534,9 -416,8 +534,12 @@@ class ExportServic
+          $content .= $this->pdfCenteredText(421, 512, $this->pdfLimit($this->ascii((string) $context['contact_line']), 560), 8, '0.10 0.14 0.24');
+          $content .= $this->pdfCenteredText(421, 480, $this->ascii((string) $context['title_upper']), 16, '0.10 0.14 0.49');
+          $content .= "0.03 0.64 0.62 rg\n335 469 172 2 re f\n";
+++<<<<<<< HEAD
+ +        $content .= $this->pdfCenteredText(421, 452, $this->pdfLimit($this->ascii(mb_strtoupper($sheetName)), 500), 12, '0.19 0.22 0.30');
+++=======
+++>>>>>>> upstream/quyen-branch
+  
+-         $tableTop = 424;
++         $tableTop = 444;
+          $left = 35;
+          $width = 772;
+          $rowHeight = 18;
+diff --cc public/js/app.js
+index 4d074ff,a865eff..0000000
+--- a/public/js/app.js
++++ b/public/js/app.js
+diff --cc resources/views/customers/create.blade.php
+index 8019cbb,a3f67a5..0000000
+--- a/resources/views/customers/create.blade.php
++++ b/resources/views/customers/create.blade.php
+@@@ -35,7 -30,7 +35,11 @@@
+              </div>
+              <div class="col-md-4">
+                  <label class="form-label fw-bold">M├ú Sß╗æ Thuß║┐ <span class="text-danger">*</span></label>
+++<<<<<<< HEAD
+ +                <input type="text" name="tax_code" class="form-control @error('tax_code') is-invalid @enderror" value="{{ old('tax_code') }}" maxlength="10" inputmode="numeric" required oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+++=======
++                 <input type="text" name="tax_code" class="form-control @error('tax_code') is-invalid @enderror" value="{{ old('tax_code') }}" maxlength="10" inputmode="numeric" data-validate="tax-code" data-label="M├ú sß╗æ thuß║┐" required>
+++>>>>>>> upstream/quyen-branch
+                  @error('tax_code')
+                      <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
+@@@ -51,7 -46,10 +55,14 @@@
+  
+              <div class="col-md-4">
+                  <label class="form-label fw-bold">Sß╗æ ─æiß╗çn thoß║íi li├¬n hß╗ç</label>
+++<<<<<<< HEAD
+ +                <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}" maxlength="10" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+++=======
++                 <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}" maxlength="10" inputmode="numeric" data-validate="phone-vn" data-label="Sß╗æ ─æiß╗çn thoß║íi">
++                 @error('phone')
++                     <div class="invalid-feedback">{{ $message }}</div>
++                 @enderror
+++>>>>>>> upstream/quyen-branch
+              </div>
+              <div class="col-md-4">
+                  <label class="form-label fw-bold">Email</label>
+@@@ -59,7 -57,7 +70,11 @@@
+              </div>
+              <div class="col-md-4">
+                  <label class="form-label fw-bold">Ng╞░ß╗¥i li├¬n hß╗ç</label>
+++<<<<<<< HEAD
+ +                <input type="text" name="contact_person" class="form-control @error('contact_person') is-invalid @enderror" value="{{ old('contact_person') }}" placeholder="Nhß║¡p t├¬n ng╞░ß╗¥i li├¬n hß╗ç">
+++=======
++                 <input type="text" name="contact_person" class="form-control @error('contact_person') is-invalid @enderror" value="{{ old('contact_person') }}" placeholder="VD: Nguyß╗àn V─ân A">
+++>>>>>>> upstream/quyen-branch
+                  @error('contact_person')
+                      <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
+diff --cc resources/views/customers/edit.blade.php
+index c89a39c,d3e33ac..0000000
+--- a/resources/views/customers/edit.blade.php
++++ b/resources/views/customers/edit.blade.php
+diff --cc resources/views/customers/index.blade.php
+index da22a83,ec4ea92..0000000
+--- a/resources/views/customers/index.blade.php
++++ b/resources/views/customers/index.blade.php
+@@@ -27,13 -41,12 +41,18 @@@
+      </form>
+  </div>
+  
+ +<div class="d-flex justify-content-end mb-4">
+ +    <a href="{{ route('customers.create') }}" class="btn btn-navy px-4 fw-bold">
+ +        <i class="fa fa-plus me-2"></i> TH├èM KH├üCH H├ÇNG
+ +    </a>
+ +</div>
+ +
+  <!-- Data Table -->
++ <div class="d-flex justify-content-end mb-3">
++     <a href="{{ route('customers.create') }}" class="btn btn-navy px-4 fw-bold">
++         <i class="fa fa-plus me-2"></i> TH├èM KH├üCH H├ÇNG
++     </a>
++ </div>
+  <div class="card border-0 rounded-4 shadow-sm overflow-hidden">
+      <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+diff --cc resources/views/dispatch_orders/index.blade.php
+index 5707317,29dfba9..0000000
+--- a/resources/views/dispatch_orders/index.blade.php
++++ b/resources/views/dispatch_orders/index.blade.php
+@@@ -66,26 -66,52 +66,75 @@@
+  @endif
+  
+  <!-- Filters -->
+++<<<<<<< HEAD
+ +<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
+ +    <form action="{{ route('dispatch-orders.index') }}" method="GET">
+ +        <div class="row g-3 align-items-center">
+ +            <div class="col-md-2"><input type="text" name="order_number" class="form-control border-light" placeholder="Sß╗æ lß╗çnh" value="{{ request('order_number') }}"></div>
+ +            <div class="col-md-2"><input type="text" name="job_code" class="form-control border-light" placeholder="M├ú Job" value="{{ request('job_code') }}"></div>
+ +            <div class="col-md-2"><input type="text" name="driver_name" class="form-control border-light" placeholder="T├ái xß║┐" value="{{ request('driver_name') }}"></div>
+ +            <div class="col-md-2"><input type="text" name="plate_number" class="form-control border-light" placeholder="Biß╗ân sß╗æ" value="{{ request('plate_number') }}"></div>
+ +            <div class="col-md-2">
+ +                <select name="approval_status" class="form-select border-light">
+ +                    <option value="">Duyß╗çt</option>
+ +                    <option value="pending" {{ request('approval_status') === 'pending' ? 'selected' : '' }}>Chß╗¥ duyß╗çt</option>
+ +                    <option value="approved" {{ request('approval_status') === 'approved' ? 'selected' : '' }}>─É├ú duyß╗çt</option>
+ +                    <option value="rejected" {{ request('approval_status') === 'rejected' ? 'selected' : '' }}>Tß╗½ chß╗æi</option>
+ +                </select>
+ +            </div>
+ +            
+ +            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+ +                <a href="{{ route('dispatch-orders.index') }}" class="btn btn-light px-4">X├│a lß╗ìc</a>
+ +                <button type="submit" class="btn btn-navy px-4">T├¼m kiß║┐m</button>
+ +            </div>
+++=======
++ <div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
++     <form action="{{ route('dispatch-orders.index') }}" method="GET" class="row g-3 align-items-end">
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Sß╗æ lß╗çnh</label>
++             <input type="text" name="order_number" class="form-control border-light" placeholder="Sß╗æ lß╗çnh" value="{{ request('order_number') }}">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">M├ú ─æ╞ín h├áng</label>
++             <input type="text" name="job_code" class="form-control border-light" placeholder="M├ú Job" value="{{ request('job_code') }}">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">T├ái xß║┐</label>
++             <input type="text" name="driver_name" class="form-control border-light" placeholder="T├ái xß║┐" value="{{ request('driver_name') }}">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Biß╗ân sß╗æ xe</label>
++             <input type="text" name="plate_number" class="form-control border-light" placeholder="Biß╗ân sß╗æ" value="{{ request('plate_number') }}">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Trß║íng th├íi duyß╗çt</label>
++             <select name="approval_status" class="form-select border-light">
++                 <option value="">Duyß╗çt</option>
++                 <option value="pending" {{ request('approval_status') === 'pending' ? 'selected' : '' }}>Chß╗¥ duyß╗çt</option>
++                 <option value="approved" {{ request('approval_status') === 'approved' ? 'selected' : '' }}>─É├ú duyß╗çt</option>
++                 <option value="rejected" {{ request('approval_status') === 'rejected' ? 'selected' : '' }}>Tß╗½ chß╗æi</option>
++             </select>
+++>>>>>>> upstream/quyen-branch
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Trß║íng th├íi ─æiß╗üu vß║¡n</label>
++             <select name="dispatch_status" class="form-select border-light">
++                 <option value="">Tß║Ñt cß║ú chuyß║┐n</option>
++                 <option value="dispatched" {{ request('dispatch_status') === 'dispatched' ? 'selected' : '' }}>─É├ú ─æiß╗üu xe</option>
++                 <option value="on_way" {{ request('dispatch_status') === 'on_way' ? 'selected' : '' }}>─Éang ─æi</option>
++                 <option value="completed" {{ request('dispatch_status') === 'completed' ? 'selected' : '' }}>Ho├án th├ánh</option>
++             </select>
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Ng├áy ─æi</label>
++             <input type="text" name="planned_departure_date" class="form-control border-light" placeholder="Ng├áy/Th├íng/N─âm" value="{{ \App\Support\VietnameseDate::display(request('planned_departure_date')) }}" data-date-input data-label="Ng├áy ─æi">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Ng├áy vß╗ü</label>
++             <input type="text" name="planned_return_date" class="form-control border-light" placeholder="Ng├áy/Th├íng/N─âm" value="{{ \App\Support\VietnameseDate::display(request('planned_return_date')) }}" data-date-input data-label="Ng├áy vß╗ü">
++         </div>
++         <div class="col-md-2 ms-md-auto">
++             <button type="submit" class="btn btn-navy w-100">Lß╗ìc</button>
+          </div>
+      </form>
+  </div>
+diff --cc resources/views/documents/index.blade.php
+index 979bf45,2fb6286..0000000
+--- a/resources/views/documents/index.blade.php
++++ b/resources/views/documents/index.blade.php
+@@@ -11,43 -11,50 +11,90 @@@
+      <x-export-buttons />
+  </div>
+  
+++<<<<<<< HEAD
+ +<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
+ +    <form action="{{ route('documents.index') }}" method="GET">
+ +        <div class="row g-3 align-items-center">
+ +            <div class="col-md-2">
+ +                <input type="text" name="document_code" class="form-control border-light" placeholder="M├ú chß╗⌐ng tß╗½" value="{{ request('document_code') }}">
+ +            </div>
+ +            <div class="col-md-2">
+ +                <input type="text" name="doc_category" class="form-control border-light" placeholder="Loß║íi chß╗⌐ng tß╗½" value="{{ request('doc_category') }}">
+ +            </div>
+ +            <div class="col-md-2">
+ +                <input type="text" name="job_code" class="form-control border-light" placeholder="M├ú ─æ╞ín h├áng" value="{{ request('job_code') }}">
+ +            </div>
+ +            <div class="col-md-2">
+ +                <input type="text" name="customer_name" class="form-control border-light" placeholder="Kh├ích h├áng" value="{{ request('customer_name') }}">
+ +            </div>
+ +            <div class="col-md-2">
+ +                <input type="text" name="uploader_name" class="form-control border-light" placeholder="Ng╞░ß╗¥i tß║úi" value="{{ request('uploader_name') }}">
+ +            </div>
+ +            <div class="col-md-2">
+ +                <select name="document_flow" class="form-select border-light">
+ +                    <option value="">Tß║Ñt cß║ú luß╗ông</option>
+ +                    <option value="input" {{ request('document_flow') === 'input' ? 'selected' : '' }}>─Éß║ºu v├áo</option>
+ +                    <option value="output" {{ request('document_flow') === 'output' ? 'selected' : '' }}>─Éß║ºu ra</option>
+ +                </select>
+ +            </div>
+ +            <div class="col-md-2">
+ +                <select name="tax_stage" class="form-select border-light">
+ +                    <option value="">Tß║Ñt cß║ú thuß║┐</option>
+ +                    <option value="before_tax" {{ request('tax_stage') === 'before_tax' ? 'selected' : '' }}>Tr╞░ß╗¢c thuß║┐</option>
+ +                    <option value="after_tax" {{ request('tax_stage') === 'after_tax' ? 'selected' : '' }}>Sau thuß║┐</option>
+ +                </select>
+ +            </div>
+ +            
+ +            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+ +                <a href="{{ route('documents.index') }}" class="btn btn-light px-4">X├│a lß╗ìc</a>
+ +                <button type="submit" class="btn btn-navy px-4">T├¼m kiß║┐m</button>
+ +            </div>
+++=======
++ <div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
++     <form action="{{ route('documents.index') }}" method="GET" class="row g-3 align-items-end">
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">M├ú chß╗⌐ng tß╗½</label>
++             <input type="text" name="document_code" class="form-control border-light" placeholder="M├ú chß╗⌐ng tß╗½" value="{{ request('document_code') }}">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Loß║íi chß╗⌐ng tß╗½</label>
++             <input type="text" name="doc_category" class="form-control border-light" placeholder="Loß║íi chß╗⌐ng tß╗½" value="{{ request('doc_category') }}">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">M├ú ─æ╞ín h├áng</label>
++             <input type="text" name="job_code" class="form-control border-light" placeholder="M├ú ─æ╞ín h├áng" value="{{ request('job_code') }}">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Kh├ích h├áng</label>
++             <input type="text" name="customer_name" class="form-control border-light" placeholder="Kh├ích h├áng" value="{{ request('customer_name') }}">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Luß╗ông chß╗⌐ng tß╗½</label>
++             <select name="document_flow" class="form-select border-light">
++                 <option value="">Tß║Ñt cß║ú luß╗ông</option>
++                 <option value="input" {{ request('document_flow') === 'input' ? 'selected' : '' }}>─Éß║ºu v├áo</option>
++                 <option value="output" {{ request('document_flow') === 'output' ? 'selected' : '' }}>─Éß║ºu ra</option>
++             </select>
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Giai ─æoß║ín thuß║┐</label>
++             <select name="tax_stage" class="form-select border-light">
++                 <option value="">Tß║Ñt cß║ú thuß║┐</option>
++                 <option value="before_tax" {{ request('tax_stage') === 'before_tax' ? 'selected' : '' }}>Tr╞░ß╗¢c thuß║┐</option>
++                 <option value="after_tax" {{ request('tax_stage') === 'after_tax' ? 'selected' : '' }}>Sau thuß║┐</option>
++             </select>
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Ng╞░ß╗¥i tß║úi</label>
++             <input type="text" name="uploader_name" class="form-control border-light" placeholder="Ng╞░ß╗¥i tß║úi" value="{{ request('uploader_name') }}">
+++>>>>>>> upstream/quyen-branch
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Ng├áy tß║úi</label>
++             <input type="text" name="created_date" class="form-control border-light" placeholder="Ng├áy/Th├íng/N─âm" value="{{ \App\Support\VietnameseDate::display(request('created_date')) }}" data-date-input data-label="Ng├áy tß║úi">
++         </div>
++         <div class="col-md-2 ms-md-auto">
++             <button type="submit" class="btn btn-navy w-100">Lß╗ìc</button>
+          </div>
+      </form>
+  </div>
+@@@ -91,13 -98,21 +138,29 @@@
+                          </td>
+                          <td>{{ $document->uploader->name ?? '---' }}</td>
+                          <td class="text-center">
+ -                            <a href="{{ route('documents.show', $document) }}" target="_blank" class="btn btn-sm btn-outline-navy">
+ +                            @php
+ +                                $fileExt = pathinfo($document->file_url, PATHINFO_EXTENSION);
+ +                                $fileUrl = route('documents.show', $document);
+ +                            @endphp
+ +                            <button type="button" class="btn btn-sm btn-outline-navy" data-bs-toggle="modal" data-bs-target="#previewModal" onclick="previewDocument('{{ $fileUrl }}', '{{ $document->doc_category }}', '{{ $fileExt }}')">
+                                  <i class="fa fa-eye"></i>
+++<<<<<<< HEAD
+ +                            </button>
+++=======
++                             </a>
++                             @if(Auth::user()->hasRole(['ADMIN', 'ACCOUNTANT', 'DOCUMENT']))
++                                 <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#documentEditModal" onclick='prepareDocumentEdit(@json($document))'>
++                                     <i class="fa fa-edit"></i>
++                                 </button>
++                                 <form action="{{ route('documents.destroy', $document) }}" method="POST" id="delete-form-{{ $document->id }}" class="d-inline">
++                                     @csrf
++                                     @method('DELETE')
++                                     <button type="button" class="btn btn-sm btn-outline-danger" onclick="handleDelete('{{ $document->id }}', 'X├│a chß╗⌐ng tß╗½ {{ $document->document_code }}?')">
++                                         <i class="fa fa-trash"></i>
++                                     </button>
++                                 </form>
++                             @endif
+++>>>>>>> upstream/quyen-branch
+                          </td>
+                      </tr>
+                  @empty
+@@@ -112,6 -127,65 +175,67 @@@
+          {{ $documents->appends(request()->query())->links('pagination::bootstrap-5') }}
+      </div>
+  </div>
++ 
++ <div class="modal fade" id="documentEditModal" tabindex="-1" aria-hidden="true">
++     <div class="modal-dialog modal-dialog-centered">
++         <div class="modal-content border-0 rounded-4 shadow">
++             <form id="documentEditForm" method="POST" enctype="multipart/form-data">
++                 @csrf
++                 @method('PUT')
++                 <div class="modal-header bg-navy text-white border-0 rounded-top-4 p-4">
++                     <h5 class="modal-title fw-bold">Sß╗¡a chß╗⌐ng tß╗½</h5>
++                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
++                 </div>
++                 <div class="modal-body p-4">
++                     <div class="mb-3">
++                         <label class="form-label fw-bold small text-muted">Loß║íi chß╗⌐ng tß╗½ <span class="text-danger">*</span></label>
++                         <input type="text" name="doc_category" id="edit_doc_category" class="form-control" data-validate required>
++                     </div>
++                     <div class="row g-3 mb-3">
++                         <div class="col-md-6">
++                             <label class="form-label fw-bold small text-muted">Luß╗ông chß╗⌐ng tß╗½ <span class="text-danger">*</span></label>
++                             <select name="document_flow" id="edit_document_flow" class="form-select" data-validate required>
++                                 <option value="input">─Éß║ºu v├áo</option>
++                                 <option value="output">─Éß║ºu ra</option>
++                             </select>
++                         </div>
++                         <div class="col-md-6">
++                             <label class="form-label fw-bold small text-muted">Giai ─æoß║ín thuß║┐ <span class="text-danger">*</span></label>
++                             <select name="tax_stage" id="edit_tax_stage" class="form-select" data-validate required>
++                                 <option value="before_tax">Tr╞░ß╗¢c thuß║┐</option>
++                                 <option value="after_tax">Sau thuß║┐</option>
++                             </select>
++                         </div>
++                     </div>
++                     <div class="mb-3">
++                         <label class="form-label fw-bold small text-muted">Thay file mß╗¢i</label>
++                         <input type="file" name="file" class="form-control" accept="image/*,.pdf">
++                     </div>
++                     <div>
++                         <label class="form-label fw-bold small text-muted">Ghi ch├║</label>
++                         <input type="text" name="note" id="edit_note" class="form-control">
++                     </div>
++                 </div>
++                 <div class="modal-footer border-0 p-4 pt-0">
++                     <button type="button" class="btn btn-light fw-bold px-4" data-bs-dismiss="modal">Hß╗ºy</button>
++                     <button type="submit" class="btn btn-navy fw-bold px-4">L╞░u thay ─æß╗òi</button>
++                 </div>
++             </form>
++         </div>
++     </div>
++ </div>
++ 
++ @push('scripts')
++ <script>
++     function prepareDocumentEdit(documentData) {
++         document.getElementById('documentEditForm').action = `/documents/${documentData.id}`;
++         document.getElementById('edit_doc_category').value = documentData.doc_category || '';
++         document.getElementById('edit_document_flow').value = documentData.document_flow || 'input';
++         document.getElementById('edit_tax_stage').value = documentData.tax_stage || 'before_tax';
++         document.getElementById('edit_note').value = documentData.note || '';
++     }
++ </script>
++ @endpush
+  @endsection
+ +
+ +<x-document-preview-modal />
+diff --cc resources/views/drivers/index.blade.php
+index 20d4e4b,987e015..0000000
+--- a/resources/views/drivers/index.blade.php
++++ b/resources/views/drivers/index.blade.php
+@@@ -5,48 -5,64 +5,105 @@@
+  @section('content')
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+      <h4 class="fw-bold mb-0">Quß║ún l├╜ ─Éß╗Öi ng┼⌐ T├ái xß║┐</h4>
+++<<<<<<< HEAD
+ +    
+ +    <x-export-buttons />
+ +</div>
+ +
+ +<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
+ +    <form action="{{ route('drivers.index') }}" method="GET">
+ +        <div class="row g-3 align-items-center">
+ +            <div class="col-md-3"><input type="text" name="driver_code" class="form-control border-light" placeholder="M├ú t├ái xß║┐" value="{{ request('driver_code') }}"></div>
+ +            <div class="col-md-3"><input type="text" name="full_name" class="form-control border-light" placeholder="Hß╗ì t├¬n" value="{{ request('full_name') }}"></div>
+ +            <div class="col-md-3"><input type="text" name="phone" class="form-control border-light" placeholder="S─ÉT" value="{{ request('phone') }}"></div>
+ +            <div class="col-md-3"><input type="text" name="license_number" class="form-control border-light" placeholder="GPLX" value="{{ request('license_number') }}"></div>
+ +            <div class="col-md-3">
+ +                <select name="rank" class="form-select border-light">
+ +                    <option value="">Cß║Ñp bß║¡c</option>
+ +                    @foreach(\App\Support\LogisticsOptions::driverRanks() as $value => $label)
+ +                        <option value="{{ $value }}" {{ request('rank') === $value ? 'selected' : '' }}>{{ $label }}</option>
+ +                    @endforeach
+ +                </select>
+ +            </div>
+ +            <div class="col-md-3">
+ +                <select name="status" class="form-select border-light">
+ +                    <option value="">Tß║Ñt cß║ú</option>
+ +                    <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>─Éang l├ám viß╗çc</option>
+ +                    <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Nghß╗ë viß╗çc</option>
+ +                </select>
+ +            </div>
+ +            
+ +            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+ +                <a href="{{ route('drivers.index') }}" class="btn btn-light px-4">X├│a lß╗ìc</a>
+ +                <button type="submit" class="btn btn-navy px-4">T├¼m kiß║┐m</button>
+ +            </div>
+ +        </div>
+++=======
++     <x-export-buttons />
++ </div>
++ 
++ <div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
++     <form action="{{ route('drivers.index') }}" method="GET" class="row g-3 align-items-end">
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">M├ú t├ái xß║┐</label>
++             <input type="text" name="driver_code" class="form-control border-light" placeholder="M├ú t├ái xß║┐" value="{{ request('driver_code') }}">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Hß╗ì t├¬n</label>
++             <input type="text" name="full_name" class="form-control border-light" placeholder="Hß╗ì t├¬n" value="{{ request('full_name') }}">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Sß╗æ ─æiß╗çn thoß║íi</label>
++             <input type="text" name="phone" class="form-control border-light" placeholder="10 sß╗æ" value="{{ request('phone') }}">
++         </div>
++         <div class="col-md-3">
++             <label class="form-label small fw-bold text-muted">Cß║Ñp bß║¡c</label>
++             <select name="rank" class="form-select border-light">
++                 <option value="">Cß║Ñp bß║¡c</option>
++                 @foreach(\App\Support\LogisticsOptions::driverRanks() as $value => $label)
++                     <option value="{{ $value }}" {{ request('rank') === $value ? 'selected' : '' }}>{{ $label }}</option>
++                 @endforeach
++             </select>
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Trß║íng th├íi</label>
++             <select name="status" class="form-select border-light">
++                 <option value="">Tß║Ñt cß║ú</option>
++                 <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>─Éang l├ám viß╗çc</option>
++                 <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Nghß╗ë viß╗çc</option>
++             </select>
++         </div>
++         <div class="col-md-3">
++             <label class="form-label small fw-bold text-muted">Sß╗æ GPLX</label>
++             <input type="text" name="license_number" class="form-control border-light" placeholder="GPLX" value="{{ request('license_number') }}">
++         </div>
++         <div class="col-md-3">
++             <label class="form-label small fw-bold text-muted">Ng├áy sinh</label>
++             <input type="text" name="date_of_birth" class="form-control border-light" placeholder="Ng├áy/Th├íng/N─âm" value="{{ \App\Support\VietnameseDate::display(request('date_of_birth')) }}" data-date-input data-label="Ng├áy sinh">
++         </div>
++         <div class="col-md-3">
++             <label class="form-label small fw-bold text-muted">Thß╗¥i hß║ín hß╗úp ─æß╗ông</label>
++             <input type="text" name="contract_expiry" class="form-control border-light" placeholder="Ng├áy/Th├íng/N─âm" value="{{ \App\Support\VietnameseDate::display(request('contract_expiry')) }}" data-date-input data-label="Thß╗¥i hß║ín hß╗úp ─æß╗ông">
++         </div>
++         <div class="col-md-2 ms-md-auto">
++             <button type="submit" class="btn btn-navy w-100">Lß╗ìc</button>
++         </div>
+++>>>>>>> upstream/quyen-branch
+      </form>
+  </div>
+  
+ +<div class="d-flex justify-content-end mb-4">
+ +    <button class="btn btn-navy px-4 fw-bold" data-bs-toggle="modal" data-bs-target="#driverModal" onclick="prepareAdd()">
+ +        <i class="fa fa-plus me-2"></i> TH├èM T├ÇI Xß║╛
+ +    </button>
+ +</div>
+ +
+  <!-- Data Table -->
++ <div class="d-flex justify-content-end mb-3">
++     <button class="btn btn-navy px-4 fw-bold" data-bs-toggle="modal" data-bs-target="#driverModal" onclick="prepareAdd()">
++         <i class="fa fa-plus me-2"></i> TH├èM T├ÇI Xß║╛
++     </button>
++ </div>
+  <div class="card border-0 rounded-4 shadow-sm overflow-hidden">
+      <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+@@@ -126,13 -143,11 +184,21 @@@
+                      <div class="row g-3">
+                          <div class="col-md-12">
+                              <label class="form-label fw-semibold">Hß╗ì v├á T├¬n</label>
+++<<<<<<< HEAD
+ +                            <input type="text" name="full_name" id="full_name" class="form-control bg-light border-0" required oninput="formatName(this)">
+ +                            <div class="invalid-feedback" id="full_name_error" style="display: none;"></div>
+ +                        </div>
+ +                        <div class="col-md-12">
+ +                            <label class="form-label fw-semibold">Sß╗æ ─Éiß╗çn Thoß║íi</label>
+ +                            <input type="text" name="phone" id="phone" class="form-control bg-light border-0" maxlength="10" inputmode="numeric" required oninput="formatPhone(this)">
+ +                            <div class="invalid-feedback" id="phone_error" style="display: none;"></div>
+++=======
++                             <input type="text" name="full_name" id="full_name" class="form-control bg-light border-0" data-validate="person-name" data-label="Hß╗ì v├á t├¬n" required>
++                         </div>
++                         <div class="col-md-12">
++                             <label class="form-label fw-semibold">Sß╗æ ─Éiß╗çn Thoß║íi</label>
++                             <input type="text" name="phone" id="phone" class="form-control bg-light border-0" maxlength="10" inputmode="numeric" data-validate="phone-vn" data-label="Sß╗æ ─æiß╗çn thoß║íi" required>
+++>>>>>>> upstream/quyen-branch
+                          </div>
+                          <div class="col-md-12">
+                              <label class="form-label fw-semibold">Ng├áy sinh</label>
+@@@ -189,15 -236,7 +288,19 @@@
+          document.getElementById('driverForm').action = "{{ route('drivers.store') }}";
+          document.getElementById('methodField').innerHTML = '';
+          document.getElementById('driverForm').reset();
+++<<<<<<< HEAD
+ +        
+ +        let today = new Date();
+ +        let adultDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+ +        
+ +        if (window.setDateValue) {
+ +            setDateValue('date_of_birth', adultDate);
+ +            setDateValue('start_date', today);
+ +            setDateValue('contract_expiry', today);
+ +        }
+++=======
++         removeTemporaryDriverUserOptions();
+++>>>>>>> upstream/quyen-branch
+      }
+  
+      function prepareEdit(driver) {
+diff --cc resources/views/field_assignments/index.blade.php
+index 3d40fa8,290ab0c..0000000
+--- a/resources/views/field_assignments/index.blade.php
++++ b/resources/views/field_assignments/index.blade.php
+@@@ -34,37 -34,39 +34,73 @@@
+      </div>
+  </div>
+  
+++<<<<<<< HEAD
+ +<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
+ +    <form action="{{ route('field-assignments.index') }}" method="GET">
+ +        <div class="row g-3 align-items-center">
+ +            <div class="col-md-2">
+ +                <input type="text" name="assignment_code" class="form-control border-light" placeholder="M├ú phiß║┐u" value="{{ request('assignment_code') }}">
+ +            </div>
+ +            <div class="col-md-2">
+ +                <input type="text" name="job_code" class="form-control border-light" placeholder="M├ú ─æ╞ín h├áng" value="{{ request('job_code') }}">
+ +            </div>
+ +            <div class="col-md-2">
+ +                <input type="text" name="field_staff_name" class="form-control border-light" placeholder="Nh├ón vi├¬n" value="{{ request('field_staff_name') }}">
+ +            </div>
+ +            <div class="col-md-2">
+ +                <input type="text" name="location_name" class="form-control border-light" placeholder="Vß╗ï tr├¡" value="{{ request('location_name') }}">
+ +            </div>
+ +            <div class="col-md-2">
+ +                <input type="date" name="assigned_date" class="form-control border-light" value="{{ request('assigned_date') }}">
+ +            </div>
+ +            <div class="col-md-2">
+ +                <select name="status" class="form-select border-light">
+ +                    <option value="">Trß║íng th├íi</option>
+ +                    @foreach($statusLabels as $status => $label)
+ +                        <option value="{{ $status }}" {{ request('status') === $status ? 'selected' : '' }}>{{ $label }}</option>
+ +                    @endforeach
+ +                </select>
+ +            </div>
+ +            
+ +            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+ +                <a href="{{ route('field-assignments.index') }}" class="btn btn-light px-4">X├│a lß╗ìc</a>
+ +                <button type="submit" class="btn btn-navy px-4">T├¼m kiß║┐m</button>
+ +            </div>
+++=======
++ <div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
++     <form action="{{ route('field-assignments.index') }}" method="GET" class="row g-3 align-items-end">
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">M├ú phiß║┐u</label>
++             <input type="text" name="assignment_code" class="form-control border-light" placeholder="M├ú phiß║┐u" value="{{ request('assignment_code') }}">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">M├ú ─æ╞ín h├áng</label>
++             <input type="text" name="job_code" class="form-control border-light" placeholder="M├ú ─æ╞ín h├áng" value="{{ request('job_code') }}">
++         </div>
++         <div class="col-md-3">
++             <label class="form-label small fw-bold text-muted">Nh├ón vi├¬n hiß╗çn tr╞░ß╗¥ng</label>
++             <input type="text" name="field_staff_name" class="form-control border-light" placeholder="Nh├ón vi├¬n" value="{{ request('field_staff_name') }}">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Vß╗ï tr├¡ thß╗▒c hiß╗çn</label>
++             <input type="text" name="location_name" class="form-control border-light" placeholder="Vß╗ï tr├¡" value="{{ request('location_name') }}">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Ng├áy thß╗▒c hiß╗çn</label>
++             <input type="text" name="assigned_date" class="form-control border-light" placeholder="Ng├áy/Th├íng/N─âm" value="{{ \App\Support\VietnameseDate::display(request('assigned_date')) }}" data-date-input data-label="Ng├áy thß╗▒c hiß╗çn">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Trß║íng th├íi phiß║┐u</label>
++             <select name="status" class="form-select border-light">
++                 <option value="">Trß║íng th├íi</option>
++                 @foreach($statusLabels as $status => $label)
++                     <option value="{{ $status }}" {{ request('status') === $status ? 'selected' : '' }}>{{ $label }}</option>
++                 @endforeach
++             </select>
+++>>>>>>> upstream/quyen-branch
++         </div>
++         <div class="col-md-2 ms-md-auto">
++             <button type="submit" class="btn btn-navy w-100">Lß╗ìc</button>
+          </div>
+      </form>
+  </div>
+diff --cc resources/views/field_staff/index.blade.php
+index d3cc05e,4e9f7ad..0000000
+--- a/resources/views/field_staff/index.blade.php
++++ b/resources/views/field_staff/index.blade.php
+@@@ -5,43 -5,57 +5,97 @@@
+  @section('content')
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+      <h4 class="fw-bold mb-0">Quß║ún l├╜ Nh├ón vi├¬n hiß╗çn tr╞░ß╗¥ng</h4>
+++<<<<<<< HEAD
+ +    
+ +    <x-export-buttons />
+ +</div>
+ +
+ +<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
+ +    <form action="{{ route('field-staff.index') }}" method="GET">
+ +        <div class="row g-3 align-items-center">
+ +            <div class="col-md-3"><input type="text" name="staff_code" class="form-control border-light" placeholder="M├ú" value="{{ request('staff_code') }}"></div>
+ +            <div class="col-md-3"><input type="text" name="full_name" class="form-control border-light" placeholder="Hß╗ì t├¬n" value="{{ request('full_name') }}"></div>
+ +            <div class="col-md-3"><input type="text" name="phone" class="form-control border-light" placeholder="S─ÉT" value="{{ request('phone') }}"></div>
+ +            <div class="col-md-3">
+ +                <select name="responsible_location_id" class="form-select border-light">
+ +                    <option value="">Tß║Ñt cß║ú khu vß╗▒c</option>
+ +                    @foreach($responsibleLocations as $location)
+ +                        <option value="{{ $location->id }}" {{ (string) request('responsible_location_id') === (string) $location->id ? 'selected' : '' }}>
+ +                            {{ $location->location_name }}
+ +                        </option>
+ +                    @endforeach
+ +                </select>
+ +            </div>
+ +            <div class="col-md-3">
+ +                <select name="status" class="form-select border-light">
+ +                    <option value="">Tß║Ñt cß║ú trß║íng th├íi</option>
+ +                    <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>─Éang l├ám viß╗çc</option>
+ +                    <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Nghß╗ë viß╗çc</option>
+ +                </select>
+ +            </div>
+ +            
+ +            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+ +                <a href="{{ route('field-staff.index') }}" class="btn btn-light px-4">X├│a lß╗ìc</a>
+ +                <button type="submit" class="btn btn-navy px-4">T├¼m kiß║┐m</button>
+ +            </div>
+ +        </div>
+ +    </form>
+ +</div>
+ +
+ +<div class="d-flex justify-content-end mb-4">
+++=======
++     <x-export-buttons />
++ </div>
++ 
++ <div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
++     <form action="{{ route('field-staff.index') }}" method="GET" class="row g-3 align-items-end">
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">M├ú nh├ón vi├¬n</label>
++             <input type="text" name="staff_code" class="form-control border-light" placeholder="M├ú" value="{{ request('staff_code') }}">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Hß╗ì t├¬n</label>
++             <input type="text" name="full_name" class="form-control border-light" placeholder="Hß╗ì t├¬n" value="{{ request('full_name') }}">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Sß╗æ ─æiß╗çn thoß║íi</label>
++             <input type="text" name="phone" class="form-control border-light" placeholder="10 sß╗æ" value="{{ request('phone') }}">
++         </div>
++         <div class="col-md-3">
++             <label class="form-label small fw-bold text-muted">Khu vß╗▒c phß╗Ñ tr├ích</label>
++             <select name="responsible_location_id" class="form-select border-light">
++                 <option value="">Tß║Ñt cß║ú khu vß╗▒c</option>
++                 @foreach($responsibleLocations as $location)
++                     <option value="{{ $location->id }}" {{ (string) request('responsible_location_id') === (string) $location->id ? 'selected' : '' }}>
++                         {{ $location->location_name }}
++                     </option>
++                 @endforeach
++             </select>
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Ng├áy sinh</label>
++             <input type="text" name="date_of_birth" class="form-control border-light" placeholder="Ng├áy/Th├íng/N─âm" value="{{ \App\Support\VietnameseDate::display(request('date_of_birth')) }}" data-date-input data-label="Ng├áy sinh">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Trß║íng th├íi</label>
++             <select name="status" class="form-select border-light">
++                 <option value="">Tß║Ñt cß║ú trß║íng th├íi</option>
++                 <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>─Éang l├ám viß╗çc</option>
++                 <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Nghß╗ë viß╗çc</option>
++             </select>
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Chß╗⌐ng chß╗ë</label>
++             <input type="text" name="certificates" class="form-control border-light" placeholder="Chß╗⌐ng chß╗ë" value="{{ request('certificates') }}">
++         </div>
++         <div class="col-md-2 ms-md-auto">
++             <button type="submit" class="btn btn-navy w-100">Lß╗ìc</button>
++         </div>
++     </form>
++ </div>
++ 
++ <div class="d-flex justify-content-end mb-3">
+++>>>>>>> upstream/quyen-branch
+      <button class="btn btn-navy px-4 fw-bold" data-bs-toggle="modal" data-bs-target="#fieldStaffModal" onclick="prepareAdd()">
+          <i class="fa fa-plus me-2"></i> TH├èM NH├éN VI├èN
+      </button>
+@@@ -133,18 -151,16 +191,31 @@@
+                  <div class="modal-body p-4 pt-0">
+                      <div class="row g-3">
+                          <div class="col-md-6">
+++<<<<<<< HEAD
+ +                            <label class="form-label fw-semibold">Hß╗ì v├á t├¬n <span class="text-danger">*</span></label>
+ +                            <input type="text" name="full_name" id="full_name" class="form-control bg-light border-0" required maxlength="100" placeholder="Nhß║¡p hß╗ì v├á t├¬n" oninput="formatName(this)">
+ +                            <div class="invalid-feedback" id="full_name_error" style="display: none;"></div>
+ +                        </div>
+ +                        <div class="col-md-6">
+ +                            <label class="form-label fw-semibold">Sß╗æ ─æiß╗çn thoß║íi <span class="text-danger">*</span></label>
+ +                            <input type="text" name="phone" id="phone" class="form-control bg-light border-0" maxlength="10" inputmode="numeric" required placeholder="VD: 0912345678" oninput="formatPhone(this)">
+ +                            <div class="invalid-feedback" id="phone_error" style="display: none;"></div>
+ +                        </div>
+ +                        <div class="col-md-6">
+ +                            <label class="form-label fw-semibold">Ng├áy sinh <span class="text-danger">*</span></label>
+ +                            <input type="date" name="date_of_birth" id="date_of_birth" class="form-control bg-light border-0" required>
+++=======
++                             <label class="form-label fw-semibold">Hß╗ì v├á t├¬n</label>
++                             <input type="text" name="full_name" id="full_name" class="form-control bg-light border-0" data-validate="person-name" data-label="Hß╗ì v├á t├¬n" required>
++                         </div>
++                         <div class="col-md-6">
++                             <label class="form-label fw-semibold">Sß╗æ ─æiß╗çn thoß║íi</label>
++                             <input type="text" name="phone" id="phone" class="form-control bg-light border-0" maxlength="10" inputmode="numeric" data-validate="phone-vn" data-label="Sß╗æ ─æiß╗çn thoß║íi" required>
++                         </div>
++                         <div class="col-md-6">
++                             <label class="form-label fw-semibold">Ng├áy sinh</label>
++                             <input type="text" name="date_of_birth" id="date_of_birth" class="form-control bg-light border-0" placeholder="Ng├áy/Th├íng/N─âm" data-date-input data-label="Ng├áy sinh" required>
+++>>>>>>> upstream/quyen-branch
+                          </div>
+                          <div class="col-md-6">
+                              <label class="form-label fw-semibold">T├ái khoß║ún li├¬n kß║┐t</label>
+@@@ -159,8 -175,7 +230,12 @@@
+                          </div>
+                          <div class="col-md-6">
+                              <label class="form-label fw-semibold">Khu vß╗▒c phß╗Ñ tr├ích <span class="text-danger">*</span></label>
+++<<<<<<< HEAD
+ +                            <select name="responsible_location_id" id="responsible_location_id" class="form-select bg-light border-0" required>
+ +                                <option value="">Chß╗ìn kho/b├úi</option>
+++=======
++                             <select name="responsible_location_ids[]" id="responsible_location_ids" class="form-select bg-light border-0" multiple data-validate data-label="Khu vß╗▒c phß╗Ñ tr├ích" required>
+++>>>>>>> upstream/quyen-branch
+                                  @foreach($responsibleLocations as $location)
+                                      <option value="{{ $location->id }}">{{ $location->location_name }} - {{ $location->province }}</option>
+                                  @endforeach
+@@@ -168,10 -183,10 +243,14 @@@
+                          </div>
+                          <div class="col-md-6">
+                              <label class="form-label fw-semibold">Ng├áy bß║»t ─æß║ºu l├ám viß╗çc</label>
+++<<<<<<< HEAD
+ +                            <input type="text" onfocus="(this.type='date')" onblur="(this.value == '' ? this.type='text' : this.type='date')" placeholder="VD: {{ now()->format('d/m/Y') }}" name="start_date" id="start_date" class="form-control bg-light border-0" min="{{ now()->subYears(10)->toDateString() }}" max="{{ now()->toDateString() }}">
+++=======
++                             <input type="text" name="start_date" id="start_date" class="form-control bg-light border-0" placeholder="Ng├áy/Th├íng/N─âm" data-date-input data-label="Ng├áy bß║»t ─æß║ºu l├ám viß╗çc">
+++>>>>>>> upstream/quyen-branch
+                          </div>
+                          <div class="col-md-6">
+ -                            <label class="form-label fw-semibold">Trß║íng th├íi</label>
+ +                            <label class="form-label fw-semibold">Trß║íng th├íi <span class="text-danger">*</span></label>
+                              <select name="status" id="status" class="form-select bg-light border-0" required>
+                                  <option value="active">─Éang l├ám viß╗çc</option>
+                                  <option value="inactive">Nghß╗ë viß╗çc</option>
+@@@ -198,22 -213,26 +277,45 @@@
+  
+  @push('scripts')
+  <script>
+++<<<<<<< HEAD
+ +    document.addEventListener("DOMContentLoaded", function() {
+ +        if (typeof flatpickr !== 'undefined') {
+ +            flatpickr("#date_of_birth", { dateFormat: "d/m/Y", allowInput: true });
+ +            flatpickr("#start_date", { dateFormat: "d/m/Y", allowInput: true });
+ +        }
+ +    });
+ +
+ +    function dateOnly(value) {
+ +        return value ? value.split('T')[0].split(' ')[0] : '';
+ +    }
+ +
+ +    function setDateValue(id, date) {
+ +        if (typeof flatpickr !== 'undefined') {
+ +            let instance = flatpickr("#" + id, { dateFormat: "d/m/Y" });
+ +            instance.setDate(date);
+ +        }
+++=======
++     function removeTemporaryFieldUserOptions() {
++         document.querySelectorAll('#user_id option[data-temporary-linked-user="true"]').forEach((option) => option.remove());
++     }
++ 
++     function ensureFieldUserOption(staff) {
++         const select = document.getElementById('user_id');
++         removeTemporaryFieldUserOptions();
++ 
++         if (!staff.user_id || !staff.user) {
++             select.value = '';
++             return;
++         }
++ 
++         if (!Array.from(select.options).some((option) => option.value === String(staff.user_id))) {
++             const option = new Option(`${staff.user.name} - ${staff.user.username || staff.user.email}`, staff.user_id, true, true);
++             option.dataset.temporaryLinkedUser = 'true';
++             select.add(option);
++         }
++ 
++         select.value = String(staff.user_id);
+++>>>>>>> upstream/quyen-branch
+      }
+  
+      function prepareAdd() {
+@@@ -221,17 -240,12 +323,21 @@@
+          document.getElementById('fieldStaffForm').action = "{{ route('field-staff.store') }}";
+          document.getElementById('methodField').innerHTML = '';
+          document.getElementById('fieldStaffForm').reset();
+++<<<<<<< HEAD
+ +
+ +        let today = new Date();
+ +        let adultDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+ +        
+ +        if (window.setDateValue) {
+ +            setDateValue('date_of_birth', adultDate);
+ +            setDateValue('start_date', today);
+ +        }
+++=======
++         removeTemporaryFieldUserOptions();
+++>>>>>>> upstream/quyen-branch
+      }
+  
+ -    function dateOnly(value) {
+ -        return value ? value.split('T')[0].split(' ')[0] : '';
+ -    }
+ +
+  
+      function prepareEdit(staff) {
+          document.getElementById('modalTitle').innerText = 'Chß╗ënh sß╗¡a Nh├ón vi├¬n hiß╗çn tr╞░ß╗¥ng';
+diff --cc resources/views/locations/index.blade.php
+index 1a82a97,3ddc464..0000000
+--- a/resources/views/locations/index.blade.php
++++ b/resources/views/locations/index.blade.php
+@@@ -5,48 -5,51 +5,92 @@@
+  @section('content')
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+      <h4 class="fw-bold mb-0">Danh mß╗Ñc ─Éß╗ïa ─æiß╗âm (Kho/Cß║úng/B├úi)</h4>
+++<<<<<<< HEAD
+ +    
+ +    <x-export-buttons />
+ +</div>
+ +
+ +<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
+ +    <form action="{{ route('locations.index') }}" method="GET">
+ +        <div class="row g-3 align-items-center">
+ +            <div class="col-md-3"><input type="text" name="search" class="form-control border-light" placeholder="T├¼m tß║Ñt cß║ú" value="{{ request('search') }}"></div>
+ +            <div class="col-md-2"><input type="text" name="location_code" class="form-control border-light" placeholder="M├ú" value="{{ request('location_code') }}"></div>
+ +            <div class="col-md-2"><input type="text" name="location_name" class="form-control border-light" placeholder="T├¬n ─æß╗ïa ─æiß╗âm" value="{{ request('location_name') }}"></div>
+ +            <div class="col-md-2">
+ +                <select name="type" class="form-select border-light">
+ +                    <option value="">Tß║Ñt cß║ú loß║íi</option>
+ +                    @foreach(['port' => 'Cß║úng', 'depot' => 'B├úi', 'warehouse' => 'Kho', 'factory' => 'Nh├á m├íy', 'other' => 'Kh├íc'] as $value => $label)
+ +                        <option value="{{ $value }}" {{ request('type') === $value ? 'selected' : '' }}>{{ $label }}</option>
+ +                    @endforeach
+ +                </select>
+ +            </div>
+ +            <div class="col-md-2">
+ +                <select name="status" class="form-select border-light">
+ +                    <option value="">Tß║Ñt cß║ú trß║íng th├íi</option>
+ +                    @foreach(['active' => 'Hoß║ít ─æß╗Öng', 'inactive' => 'Ngß╗½ng hoß║ít ─æß╗Öng', 'maintenance' => 'Bß║úo tr├¼', 'overloaded' => 'Qu├í tß║úi'] as $value => $label)
+ +                        <option value="{{ $value }}" {{ request('status') === $value ? 'selected' : '' }}>{{ $label }}</option>
+ +                    @endforeach
+ +                </select>
+ +            </div>
+ +            
+ +            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+ +                <a href="{{ route('locations.index') }}" class="btn btn-light px-4">X├│a lß╗ìc</a>
+ +                <button type="submit" class="btn btn-navy px-4">T├¼m kiß║┐m</button>
+ +            </div>
+ +        </div>
+++=======
++     <x-export-buttons />
++ </div>
++ 
++ <div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
++     <form action="{{ route('locations.index') }}" method="GET" class="row g-3 align-items-end">
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">M├ú ─æß╗ïa ─æiß╗âm</label>
++             <input type="text" name="location_code" class="form-control border-light" placeholder="M├ú" value="{{ request('location_code') }}">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">T├¬n ─æß╗ïa ─æiß╗âm</label>
++             <input type="text" name="location_name" class="form-control border-light" placeholder="T├¬n ─æß╗ïa ─æiß╗âm" value="{{ request('location_name') }}">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Tß╗ënh / Th├ánh phß╗æ</label>
++             <input type="text" name="province" class="form-control border-light" placeholder="Tß╗ënh th├ánh" value="{{ request('province') }}">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Loß║íi ─æß╗ïa ─æiß╗âm</label>
++             <select name="type" class="form-select border-light">
++                 <option value="">Tß║Ñt cß║ú loß║íi</option>
++                 @foreach(['port' => 'Cß║úng', 'depot' => 'B├úi', 'warehouse' => 'Kho', 'factory' => 'Nh├á m├íy', 'other' => 'Kh├íc'] as $value => $label)
++                     <option value="{{ $value }}" {{ request('type') === $value ? 'selected' : '' }}>{{ $label }}</option>
++                 @endforeach
++             </select>
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Trß║íng th├íi ─æß╗ïa ─æiß╗âm</label>
++             <select name="status" class="form-select border-light">
++                 <option value="">Tß║Ñt cß║ú trß║íng th├íi</option>
++                 @foreach(['active' => 'Hoß║ít ─æß╗Öng', 'inactive' => 'Ngß╗½ng hoß║ít ─æß╗Öng', 'maintenance' => 'Bß║úo tr├¼', 'overloaded' => 'Qu├í tß║úi'] as $value => $label)
++                     <option value="{{ $value }}" {{ request('status') === $value ? 'selected' : '' }}>{{ $label }}</option>
++                 @endforeach
++             </select>
++         </div>
++         <div class="col-md-2"><button type="submit" class="btn btn-navy w-100">Lß╗ìc</button></div>
+++>>>>>>> upstream/quyen-branch
+      </form>
+  </div>
+  
+ +<div class="d-flex justify-content-end mb-4">
+ +    <button class="btn btn-navy px-4 fw-bold" data-bs-toggle="modal" data-bs-target="#locationModal" onclick="prepareAdd()">
+ +        <i class="fa fa-plus me-2"></i> TH├èM ─Éß╗èA ─ÉIß╗éM
+ +    </button>
+ +</div>
+ +
+  <!-- Data Table -->
++ <div class="d-flex justify-content-end mb-3">
++     <button class="btn btn-navy px-4 fw-bold" data-bs-toggle="modal" data-bs-target="#locationModal" onclick="prepareAdd()">
++         <i class="fa fa-plus me-2"></i> TH├èM ─Éß╗èA ─ÉIß╗éM
++     </button>
++ </div>
+  <div class="card border-0 rounded-4 shadow-sm overflow-hidden">
+      <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+@@@ -137,13 -140,13 +181,17 @@@
+                  </div>
+                  <div class="modal-body p-4 pt-0">
+                      <div class="row g-3">
+++<<<<<<< HEAD
+ +                        <!-- <div class="col-md-4">
+++=======
++                         <div class="col-md-4" id="locationCodeGroup">
+++>>>>>>> upstream/quyen-branch
+                              <label class="form-label fw-semibold">M├ú ─æß╗ïa ─æiß╗âm</label>
+                              <input type="text" id="location_code" class="form-control bg-light border-0" value="Tß╗▒ sinh theo loß║íi" disabled>
+ -                        </div>
+ +                        </div> -->
+                          <div class="col-md-8">
+                              <label class="form-label fw-semibold">T├¬n ─Éß╗ïa ─Éiß╗âm</label>
+-                             <input type="text" name="location_name" id="location_name" class="form-control bg-light border-0" required>
++                             <input type="text" name="location_name" id="location_name" class="form-control bg-light border-0" data-validate data-label="T├¬n ─æß╗ïa ─æiß╗âm" required>
+                          </div>
+                          <div class="col-md-4">
+                              <label class="form-label fw-semibold">Loß║íi ─æß╗ïa ─æiß╗âm</label>
+diff --cc resources/views/reports/financial.blade.php
+index ff74b3a,584ece9..0000000
+--- a/resources/views/reports/financial.blade.php
++++ b/resources/views/reports/financial.blade.php
+@@@ -131,28 -138,19 +138,44 @@@
+                                          <td class="fw-bold text-navy">{{ $expense->expense_code }}</td>
+                                          <td>{{ $expense->name }}</td>
+                                          <td>{{ $expense->category ?? '---' }}</td>
+++<<<<<<< HEAD
+ +                                        <td>
+ +                                            {{ match($expense->cycle) {
+ +                                                'monthly' => 'H├áng th├íng',
+ +                                                'quarterly' => 'H├áng qu├╜',
+ +                                                'yearly' => 'H├áng n─âm',
+ +                                                default => $expense->cycle
+ +                                            } }}
+ +                                        </td>
+ +                                        <td class="text-end fw-bold">{{ number_format($expense->amount) }}─æ</td>
+ +                                        <td class="text-center no-print">
+ +                                            <div class="d-flex justify-content-center gap-1">
+ +                                                <a href="{{ route('recurring-expenses.edit', $expense) }}" class="btn btn-sm btn-outline-primary">
+ +                                                    <i class="fa fa-edit"></i>
+ +                                                </a>
+ +                                                <form action="{{ route('recurring-expenses.destroy', $expense) }}" method="POST" onsubmit="return confirm('X├│a chi ph├¡ cß╗æ ─æß╗ïnh n├áy?')">
+ +                                                    @csrf
+ +                                                    @method('DELETE')
+ +                                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+ +                                                        <i class="fa fa-trash"></i>
+ +                                                    </button>
+ +                                                </form>
+ +                                            </div>
+++=======
++                                         <td>{{ $cycleLabels[$expense->cycle] ?? $expense->cycle }}</td>
++                                         <td class="text-end fw-bold">{{ number_format($expense->amount) }}─æ</td>
++                                         <td class="text-center no-print">
++                                             <button type="button" class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#recurringExpenseModal" onclick='prepareRecurringEdit(@json($expense))'>
++                                                 <i class="fa fa-edit"></i>
++                                             </button>
++                                             <form action="{{ route('recurring-expenses.destroy', $expense) }}" method="POST" class="d-inline" onsubmit="return confirm('X├│a chi ph├¡ cß╗æ ─æß╗ïnh n├áy?')">
++                                                 @csrf
++                                                 @method('DELETE')
++                                                 <button type="submit" class="btn btn-sm btn-outline-danger">
++                                                     <i class="fa fa-trash"></i>
++                                                 </button>
++                                             </form>
+++>>>>>>> upstream/quyen-branch
+                                          </td>
+                                      </tr>
+                                  @empty
+diff --cc resources/views/service_prices/index.blade.php
+index d3f0cc3,5afe5a6..0000000
+--- a/resources/views/service_prices/index.blade.php
++++ b/resources/views/service_prices/index.blade.php
+@@@ -8,42 -8,45 +8,79 @@@
+      <x-export-buttons />
+  </div>
+  
+++<<<<<<< HEAD
+ +<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
+ +    <form action="{{ route('service-prices.index') }}" method="GET">
+ +        <div class="row g-3 align-items-center">
+ +            <div class="col-md-3"><input type="text" name="package_code" class="form-control border-light" placeholder="M├ú g├│i" value="{{ request('package_code') }}"></div>
+ +            <div class="col-md-3"><input type="text" name="service_name" class="form-control border-light" placeholder="Dß╗ïch vß╗Ñ" value="{{ request('service_name') }}"></div>
+ +            <div class="col-md-3">
+ +                <select name="unit" class="form-select border-light">
+ +                    <option value="">─É╞ín vß╗ï</option>
+ +                    @foreach(\App\Support\LogisticsOptions::serviceUnits() as $value => $label)
+ +                        <option value="{{ $value }}" {{ request('unit') === $value ? 'selected' : '' }}>{{ $label }}</option>
+ +                    @endforeach
+ +                </select>
+ +            </div>
+ +            <div class="col-md-3">
+ +                <select name="is_tax_included" class="form-select border-light">
+ +                    <option value="">Tß║Ñt cß║ú thuß║┐</option>
+ +                    <option value="1" {{ request('is_tax_included') === '1' ? 'selected' : '' }}>─É├ú gß╗ôm thuß║┐</option>
+ +                    <option value="0" {{ request('is_tax_included') === '0' ? 'selected' : '' }}>Ch╞░a gß╗ôm thuß║┐</option>
+ +                </select>
+ +            </div>
+ +
+ +            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+ +                <a href="{{ route('service-prices.index') }}" class="btn btn-light px-4">X├│a lß╗ìc</a>
+ +                <button type="submit" class="btn btn-navy px-4">T├¼m kiß║┐m</button>
+ +            </div>
+++=======
++ <div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
++     <form action="{{ route('service-prices.index') }}" method="GET" class="row g-3 align-items-end">
++         <div class="col-md-3">
++             <label class="form-label small fw-bold text-muted">M├ú g├│i</label>
++             <input type="text" name="package_code" class="form-control border-light" placeholder="M├ú g├│i" value="{{ request('package_code') }}">
++         </div>
++         <div class="col-md-3">
++             <label class="form-label small fw-bold text-muted">T├¬n dß╗ïch vß╗Ñ</label>
++             <input type="text" name="service_name" class="form-control border-light" placeholder="Dß╗ïch vß╗Ñ" value="{{ request('service_name') }}">
++         </div>
++         <div class="col-md-3">
++             <label class="form-label small fw-bold text-muted">─É╞ín vß╗ï t├¡nh</label>
++             <select name="unit" class="form-select border-light">
++                 <option value="">─É╞ín vß╗ï</option>
++                 @foreach(\App\Support\LogisticsOptions::serviceUnits() as $value => $label)
++                     <option value="{{ $value }}" {{ request('unit') === $value ? 'selected' : '' }}>{{ $label }}</option>
++                 @endforeach
++             </select>
+++>>>>>>> upstream/quyen-branch
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Thuß║┐</label>
++             <select name="is_tax_included" class="form-select border-light">
++                 <option value="">Tß║Ñt cß║ú thuß║┐</option>
++                 <option value="1" {{ request('is_tax_included') === '1' ? 'selected' : '' }}>─É├ú gß╗ôm thuß║┐</option>
++                 <option value="0" {{ request('is_tax_included') === '0' ? 'selected' : '' }}>Ch╞░a gß╗ôm thuß║┐</option>
++             </select>
++         </div>
++         <div class="col-md-1">
++             <button type="submit" class="btn btn-navy w-100">Lß╗ìc</button>
+          </div>
+      </form>
+  </div>
+  
+ +<div class="d-flex justify-content-end mb-4">
+ +    <button class="btn btn-navy px-4 fw-bold" data-bs-toggle="modal" data-bs-target="#priceModal" onclick="prepareAdd()">
+ +        <i class="fa fa-plus me-2"></i> TH├èM BIß╗éU GI├ü
+ +    </button>
+ +</div>
+ +
+  <!-- Data Table -->
++ <div class="d-flex justify-content-end mb-3">
++     <button class="btn btn-navy px-4 fw-bold" data-bs-toggle="modal" data-bs-target="#priceModal" onclick="prepareAdd()">
++         <i class="fa fa-plus me-2"></i> TH├èM BIß╗éU GI├ü
++     </button>
++ </div>
+  <div class="card border-0 rounded-4 shadow-sm overflow-hidden">
+      <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+@@@ -110,25 -113,25 +147,34 @@@
+                  </div>
+                  <div class="modal-body p-4 pt-0">
+                      <div class="row g-3">
+++<<<<<<< HEAD
+ +                        <!-- <div class="col-md-12">
+++=======
++                         <div class="col-md-12" id="packageCodeGroup">
+++>>>>>>> upstream/quyen-branch
+                              <label class="form-label fw-semibold">M├ú g├│i</label>
+                              <input type="text" id="package_code" class="form-control bg-light border-0" placeholder="Tß╗▒ sinh khi l╞░u" disabled>
+ -                        </div>
+ +                        </div> -->
+                          <div class="col-md-12">
+-                             <label class="form-label fw-semibold">T├¬n Dß╗ïch Vß╗Ñ</label>
+-                             <input type="text" name="service_name" id="service_name" class="form-control bg-light border-0" placeholder="VD: Vß║¡n chuyß╗ân Cont 20'..." required>
++                             <label class="form-label fw-semibold">T├¬n Dß╗ïch Vß╗Ñ <span class="text-danger">*</span></label>
++                             <input type="text" name="service_name" id="service_name" class="form-control bg-light border-0" placeholder="VD: Vß║¡n chuyß╗ân Cont 20'..." data-validate required>
+                          </div>
+                          <div class="col-md-6">
+-                             <label class="form-label fw-semibold">─É╞ín Vß╗ï T├¡nh</label>
+-                             <select name="unit" id="unit" class="form-select bg-light border-0" required>
++                             <label class="form-label fw-semibold">─É╞ín Vß╗ï T├¡nh <span class="text-danger">*</span></label>
++                             <select name="unit" id="unit" class="form-select bg-light border-0" data-validate required>
+                                  @foreach(\App\Support\LogisticsOptions::serviceUnits() as $value => $label)
+                                      <option value="{{ $value }}">{{ $label }}</option>
+                                  @endforeach
+                              </select>
+                          </div>
+                          <div class="col-md-6">
+++<<<<<<< HEAD
+ +                            <label class="form-label fw-semibold">─É╞ín Gi├í (VN─É)</label>
+ +                            <input type="number" name="unit_price" id="unit_price" class="form-control bg-light border-0" min="1000" required>
+++=======
++                             <label class="form-label fw-semibold">─É╞ín Gi├í (VN─É) <span class="text-danger">*</span></label>
++                             <input type="number" name="unit_price" id="unit_price" class="form-control bg-light border-0" data-validate required>
+++>>>>>>> upstream/quyen-branch
+                          </div>
+                          <div class="col-md-12">
+                              <div class="form-check form-switch">
+diff --cc resources/views/shipping_jobs/create.blade.php
+index dce7189,606bd9b..0000000
+--- a/resources/views/shipping_jobs/create.blade.php
++++ b/resources/views/shipping_jobs/create.blade.php
+@@@ -90,24 -90,9 +90,28 @@@
+                  </select>
+              </div>
+  
+ +            <div class="col-md-4">
+ +                <label class="form-label fw-bold text-navy">G├│i dß╗ïch vß╗Ñ <span class="text-danger">*</span></label>
+ +                <select name="service_price_id" class="form-select @error('service_price_id') is-invalid @enderror" required>
+ +                    <option value="">-- Chß╗ìn G├│i dß╗ïch vß╗Ñ --</option>
+ +                    @foreach($servicePrices as $service)
+ +                        <option value="{{ $service->id }}" {{ old('service_price_id') == $service->id ? 'selected' : '' }}>
+ +                            {{ $service->service_name }} - {{ number_format($service->unit_price) }}─æ
+ +                        </option>
+ +                    @endforeach
+ +                </select>
+ +                @error('service_price_id')
+ +                    <div class="invalid-feedback">{{ $message }}</div>
+ +                @enderror
+ +            </div>
+ +
+              <div class="col-md-4">
+                  <label class="form-label fw-bold text-navy">Sß╗æ Container</label>
+++<<<<<<< HEAD
+ +                <input type="text" name="container_number" class="form-control @error('container_number') is-invalid @enderror" value="{{ old('container_number') }}" placeholder="VD: TCNU1234567" maxlength="11" pattern="[A-Z]{4}[0-9]{7}" title="Sß╗æ container phß║úi ─æ├║ng chuß║⌐n ISO 6346: 4 chß╗» c├íi theo sau l├á 7 chß╗» sß╗æ (VD: TCNU1234567)" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');">
+++=======
++                 <input type="text" name="container_number" class="form-control @error('container_number') is-invalid @enderror" value="{{ old('container_number') }}" placeholder="VD: TCNU1234567" maxlength="11" data-validate="container-number" data-uppercase="true" data-label="Sß╗æ container">
+++>>>>>>> upstream/quyen-branch
+                  @error('container_number')
+                      <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
+diff --cc resources/views/shipping_jobs/index.blade.php
+index 5ca043a,e46b9c6..0000000
+--- a/resources/views/shipping_jobs/index.blade.php
++++ b/resources/views/shipping_jobs/index.blade.php
+@@@ -5,60 -5,73 +5,129 @@@
+  @section('content')
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+      <h4 class="fw-bold mb-0">Danh s├ích ─É╞ín h├áng (Jobs)</h4>
+++<<<<<<< HEAD
+ +    
+++=======
+++>>>>>>> upstream/quyen-branch
+      <x-export-buttons />
+  </div>
+  
+  <!-- Filters -->
+++<<<<<<< HEAD
+ +<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
+ +    <form action="{{ route('shipping-jobs.index') }}" method="GET">
+ +        <div class="row g-3 align-items-center">
+ +            <div class="col-lg-2 col-md-6">
+ +                <select name="customer_id" class="form-select border-light">
+ +                    <option value="">Tß║Ñt cß║ú kh├ích h├áng</option>
+ +                    @foreach($customers as $customer)
+ +                        <option value="{{ $customer->id }}" {{ (string) request('customer_id') === (string) $customer->id ? 'selected' : '' }}>
+ +                            {{ $customer->customer_name }}
+ +                        </option>
+ +                    @endforeach
+ +                </select>
+ +            </div>
+ +            <div class="col-lg-2 col-md-4">
+ +                <select name="status" class="form-select border-light">
+ +                    <option value="">Tß║Ñt cß║ú trß║íng th├íi</option>
+ +                    <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>─Éang xß╗¡ l├╜</option>
+ +                    <option value="new" {{ request('status') == 'new' ? 'selected' : '' }}>Mß╗¢i tß║ío</option>
+ +                    <option value="dispatched" {{ request('status') == 'dispatched' ? 'selected' : '' }}>─É├ú ─æiß╗üu xe</option>
+ +                    <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Ho├án th├ánh</option>
+ +                    <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>─É├ú hß╗ºy</option>
+ +                </select>
+ +            </div>
+ +            <div class="col-lg-2 col-md-4">
+ +                <input type="date" name="date_from" class="form-control border-light" value="{{ request('date_from') }}" title="Tß╗½ ng├áy dß╗▒ kiß║┐n">
+ +            </div>
+ +            <div class="col-lg-2 col-md-4">
+ +                <input type="date" name="date_to" class="form-control border-light" value="{{ request('date_to') }}" title="─Éß║┐n ng├áy dß╗▒ kiß║┐n">
+ +            </div>
+ +            <div class="col-lg-2 col-md-4"><input type="text" name="job_code" class="form-control border-light" placeholder="M├ú Job" value="{{ request('job_code') }}"></div>
+ +            <div class="col-md-2"><input type="text" name="container_number" class="form-control border-light" placeholder="Sß╗æ Cont" value="{{ request('container_number') }}"></div>
+ +            <div class="col-md-2"><input type="text" name="customs_declaration_no" class="form-control border-light" placeholder="Tß╗¥ khai" value="{{ request('customs_declaration_no') }}"></div>
+ +            <div class="col-md-2"><input type="text" name="cargo_type" class="form-control border-light" placeholder="H├áng h├│a" value="{{ request('cargo_type') }}"></div>
+ +            <div class="col-md-2"><input type="text" name="container_type" class="form-control border-light" placeholder="Loß║íi cont" value="{{ request('container_type') }}"></div>
+ +            
+ +            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+ +                <a href="{{ route('shipping-jobs.index') }}" class="btn btn-light px-4">X├│a lß╗ìc</a>
+ +                <button type="submit" class="btn btn-navy px-4">Lß╗ìc</button>
+ +            </div>
+ +        </div>
+ +    </form>
+ +</div>
+ +
+ +<div class="d-flex justify-content-end mb-4">
+ +    @if(Auth::user()->hasRole(['ADMIN', 'SALES']))
+ +    <a href="{{ route('shipping-jobs.create') }}" class="btn btn-navy px-4 fw-bold">
+ +        <i class="fa fa-plus me-2"></i> Tß║áO ─É╞áN H├ÇNG Mß╗ÜI
+ +    </a>
+ +    @endif
+++=======
++ <div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
++     <form action="{{ route('shipping-jobs.index') }}" method="GET" class="row g-3 align-items-end">
++         <div class="col-lg-2 col-md-4">
++             <label class="form-label small fw-bold text-muted">M├ú ─æ╞ín h├áng</label>
++             <input type="text" name="job_code" class="form-control border-light" placeholder="M├ú Job" value="{{ request('job_code') }}">
++         </div>
++         <div class="col-lg-2 col-md-6">
++             <label class="form-label small fw-bold text-muted">Kh├ích h├áng</label>
++             <select name="customer_id" class="form-select border-light">
++                 <option value="">Tß║Ñt cß║ú kh├ích h├áng</option>
++                 @foreach($customers as $customer)
++                     <option value="{{ $customer->id }}" {{ (string) request('customer_id') === (string) $customer->id ? 'selected' : '' }}>
++                         {{ $customer->customer_name }}
++                     </option>
++                 @endforeach
++             </select>
++         </div>
++         <div class="col-lg-2 col-md-4">
++             <label class="form-label small fw-bold text-muted">Trß║íng th├íi ─æ╞ín h├áng</label>
++             <select name="status" class="form-select border-light">
++                 <option value="">Tß║Ñt cß║ú trß║íng th├íi</option>
++                 <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>─Éang xß╗¡ l├╜</option>
++                 <option value="new" {{ request('status') == 'new' ? 'selected' : '' }}>Mß╗¢i tß║ío</option>
++                 <option value="dispatched" {{ request('status') == 'dispatched' ? 'selected' : '' }}>─É├ú ─æiß╗üu xe</option>
++                 <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Ho├án th├ánh</option>
++                 <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>─É├ú hß╗ºy</option>
++             </select>
++         </div>
++         <div class="col-lg-2 col-md-4">
++             <label class="form-label small fw-bold text-muted">Hß║ín xß╗¡ l├╜ tß╗½ ng├áy</label>
++             <input type="text" name="date_from" class="form-control border-light" value="{{ \App\Support\VietnameseDate::display(request('date_from')) }}" placeholder="Ng├áy/Th├íng/N─âm" data-date-input data-label="Hß║ín xß╗¡ l├╜ tß╗½ ng├áy">
++         </div>
++         <div class="col-lg-2 col-md-4">
++             <label class="form-label small fw-bold text-muted">Hß║ín xß╗¡ l├╜ ─æß║┐n ng├áy</label>
++             <input type="text" name="date_to" class="form-control border-light" value="{{ \App\Support\VietnameseDate::display(request('date_to')) }}" placeholder="Ng├áy/Th├íng/N─âm" data-date-input data-label="Hß║ín xß╗¡ l├╜ ─æß║┐n ng├áy">
++         </div>
++         <div class="col-lg-2 col-md-4">
++             <label class="form-label small fw-bold text-muted">Ng├áy tß║ío ─æ╞ín</label>
++             <input type="text" name="created_date" class="form-control border-light" value="{{ \App\Support\VietnameseDate::display(request('created_date')) }}" placeholder="Ng├áy/Th├íng/N─âm" data-date-input data-label="Ng├áy tß║ío ─æ╞ín">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Sß╗æ container</label>
++             <input type="text" name="container_number" class="form-control border-light" placeholder="TCNU1234567" value="{{ request('container_number') }}">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Tß╗¥ khai hß║úi quan</label>
++             <input type="text" name="customs_declaration_no" class="form-control border-light" placeholder="12 chß╗» sß╗æ" value="{{ request('customs_declaration_no') }}">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Loß║íi h├áng h├│a</label>
++             <input type="text" name="cargo_type" class="form-control border-light" placeholder="H├áng h├│a" value="{{ request('cargo_type') }}">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Loß║íi container</label>
++             <input type="text" name="container_type" class="form-control border-light" placeholder="Loß║íi cont" value="{{ request('container_type') }}">
++         </div>
++         <div class="col-md-2 ms-md-auto">
++             <button type="submit" class="btn btn-navy w-100">Lß╗ìc</button>
++         </div>
++         <div class="col-md-2">
++             <a href="{{ route('shipping-jobs.index') }}" class="btn btn-light w-100">X├│a lß╗ìc</a>
++         </div>
++     </form>
+++>>>>>>> upstream/quyen-branch
+  </div>
+  
+  <!-- Data Table -->
+diff --cc resources/views/shipping_jobs/show.blade.php
+index 59c6023,cb74b58..0000000
+--- a/resources/views/shipping_jobs/show.blade.php
++++ b/resources/views/shipping_jobs/show.blade.php
+@@@ -301,19 -378,17 +301,33 @@@
+                                      </div>
+                                  </div>
+                                  <div class="d-flex gap-1">
+++<<<<<<< HEAD
+ +                                    @php
+ +                                        $fileExt = pathinfo($doc->file_url, PATHINFO_EXTENSION);
+ +                                        $fileUrl = route('documents.show', $doc);
+ +                                    @endphp
+ +                                    <button type="button" class="btn btn-link text-white p-1" data-bs-toggle="modal" data-bs-target="#previewModal" onclick="previewDocument('{{ $fileUrl }}', '{{ $doc->doc_category }}', '{{ $fileExt }}')">
+ +                                        <i class="fa fa-eye"></i>
+ +                                    </button>
+ +                                    <form action="{{ route('documents.destroy', $doc->id) }}" method="POST" id="delete-doc-{{ $doc->id }}" class="d-none">
+ +                                        @csrf @method('DELETE')
+ +                                    </form>
+ +                                    <button type="button" class="btn btn-link text-danger p-1" onclick="handleDelete('delete-doc-{{ $doc->id }}', 'X├│a chß╗⌐ng tß╗½ n├áy?')">
+ +                                        <i class="fa fa-trash-alt"></i>
+ +                                    </button>
+++=======
++                                     <a href="{{ route('documents.show', $doc) }}" target="_blank" class="btn btn-link text-white p-1">
++                                         <i class="fa fa-eye"></i>
++                                     </a>
++                                     @if(Auth::user()->hasRole(['ADMIN', 'ACCOUNTANT', 'DOCUMENT']))
++                                         <form action="{{ route('documents.destroy', $doc->id) }}" method="POST" id="delete-doc-{{ $doc->id }}" class="d-none">
++                                             @csrf @method('DELETE')
++                                         </form>
++                                         <button type="button" class="btn btn-link text-danger p-1" onclick="handleDelete('delete-doc-{{ $doc->id }}', 'X├│a chß╗⌐ng tß╗½ n├áy?')">
++                                             <i class="fa fa-trash-alt"></i>
++                                         </button>
++                                     @endif
+++>>>>>>> upstream/quyen-branch
+                                  </div>
+                              </div>
+                          @endforeach
+diff --cc resources/views/users/create.blade.php
+index 208566a,27d6b42..0000000
+--- a/resources/views/users/create.blade.php
++++ b/resources/views/users/create.blade.php
+@@@ -14,50 -14,49 +14,80 @@@
+      </div>
+  
+      <div class="row justify-content-center">
+-         <div class="col-lg-6">
++         <div class="col-lg-8">
+              <div class="card border-0 rounded-4 shadow-sm">
+                  <div class="card-body p-4">
+ -                    <form action="{{ route('users.store') }}" method="POST">
+ +                    <form action="{{ route('users.store') }}" method="POST" id="user_form">
+                          @csrf
+                          <div class="mb-3">
+++<<<<<<< HEAD
+ +                            <label class="form-label fw-bold">Hß╗ì t├¬n nh├ón vi├¬n</label>
+ +                            <input type="text" id="profile_name" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
+ +                            <div id="profile_name_error" class="invalid-feedback"></div>
+++=======
++                             <label class="form-label fw-bold">Hß╗ì t├¬n nh├ón vi├¬n <span class="text-danger">*</span></label>
++                             <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" data-validate="person-name" data-label="Hß╗ì t├¬n nh├ón vi├¬n" required>
+++>>>>>>> upstream/quyen-branch
+                              @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                          </div>
+  
+                          <div class="mb-3">
+++<<<<<<< HEAD
+ +                            <label class="form-label fw-bold">Email ─æ─âng nhß║¡p</label>
+ +                            <input type="email" id="profile_email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required>
+ +                            <div id="profile_email_error" class="invalid-feedback"></div>
+++=======
++                             <label class="form-label fw-bold">Email ─æ─âng nhß║¡p <span class="text-danger">*</span></label>
++                             <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" data-validate data-label="Email ─æ─âng nhß║¡p" required>
+++>>>>>>> upstream/quyen-branch
+                              @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                          </div>
+  
+                          <div class="row g-3 mb-3">
+                              <div class="col-md-6">
+++<<<<<<< HEAD
+ +                                <label class="form-label fw-bold">Bß╗Ö phß║¡n / Ph├▓ng ban</label>
+ +                                <select id="department" name="department" class="form-select @error('department') is-invalid @enderror" required>
+ +                                    <option value="">-- Chß╗ìn bß╗Ö phß║¡n --</option>
+++=======
++                                 <label class="form-label fw-bold">Chß╗⌐c vß╗Ñ <span class="text-danger">*</span></label>
++                                 <select name="position" class="form-select" required>
++                                     <option value="">Chß╗ìn chß╗⌐c vß╗Ñ</option>
++                                     @foreach($positions as $value => $label)
++                                         <option value="{{ $value }}" {{ old('position') === $value ? 'selected' : '' }}>{{ $label }}</option>
++                                     @endforeach
++                                 </select>
++                             </div>
++                             <div class="col-md-6">
++                                 <label class="form-label fw-bold">Bß╗Ö phß║¡n / ph├▓ng ban <span class="text-danger">*</span></label>
++                                 <select name="department" class="form-select" required>
++                                     <option value="">Chß╗ìn bß╗Ö phß║¡n</option>
+++>>>>>>> upstream/quyen-branch
+                                      @foreach($departments as $value => $label)
+                                          <option value="{{ $value }}" {{ old('department') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                                      @endforeach
+                                  </select>
+ +                                @error('department') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                              </div>
+                              <div class="col-md-6">
+ +                                <label class="form-label fw-bold">Chß╗⌐c vß╗Ñ</label>
+ +                                <select id="position" name="position" class="form-select @error('position') is-invalid @enderror" required>
+ +                                    <option value="">-- Chß╗ìn bß╗Ö phß║¡n tr╞░ß╗¢c --</option>
+ +                                </select>
+ +                                @error('position') <div class="invalid-feedback">{{ $message }}</div> @enderror
+ +                            </div>
+ +                            <div class="col-md-6">
+++<<<<<<< HEAD
+ +                                <label class="form-label fw-bold">Ng├áy sinh</label>
+ +                                <input type="date" name="date_of_birth" class="form-control" value="{{ old('date_of_birth', now()->subYears(18)->toDateString()) }}" min="1950-01-01" max="{{ now()->subYears(18)->toDateString() }}" required>
+++=======
++                                 <label class="form-label fw-bold">Ng├áy sinh <span class="text-danger">*</span></label>
++                                 <input type="text" name="date_of_birth" class="form-control" value="{{ \App\Support\VietnameseDate::display(old('date_of_birth')) }}" placeholder="Ng├áy/Th├íng/N─âm" data-date-input data-label="Ng├áy sinh" required>
+++>>>>>>> upstream/quyen-branch
+                              </div>
+                              <div class="col-md-6">
+-                                 <label class="form-label fw-bold">Ng├áy tham gia</label>
+-                                 <input type="date" name="joined_at" class="form-control" value="{{ old('joined_at', now()->toDateString()) }}" min="{{ now()->subYears(10)->toDateString() }}" max="{{ now()->toDateString() }}" required>
++                                 <label class="form-label fw-bold">Ng├áy tham gia <span class="text-danger">*</span></label>
++                                 <input type="text" name="joined_at" class="form-control" value="{{ \App\Support\VietnameseDate::display(old('joined_at', now()->toDateString())) }}" placeholder="Ng├áy/Th├íng/N─âm" data-date-input data-label="Ng├áy tham gia" required>
+                              </div>
+                          </div>
+  
+@@@ -74,36 -73,92 +104,123 @@@
+                              @error('role_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                          </div>
+  
++                         <div class="border rounded-3 p-3 mb-3 d-none" data-profile-section="DRIVER">
++                             <div class="fw-bold text-navy mb-3">Th├┤ng tin profile t├ái xß║┐</div>
++                             <div class="row g-3">
++                                 <div class="col-md-6">
++                                     <label class="form-label fw-semibold">Sß╗æ ─æiß╗çn thoß║íi <span class="text-danger">*</span></label>
++                                     <input type="text" name="driver_phone" class="form-control @error('driver_phone') is-invalid @enderror" value="{{ old('driver_phone') }}" maxlength="10" inputmode="numeric" data-validate="phone-vn" data-label="Sß╗æ ─æiß╗çn thoß║íi t├ái xß║┐" data-profile-required>
++                                     @error('driver_phone') <div class="invalid-feedback">{{ $message }}</div> @enderror
++                                 </div>
++                                 <div class="col-md-6">
++                                     <label class="form-label fw-semibold">Sß╗æ bß║▒ng l├íi <span class="text-danger">*</span></label>
++                                     <input type="text" name="driver_license_number" class="form-control @error('driver_license_number') is-invalid @enderror" value="{{ old('driver_license_number') }}" data-validate data-label="Sß╗æ bß║▒ng l├íi" data-profile-required>
++                                     @error('driver_license_number') <div class="invalid-feedback">{{ $message }}</div> @enderror
++                                 </div>
++                                 <div class="col-md-4">
++                                     <label class="form-label fw-semibold">Ng├áy bß║»t ─æß║ºu</label>
++                                     <input type="text" name="driver_start_date" class="form-control @error('driver_start_date') is-invalid @enderror" value="{{ \App\Support\VietnameseDate::display(old('driver_start_date', old('joined_at', now()->toDateString()))) }}" placeholder="Ng├áy/Th├íng/N─âm" data-date-input data-label="Ng├áy bß║»t ─æß║ºu t├ái xß║┐">
++                                     @error('driver_start_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
++                                 </div>
++                                 <div class="col-md-4">
++                                     <label class="form-label fw-semibold">Cß║Ñp bß║¡c</label>
++                                     <select name="driver_rank" class="form-select @error('driver_rank') is-invalid @enderror">
++                                         <option value="">Chß╗ìn cß║Ñp bß║¡c</option>
++                                         @foreach(\App\Support\LogisticsOptions::driverRanks() as $value => $label)
++                                             <option value="{{ $value }}" {{ old('driver_rank') === $value ? 'selected' : '' }}>{{ $label }}</option>
++                                         @endforeach
++                                     </select>
++                                     @error('driver_rank') <div class="invalid-feedback">{{ $message }}</div> @enderror
++                                 </div>
++                                 <div class="col-md-4">
++                                     <label class="form-label fw-semibold">Hß║ín hß╗úp ─æß╗ông</label>
++                                     <input type="text" name="driver_contract_expiry" class="form-control @error('driver_contract_expiry') is-invalid @enderror" value="{{ \App\Support\VietnameseDate::display(old('driver_contract_expiry')) }}" placeholder="Ng├áy/Th├íng/N─âm" data-date-input data-label="Hß║ín hß╗úp ─æß╗ông t├ái xß║┐">
++                                     @error('driver_contract_expiry') <div class="invalid-feedback">{{ $message }}</div> @enderror
++                                 </div>
++                                 <div class="col-12">
++                                     <label class="form-label fw-semibold">Ghi ch├║</label>
++                                     <textarea name="driver_note" class="form-control" rows="2">{{ old('driver_note') }}</textarea>
++                                 </div>
++                             </div>
++                         </div>
++ 
++                         <div class="border rounded-3 p-3 mb-3 d-none" data-profile-section="FIELD">
++                             <div class="fw-bold text-navy mb-3">Th├┤ng tin profile nh├ón vi├¬n hiß╗çn tr╞░ß╗¥ng</div>
++                             <div class="row g-3">
++                                 <div class="col-md-6">
++                                     <label class="form-label fw-semibold">Sß╗æ ─æiß╗çn thoß║íi <span class="text-danger">*</span></label>
++                                     <input type="text" name="field_phone" class="form-control @error('field_phone') is-invalid @enderror" value="{{ old('field_phone') }}" maxlength="10" inputmode="numeric" data-validate="phone-vn" data-label="Sß╗æ ─æiß╗çn thoß║íi nh├ón vi├¬n hiß╗çn tr╞░ß╗¥ng" data-profile-required>
++                                     @error('field_phone') <div class="invalid-feedback">{{ $message }}</div> @enderror
++                                 </div>
++                                 <div class="col-md-6">
++                                     <label class="form-label fw-semibold">Ng├áy bß║»t ─æß║ºu</label>
++                                     <input type="text" name="field_start_date" class="form-control @error('field_start_date') is-invalid @enderror" value="{{ \App\Support\VietnameseDate::display(old('field_start_date', old('joined_at', now()->toDateString()))) }}" placeholder="Ng├áy/Th├íng/N─âm" data-date-input data-label="Ng├áy bß║»t ─æß║ºu nh├ón vi├¬n hiß╗çn tr╞░ß╗¥ng">
++                                     @error('field_start_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
++                                 </div>
++                                 <div class="col-12">
++                                     <label class="form-label fw-semibold">Khu vß╗▒c phß╗Ñ tr├ích <span class="text-danger">*</span></label>
++                                     <select name="field_responsible_location_ids[]" class="form-select @error('field_responsible_location_ids') is-invalid @enderror" multiple data-profile-required>
++                                         @foreach($responsibleLocations as $location)
++                                             <option value="{{ $location->id }}" {{ in_array($location->id, old('field_responsible_location_ids', [])) ? 'selected' : '' }}>
++                                                 {{ $location->location_name }} - {{ $location->province }}
++                                             </option>
++                                         @endforeach
++                                     </select>
++                                     @error('field_responsible_location_ids') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
++                                     @error('field_responsible_location_ids.*') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
++                                 </div>
++                                 <div class="col-12">
++                                     <label class="form-label fw-semibold">Chß╗⌐ng chß╗ë</label>
++                                     <textarea name="field_certificates" class="form-control" rows="2">{{ old('field_certificates') }}</textarea>
++                                 </div>
++                                 <div class="col-12">
++                                     <label class="form-label fw-semibold">Ghi ch├║</label>
++                                     <textarea name="field_note" class="form-control" rows="2">{{ old('field_note') }}</textarea>
++                                 </div>
++                             </div>
++                         </div>
++ 
+                          <div class="row g-3 mb-4">
+                              <div class="col-md-6">
+++<<<<<<< HEAD
+ +                                <label class="form-label fw-bold">Mß║¡t khß║⌐u</label>
+ +                                <div class="input-group">
+ +                                    <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" required>
+ +                                    <button class="btn btn-outline-secondary toggle-password" type="button" tabindex="-1">
+ +                                        <i class="fa fa-eye"></i>
+ +                                    </button>
+ +                                </div>
+ +                                <div id="password-requirements" class="mt-2 small d-none">
+ +                                    <div class="text-muted mb-1 fw-semibold">Y├¬u cß║ºu mß║¡t khß║⌐u:</div>
+ +                                    <ul class="list-unstyled mb-0" style="font-size: 0.8rem;">
+ +                                        <li id="req_length" class="text-danger"><i class="fa fa-times-circle me-1"></i> Tß╗æi thiß╗âu 8 k├╜ tß╗▒</li>
+ +                                        <li id="req_lower" class="text-danger"><i class="fa fa-times-circle me-1"></i> C├│ chß╗» th╞░ß╗¥ng (a-z)</li>
+ +                                        <li id="req_upper" class="text-danger"><i class="fa fa-times-circle me-1"></i> C├│ chß╗» hoa (A-Z)</li>
+ +                                        <li id="req_number" class="text-danger"><i class="fa fa-times-circle me-1"></i> C├│ sß╗æ (0-9)</li>
+ +                                        <li id="req_special" class="text-danger"><i class="fa fa-times-circle me-1"></i> C├│ k├╜ tß╗▒ ─æß║╖c biß╗çt</li>
+ +                                    </ul>
+ +                                </div>
+ +                                @error('password') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+ +                            </div>
+ +                            <div class="col-md-6">
+ +                                <label class="form-label fw-bold">X├íc nhß║¡n mß║¡t khß║⌐u</label>
+ +                                <div class="input-group">
+ +                                    <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" required>
+ +                                    <button class="btn btn-outline-secondary toggle-password" type="button" tabindex="-1">
+ +                                        <i class="fa fa-eye"></i>
+ +                                    </button>
+ +                                </div>
+ +                                <div id="password-match-msg" class="form-text mt-2" style="display: none;"></div>
+++=======
++                                 <label class="form-label fw-bold">Mß║¡t khß║⌐u <span class="text-danger">*</span></label>
++                                 <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" data-validate required>
++                                 <div class="form-text">Tß╗æi thiß╗âu 8 k├╜ tß╗▒, c├│ chß╗» hoa, chß╗» th╞░ß╗¥ng, chß╗» sß╗æ v├á k├╜ tß╗▒ ─æß║╖c biß╗çt.</div>
++                                 @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
++                             </div>
++                             <div class="col-md-6">
++                                 <label class="form-label fw-bold">X├íc nhß║¡n mß║¡t khß║⌐u <span class="text-danger">*</span></label>
++                                 <input type="password" name="password_confirmation" class="form-control" data-validate required>
+++>>>>>>> upstream/quyen-branch
+                              </div>
+                          </div>
+  
+@@@ -116,333 -171,32 +233,361 @@@
+          </div>
+      </div>
+  </div>
++ 
++ @push('scripts')
++ <script>
++     document.addEventListener('DOMContentLoaded', () => {
++         const roleSelect = document.querySelector('[data-role-select]');
++         const profileSections = document.querySelectorAll('[data-profile-section]');
++ 
++         const syncProfileSections = () => {
++             const roleCode = roleSelect?.selectedOptions?.[0]?.dataset?.roleCode || '';
++ 
++             profileSections.forEach((section) => {
++                 const isActive = section.dataset.profileSection === roleCode;
++                 section.classList.toggle('d-none', !isActive);
++                 section.querySelectorAll('[data-profile-required]').forEach((field) => {
++                     if (isActive) {
++                         field.setAttribute('required', 'required');
++                     } else {
++                         field.removeAttribute('required');
++                     }
++                 });
++             });
++         };
++ 
++         roleSelect?.addEventListener('change', syncProfileSections);
++         syncProfileSections();
++     });
++ </script>
++ @endpush
+  @endsection
+ +
+ +@push('scripts')
+ +<script>
+ +    const DEPT_POSITION_MAP = @json(\App\Support\LogisticsOptions::departmentPositionMap());
+ +    const OLD_POSITION = '{{ old('position') }}';
+ +    const OLD_DEPARTMENT = '{{ old('department') }}';
+ +
+ +    document.addEventListener('DOMContentLoaded', function () {
+ +        const deptSelect = document.getElementById('department');
+ +        const posSelect = document.getElementById('position');
+ +        const emailInput = document.querySelector('input[name="email"]');
+ +        const submitBtn = document.querySelector('button[type="submit"]');
+ +
+ +        /** --- Cascading dropdown --- */
+ +        function populatePositions(department, selectedPosition) {
+ +            posSelect.innerHTML = '';
+ +            const positions = DEPT_POSITION_MAP[department] || [];
+ +            if (positions.length === 0) {
+ +                posSelect.innerHTML = '<option value="">-- Chß╗ìn bß╗Ö phß║¡n tr╞░ß╗¢c --</option>';
+ +                posSelect.disabled = true;
+ +                return;
+ +            }
+ +            posSelect.disabled = false;
+ +            posSelect.innerHTML = '<option value="">-- Chß╗ìn chß╗⌐c vß╗Ñ --</option>';
+ +            positions.forEach(function (pos) {
+ +                const opt = document.createElement('option');
+ +                opt.value = pos;
+ +                opt.textContent = pos;
+ +                if (pos === selectedPosition) { opt.selected = true; }
+ +                posSelect.appendChild(opt);
+ +            });
+ +        }
+ +
+ +        // Init on page load (restore old() values after validation failure)
+ +        if (OLD_DEPARTMENT) {
+ +            populatePositions(OLD_DEPARTMENT, OLD_POSITION);
+ +        } else {
+ +            posSelect.disabled = true;
+ +        }
+ +
+ +        deptSelect.addEventListener('change', function () {
+ +            populatePositions(this.value, '');
+ +        });
+ +
+ +        /** --- Name and Email Validation --- */
+ +        const userForm = document.getElementById('user_form');
+ +        const profileName = document.getElementById('profile_name');
+ +        const profileEmail = document.getElementById('profile_email');
+ +        const nameError = document.getElementById('profile_name_error');
+ +        const emailError = document.getElementById('profile_email_error');
+ +
+ +        function doValidateName() {
+ +            if (!profileName) return true;
+ +            let originalVal = profileName.value;
+ +            let val = originalVal;
+ +            let hasError = false;
+ +            let errorMsg = '';
+ +
+ +            // X├│a khoß║úng trß║»ng ß╗ƒ ─æß║ºu
+ +            if (val.startsWith(' ')) {
+ +                val = val.replace(/^\s+/, '');
+ +                hasError = true;
+ +                errorMsg = 'Kh├┤ng ─æ╞░ß╗úc nhß║¡p khoß║úng trß║»ng ß╗ƒ vß╗ï tr├¡ ─æß║ºu ti├¬n.';
+ +            }
+ +
+ +            // X├│a khoß║úng trß║»ng thß╗½a (nhiß╗üu h╞ín 1 dß║Ñu c├ích)
+ +            if (/\s{2,}/.test(val)) {
+ +                val = val.replace(/\s{2,}/g, ' ');
+ +                hasError = true;
+ +                errorMsg = 'Kh├┤ng ─æ╞░ß╗úc nhß║¡p qu├í 1 khoß║úng trß║»ng giß╗»a c├íc tß╗½.';
+ +            }
+ +
+ +            // X├│a sß╗æ v├á k├╜ tß╗▒ ─æß║╖c biß╗çt, hß╗ù trß╗ú c├íc k├╜ tß╗▒ Unicode bß║▒ng \p{L} (chß╗») v├á \p{M} (dß║Ñu)
+ +            const invalidCharsRegex = /[^\p{L}\p{M}\s]/gu;
+ +            if (invalidCharsRegex.test(val)) {
+ +                val = val.replace(invalidCharsRegex, '');
+ +                hasError = true;
+ +                errorMsg = 'Hß╗ì v├á t├¬n kh├┤ng ─æ╞░ß╗úc chß╗⌐a sß╗æ hoß║╖c k├╜ tß╗▒ ─æß║╖c biß╗çt.';
+ +            }
+ +
+ +            // Chuß║⌐n h├│a viß║┐t hoa chß╗» c├íi ─æß║ºu cß╗ºa mß╗ùi tß╗½
+ +            let capitalizedVal = val.split(' ').map(word => {
+ +                if (word.length === 0) return '';
+ +                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+ +            }).join(' ');
+ +
+ +            if (val !== capitalizedVal) {
+ +                val = capitalizedVal;
+ +            }
+ +
+ +            if (originalVal !== val) {
+ +                let start = profileName.selectionStart;
+ +                let end = profileName.selectionEnd;
+ +                let diff = originalVal.length - val.length;
+ +                profileName.value = val;
+ +                if (start !== null && end !== null) {
+ +                    profileName.setSelectionRange(Math.max(0, start - diff), Math.max(0, end - diff));
+ +                }
+ +            }
+ +
+ +            if (hasError) {
+ +                profileName.classList.add('is-invalid');
+ +                nameError.textContent = errorMsg;
+ +                return false;
+ +            } else {
+ +                profileName.classList.remove('is-invalid');
+ +                return true;
+ +            }
+ +        }
+ +
+ +        function doValidateEmail() {
+ +            if (!profileEmail) return true;
+ +            let originalVal = profileEmail.value;
+ +            let val = originalVal;
+ +            let hasError = false;
+ +            let errorMsg = '';
+ +
+ +            // X├│a tß║Ñt cß║ú khoß║úng trß║»ng trong email
+ +            if (/\s/.test(val)) {
+ +                val = val.replace(/\s/g, '');
+ +                hasError = true;
+ +                errorMsg = 'Email kh├┤ng ─æ╞░ß╗úc chß╗⌐a khoß║úng trß║»ng.';
+ +            }
+ +
+ +            // Chß╗ë cho ph├⌐p chß╗», sß╗æ, @ v├á .
+ +            const invalidCharsRegex = /[^a-zA-Z0-9@.]/g;
+ +            if (invalidCharsRegex.test(val)) {
+ +                val = val.replace(invalidCharsRegex, '');
+ +                hasError = true;
+ +                errorMsg = 'Email chß╗ë ─æ╞░ß╗úc chß╗⌐a chß╗», sß╗æ, @ v├á dß║Ñu chß║Ñm.';
+ +            }
+ +
+ +            // Chß╗ë cho ph├⌐p 1 k├╜ tß╗▒ @
+ +            if ((val.match(/@/g) || []).length > 1) {
+ +                const firstAt = val.indexOf('@');
+ +                val = val.substring(0, firstAt + 1) + val.substring(firstAt + 1).replace(/@/g, '');
+ +                hasError = true;
+ +                errorMsg = 'Email chß╗ë ─æ╞░ß╗úc chß╗⌐a tß╗æi ─æa 1 k├╜ tß╗▒ @.';
+ +            }
+ +
+ +            // Chß╗ë cho ph├⌐p 1 k├╜ tß╗▒ .
+ +            if ((val.match(/\./g) || []).length > 1) {
+ +                const firstDot = val.indexOf('.');
+ +                val = val.substring(0, firstDot + 1) + val.substring(firstDot + 1).replace(/\./g, '');
+ +                hasError = true;
+ +                errorMsg = 'Email chß╗ë ─æ╞░ß╗úc chß╗⌐a tß╗æi ─æa 1 dß║Ñu chß║Ñm.';
+ +            }
+ +
+ +            if (originalVal !== val) {
+ +                let start = profileEmail.selectionStart;
+ +                let end = profileEmail.selectionEnd;
+ +                let diff = originalVal.length - val.length;
+ +                profileEmail.value = val;
+ +                if (start !== null && end !== null) {
+ +                    profileEmail.setSelectionRange(Math.max(0, start - diff), Math.max(0, end - diff));
+ +                }
+ +            }
+ +
+ +            // Ph├ón t├¡ch lß╗ùi ─æß╗ïnh dß║íng cß╗Ñ thß╗â
+ +            let isValidFormat = true;
+ +            let formatErrorMsg = '';
+ +            if (val.length > 0) {
+ +                if (!val.includes('@')) {
+ +                    isValidFormat = false;
+ +                    formatErrorMsg = 'Email ─æang thiß║┐u k├╜ tß╗▒ @.';
+ +                } else {
+ +                    let parts = val.split('@');
+ +                    if (parts[0].length === 0) {
+ +                        isValidFormat = false;
+ +                        formatErrorMsg = 'Email ─æang thiß║┐u t├¬n tr╞░ß╗¢c @.';
+ +                    } else if (parts.length > 2) {
+ +                        isValidFormat = false;
+ +                        formatErrorMsg = 'Email kh├┤ng ─æ╞░ß╗úc chß╗⌐a nhiß╗üu h╞ín 1 k├╜ tß╗▒ @.';
+ +                    } else if (parts[1].length === 0) {
+ +                        isValidFormat = false;
+ +                        formatErrorMsg = 'Email ─æang thiß║┐u t├¬n miß╗ün (sau @).';
+ +                    } else if (!parts[1].includes('.')) {
+ +                        isValidFormat = false;
+ +                        formatErrorMsg = 'T├¬n miß╗ün email ─æang thiß║┐u dß║Ñu chß║Ñm (.).';
+ +                    } else {
+ +                        let domainParts = parts[1].split('.');
+ +                        if (domainParts[domainParts.length - 1].length < 2) {
+ +                            isValidFormat = false;
+ +                            formatErrorMsg = 'T├¬n miß╗ün email ch╞░a ─æß║ºy ─æß╗º hoß║╖c kh├┤ng hß╗úp lß╗ç.';
+ +                        }
+ +                    }
+ +                }
+ +            }
+ +
+ +            if (hasError || (val.length > 0 && !isValidFormat)) {
+ +                profileEmail.classList.add('is-invalid');
+ +                if (!hasError) errorMsg = formatErrorMsg;
+ +                emailError.textContent = errorMsg;
+ +                return false;
+ +            } else {
+ +                profileEmail.classList.remove('is-invalid');
+ +                return true;
+ +            }
+ +        }
+ +
+ +        let nameValidationTimeout;
+ +        if (profileName) {
+ +            profileName.addEventListener('input', function() {
+ +                clearTimeout(nameValidationTimeout);
+ +                nameValidationTimeout = setTimeout(doValidateName, 50);
+ +            });
+ +        }
+ +        
+ +        let emailValidationTimeout;
+ +        if (profileEmail) {
+ +            profileEmail.addEventListener('input', function() {
+ +                clearTimeout(emailValidationTimeout);
+ +                emailValidationTimeout = setTimeout(doValidateEmail, 50);
+ +            });
+ +        }
+ +
+ +        if (userForm) {
+ +            userForm.addEventListener('submit', function(e) {
+ +                const isNameValid = doValidateName();
+ +                const isEmailValid = doValidateEmail();
+ +                // Check if password match is valid if there is a password match requirement logic
+ +                if (typeof isMatchValid !== 'undefined' && !isMatchValid && document.getElementById('password').value.length > 0) {
+ +                    e.preventDefault();
+ +                    return;
+ +                }
+ +                if (!isNameValid || !isEmailValid) {
+ +                    e.preventDefault();
+ +                }
+ +            });
+ +        }
+ +
+ +        /** --- Password Real-time Validation & Toggle --- */
+ +        const pwdInput = document.getElementById('password');
+ +        const pwdConfInput = document.getElementById('password_confirmation');
+ +        const reqsBox = document.getElementById('password-requirements');
+ +        const pwdMatchMsg = document.getElementById('password-match-msg');
+ +        let isMatchValid = false;
+ +        
+ +        const reqs = {
+ +            length: { el: document.getElementById('req_length'), regex: /.{8,}/ },
+ +            lower: { el: document.getElementById('req_lower'), regex: /[a-z]/ },
+ +            upper: { el: document.getElementById('req_upper'), regex: /[A-Z]/ },
+ +            number: { el: document.getElementById('req_number'), regex: /[0-9]/ },
+ +            special: { el: document.getElementById('req_special'), regex: /[^A-Za-z0-9]/ }
+ +        };
+ +
+ +        // Toggle password visibility
+ +        document.querySelectorAll('.toggle-password').forEach(btn => {
+ +            btn.addEventListener('click', function() {
+ +                const input = this.previousElementSibling;
+ +                const icon = this.querySelector('i');
+ +                if (input.type === 'password') {
+ +                    input.type = 'text';
+ +                    icon.classList.replace('fa-eye', 'fa-eye-slash');
+ +                } else {
+ +                    input.type = 'password';
+ +                    icon.classList.replace('fa-eye-slash', 'fa-eye');
+ +                }
+ +            });
+ +        });
+ +
+ +        function updateRequirement(reqKey, val) {
+ +            const item = reqs[reqKey];
+ +            if (item.regex.test(val)) {
+ +                item.el.classList.add('d-none');
+ +            } else {
+ +                item.el.classList.remove('d-none');
+ +            }
+ +        }
+ +
+ +        if (pwdInput) {
+ +            pwdInput.addEventListener('input', function() {
+ +                const val = this.value;
+ +                if (val.length === 0) {
+ +                    reqsBox.classList.add('d-none');
+ +                    return;
+ +                }
+ +                
+ +                reqsBox.classList.remove('d-none');
+ +                
+ +                let allMet = true;
+ +                Object.keys(reqs).forEach(key => {
+ +                    updateRequirement(key, val);
+ +                    if (!reqs[key].regex.test(val)) allMet = false;
+ +                });
+ +
+ +                if (allMet) {
+ +                    reqsBox.classList.add('d-none');
+ +                }
+ +
+ +                // Re-trigger confirmation check if there's already some value
+ +                if (pwdConfInput.value.length > 0) {
+ +                    pwdConfInput.dispatchEvent(new Event('input'));
+ +                }
+ +            });
+ +        }
+ +
+ +        if (pwdConfInput) {
+ +            pwdConfInput.addEventListener('input', function() {
+ +                const val = this.value;
+ +                const pwdVal = pwdInput.value;
+ +                
+ +                if (val.length === 0) {
+ +                    pwdMatchMsg.style.display = 'none';
+ +                    pwdConfInput.classList.remove('is-invalid', 'is-valid');
+ +                    isMatchValid = false;
+ +                    return;
+ +                }
+ +
+ +                pwdMatchMsg.style.display = 'block';
+ +                if (val === pwdVal) {
+ +                    pwdMatchMsg.className = 'form-text text-success fw-bold';
+ +                    pwdMatchMsg.innerHTML = '<i class="fa fa-check-circle me-1"></i> Mß║¡t khß║⌐u khß╗¢p';
+ +                    pwdConfInput.classList.remove('is-invalid');
+ +                    pwdConfInput.classList.add('is-valid');
+ +                    isMatchValid = true;
+ +                } else {
+ +                    pwdMatchMsg.className = 'form-text text-danger mt-2';
+ +                    pwdMatchMsg.innerHTML = '<i class="fa fa-times-circle me-1"></i> Mß║¡t khß║⌐u kh├┤ng khß╗¢p';
+ +                    pwdConfInput.classList.remove('is-valid');
+ +                    pwdConfInput.classList.add('is-invalid');
+ +                    isMatchValid = false;
+ +                }
+ +            });
+ +        }
+ +
+ +    });
+ +</script>
+ +@endpush
+diff --cc resources/views/users/edit.blade.php
+index 9151628,265c64d..0000000
+--- a/resources/views/users/edit.blade.php
++++ b/resources/views/users/edit.blade.php
+@@@ -23,8 -23,7 +23,12 @@@
+                          
+                          <div class="mb-3">
+                              <label class="form-label fw-bold">Hß╗ì t├¬n nh├ón vi├¬n</label>
+++<<<<<<< HEAD
+ +                            <input type="text" id="profile_name" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $user->name) }}" required>
+ +                            <div id="profile_name_error" class="invalid-feedback"></div>
+++=======
++                             <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $user->name) }}" data-validate="person-name" data-label="Hß╗ì t├¬n nh├ón vi├¬n" required>
+++>>>>>>> upstream/quyen-branch
+                              @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                          </div>
+  
+@@@ -59,7 -56,7 +63,11 @@@
+                              </div>
+                              <div class="col-md-6">
+                                  <label class="form-label fw-bold">Ng├áy sinh</label>
+++<<<<<<< HEAD
+ +                                <input type="date" name="date_of_birth" class="form-control" value="{{ old('date_of_birth', $user->date_of_birth?->format('Y-m-d')) }}" min="1950-01-01" max="{{ now()->subYears(18)->toDateString() }}" required>
+++=======
++                                 <input type="text" name="date_of_birth" class="form-control" value="{{ \App\Support\VietnameseDate::display(old('date_of_birth', $user->date_of_birth)) }}" placeholder="Ng├áy/Th├íng/N─âm" data-date-input data-label="Ng├áy sinh" required>
+++>>>>>>> upstream/quyen-branch
+                              </div>
+                              <div class="col-md-6">
+                                  <label class="form-label fw-bold">Ng├áy tham gia</label>
+diff --cc resources/views/users/index.blade.php
+index eba56bc,6209339..0000000
+--- a/resources/views/users/index.blade.php
++++ b/resources/views/users/index.blade.php
+@@@ -14,40 -14,57 +14,90 @@@
+          </div>
+      </div>
+  
+++<<<<<<< HEAD
+ +    <div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
+ +        <form action="{{ route('users.index') }}" method="GET" id="search_form">
+ +            <div class="row g-3 align-items-center">
+ +                <div class="col-md-2"><input type="text" name="employee_code" class="form-control border-light" placeholder="M├ú" value="{{ request('employee_code') }}"></div>
+ +                <div class="col-md-2"><input type="text" name="name" class="form-control border-light" placeholder="Hß╗ì t├¬n" value="{{ request('name') }}"></div>
+ +                <div class="col-md-2">
+ +                    <input type="text" id="search_email" name="email" class="form-control border-light" placeholder="Email" value="{{ request('email') }}">
+ +                    <div id="search_email_error" class="invalid-feedback position-absolute"></div>
+ +                </div>
+ +                <div class="col-md-2"><input type="text" name="position" class="form-control border-light" placeholder="Chß╗⌐c vß╗Ñ" value="{{ request('position') }}"></div>
+ +                <div class="col-md-2"><input type="text" name="department" class="form-control border-light" placeholder="Bß╗Ö phß║¡n" value="{{ request('department') }}"></div>
+ +                <div class="col-md-2">
+ +                    <select name="role_id" class="form-select border-light">
+ +                        <option value="">Vai tr├▓</option>
+ +                        @foreach($roles as $role)
+ +                            <option value="{{ $role->id }}" {{ (string) request('role_id') === (string) $role->id ? 'selected' : '' }}>{{ $role->role_name }}</option>
+ +                        @endforeach
+ +                    </select>
+ +                </div>
+ +                
+ +                <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+ +                    <a href="{{ route('users.index') }}" class="btn btn-light px-4">X├│a lß╗ìc</a>
+ +                    <button type="submit" class="btn btn-navy px-4">T├¼m kiß║┐m</button>
+ +                </div>
+++=======
++     <div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
++         <form action="{{ route('users.index') }}" method="GET" class="row g-3 align-items-end">
++             <div class="col-md-2">
++                 <label class="form-label small fw-bold text-muted">M├ú nh├ón sß╗▒</label>
++                 <input type="text" name="employee_code" class="form-control border-light" placeholder="M├ú" value="{{ request('employee_code') }}">
++             </div>
++             <div class="col-md-2">
++                 <label class="form-label small fw-bold text-muted">Hß╗ì t├¬n</label>
++                 <input type="text" name="name" class="form-control border-light" placeholder="Hß╗ì t├¬n" value="{{ request('name') }}">
++             </div>
++             <div class="col-md-2">
++                 <label class="form-label small fw-bold text-muted">Email</label>
++                 <input type="text" name="email" class="form-control border-light" placeholder="Email" value="{{ request('email') }}">
++             </div>
++             <div class="col-md-2">
++                 <label class="form-label small fw-bold text-muted">Chß╗⌐c vß╗Ñ</label>
++                 <input type="text" name="position" class="form-control border-light" placeholder="Chß╗⌐c vß╗Ñ" value="{{ request('position') }}">
++             </div>
++             <div class="col-md-2">
++                 <label class="form-label small fw-bold text-muted">Bß╗Ö phß║¡n</label>
++                 <input type="text" name="department" class="form-control border-light" placeholder="Bß╗Ö phß║¡n" value="{{ request('department') }}">
++             </div>
++             <div class="col-md-2">
++                 <label class="form-label small fw-bold text-muted">Vai tr├▓</label>
++                 <select name="role_id" class="form-select border-light">
++                     <option value="">Vai tr├▓</option>
++                     @foreach($roles as $role)
++                         <option value="{{ $role->id }}" {{ (string) request('role_id') === (string) $role->id ? 'selected' : '' }}>{{ $role->role_name }}</option>
++                     @endforeach
++                 </select>
+++>>>>>>> upstream/quyen-branch
++             </div>
++             <div class="col-md-2">
++                 <label class="form-label small fw-bold text-muted">Ng├áy sinh</label>
++                 <input type="text" name="date_of_birth" class="form-control border-light" placeholder="Ng├áy/Th├íng/N─âm" value="{{ \App\Support\VietnameseDate::display(request('date_of_birth')) }}" data-date-input data-label="Ng├áy sinh">
++             </div>
++             <div class="col-md-2">
++                 <label class="form-label small fw-bold text-muted">Ng├áy tham gia</label>
++                 <input type="text" name="joined_at" class="form-control border-light" placeholder="Ng├áy/Th├íng/N─âm" value="{{ \App\Support\VietnameseDate::display(request('joined_at')) }}" data-date-input data-label="Ng├áy tham gia">
++             </div>
++             <div class="col-md-2 ms-md-auto">
++                 <button type="submit" class="btn btn-navy w-100">Lß╗ìc</button>
+              </div>
+          </form>
+      </div>
+ +    
+ +    <div class="d-flex justify-content-end mb-4">
+ +        <a href="{{ route('users.create') }}" class="btn btn-navy fw-bold px-4">
+ +            <i class="fa fa-user-plus me-2"></i> TH├èM NH├éN VI├èN
+ +        </a>
+ +    </div>
+  
++     <div class="d-flex justify-content-end mb-3">
++         <a href="{{ route('users.create') }}" class="btn btn-navy fw-bold px-4">
++             <i class="fa fa-user-plus me-2"></i> TH├èM NH├éN VI├èN
++         </a>
++     </div>
++ 
+      <div class="card border-0 rounded-4 shadow-sm">
+          <div class="card-body p-4">
+              <div class="table-responsive">
+diff --cc resources/views/vehicles/index.blade.php
+index 64fb504,de8d6e9..0000000
+--- a/resources/views/vehicles/index.blade.php
++++ b/resources/views/vehicles/index.blade.php
+@@@ -5,54 -5,58 +5,104 @@@
+  @section('content')
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+      <h4 class="fw-bold mb-0">Quß║ún l├╜ ─Éß╗Öi xe</h4>
+++<<<<<<< HEAD
+ +    
+ +    <x-export-buttons />
+ +</div>
+ +
+ +<div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white">
+ +    <form action="{{ route('vehicles.index') }}" method="GET">
+ +        <div class="row g-3 align-items-center">
+ +            <div class="col-md-3"><input type="text" name="plate_number" class="form-control border-light" placeholder="Biß╗ân sß╗æ" value="{{ request('plate_number') }}"></div>
+ +            <div class="col-md-3">
+ +                <select name="status" class="form-select border-light">
+ +                    <option value="">Tß║Ñt cß║ú trß║íng th├íi</option>
+ +                    <option value="available" {{ request('status') === 'available' ? 'selected' : '' }}>Sß║╡n s├áng</option>
+ +                    <option value="busy" {{ request('status') === 'busy' ? 'selected' : '' }}>─Éang chß║íy</option>
+ +                    <option value="maintenance" {{ request('status') === 'maintenance' ? 'selected' : '' }}>Bß║úo tr├¼</option>
+ +                </select>
+ +            </div>
+ +            <div class="col-md-3">
+ +                <select name="vehicle_type" class="form-select border-light">
+ +                    <option value="">Loß║íi xe</option>
+ +                    @foreach(\App\Support\LogisticsOptions::vehicleTypes() as $value => $label)
+ +                        <option value="{{ $value }}" {{ request('vehicle_type') === $value ? 'selected' : '' }}>{{ $label }}</option>
+ +                    @endforeach
+ +                </select>
+ +            </div>
+ +            <div class="col-md-3">
+ +                <select name="payload" class="form-select border-light">
+ +                    <option value="">Tß║úi trß╗ìng</option>
+ +                    @foreach(\App\Support\LogisticsOptions::payloads() as $value => $label)
+ +                        <option value="{{ $value }}" {{ request('payload') === $value ? 'selected' : '' }}>{{ $label }}</option>
+ +                    @endforeach
+ +                </select>
+ +            </div>
+ +
+ +            <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+ +                <a href="{{ route('vehicles.index') }}" class="btn btn-light px-4">X├│a lß╗ìc</a>
+ +                <button type="submit" class="btn btn-navy px-4">T├¼m kiß║┐m</button>
+ +            </div>
+++=======
++     <x-export-buttons />
++ </div>
++ 
++ <div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
++     <form action="{{ route('vehicles.index') }}" method="GET" class="row g-3 align-items-end">
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Biß╗ân sß╗æ</label>
++             <input type="text" name="plate_number" class="form-control border-light" placeholder="15B2-923.15" value="{{ request('plate_number') }}">
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Loß║íi xe</label>
++             <select name="vehicle_type" class="form-select border-light">
++                 <option value="">Loß║íi xe</option>
++                 @foreach(\App\Support\LogisticsOptions::vehicleTypes() as $value => $label)
++                     <option value="{{ $value }}" {{ request('vehicle_type') === $value ? 'selected' : '' }}>{{ $label }}</option>
++                 @endforeach
++             </select>
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Tß║úi trß╗ìng</label>
++             <select name="payload" class="form-select border-light">
++                 <option value="">Tß║úi trß╗ìng</option>
++                 @foreach(\App\Support\LogisticsOptions::payloads() as $value => $label)
++                     <option value="{{ $value }}" {{ request('payload') === $value ? 'selected' : '' }}>{{ $label }}</option>
++                 @endforeach
++             </select>
++         </div>
++         <div class="col-md-3">
++             <label class="form-label small fw-bold text-muted">Trß║íng th├íi xe</label>
++             <select name="status" class="form-select border-light">
++                 <option value="">Tß║Ñt cß║ú trß║íng th├íi</option>
++                 <option value="available" {{ request('status') === 'available' ? 'selected' : '' }}>Sß║╡n s├áng</option>
++                 <option value="busy" {{ request('status') === 'busy' ? 'selected' : '' }}>─Éang chß║íy</option>
++                 <option value="maintenance" {{ request('status') === 'maintenance' ? 'selected' : '' }}>Bß║úo tr├¼</option>
++             </select>
++         </div>
++         <div class="col-md-2">
++             <label class="form-label small fw-bold text-muted">Hß║ín ─æ─âng kiß╗âm</label>
++             <input type="text" name="registration_expiry" class="form-control border-light" placeholder="Ng├áy/Th├íng/N─âm" value="{{ \App\Support\VietnameseDate::display(request('registration_expiry')) }}" data-date-input data-label="Hß║ín ─æ─âng kiß╗âm">
++         </div>
++         <div class="col-md-1">
++             <button type="submit" class="btn btn-navy w-100">Lß╗ìc</button>
+++>>>>>>> upstream/quyen-branch
+          </div>
+      </form>
+  </div>
+  
+ +<div class="d-flex justify-content-end mb-4">
+ +    <button class="btn btn-navy px-4 fw-bold" data-bs-toggle="modal" data-bs-target="#vehicleModal" onclick="prepareAdd()">
+ +        <i class="fa fa-plus me-2"></i> TH├èM XE Mß╗ÜI
+ +    </button>
+ +</div>
+ +
+  <!-- Data Table -->
++ <div class="d-flex justify-content-end mb-3">
++     <button class="btn btn-navy px-4 fw-bold" data-bs-toggle="modal" data-bs-target="#vehicleModal" onclick="prepareAdd()">
++         <i class="fa fa-plus me-2"></i> TH├èM XE Mß╗ÜI
++     </button>
++ </div>
+  <div class="card border-0 rounded-4 shadow-sm overflow-hidden">
+      <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+@@@ -151,11 -155,7 +201,15 @@@
+                      <div class="row g-3">
+                          <div class="col-md-12">
+                              <label class="form-label fw-semibold">Biß╗ân Sß╗æ Xe</label>
+++<<<<<<< HEAD
+ +                            <input type="text" name="plate_number" id="plate_number" class="form-control bg-light border-0 @error('plate_number') is-invalid @enderror" placeholder="VD: 51C-123.45" required oninput="formatLicensePlate(this)">
+ +                            <div class="invalid-feedback" id="plate_number_error" style="display: none;"></div>
+ +                            @error('plate_number')
+ +                                <div class="invalid-feedback d-block">{{ $message }}</div>
+ +                            @enderror
+++=======
++                             <input type="text" name="plate_number" id="plate_number" class="form-control bg-light border-0" placeholder="VD: 15B2-923.15" data-validate="plate-number" data-uppercase="true" data-label="Biß╗ân sß╗æ xe" required>
+++>>>>>>> upstream/quyen-branch
+                          </div>
+                          <div class="col-md-12">
+                              <label class="form-label fw-semibold">Loß║íi Xe</label>
+@@@ -218,74 -218,9 +272,74 @@@
+          document.getElementById('vehicle_type').value = vehicle.vehicle_type;
+          document.getElementById('payload').value = vehicle.payload;
+          document.getElementById('status').value = vehicle.status;
+-         document.getElementById('registration_expiry').value = vehicle.registration_expiry ? vehicle.registration_expiry.split(' ')[0] : '';
++         document.getElementById('registration_expiry').value = vehicle.registration_expiry ? isoToDate(vehicle.registration_expiry.split('T')[0].split(' ')[0]) : '';
+          document.getElementById('note').value = vehicle.note || '';
+      }
+ +
+ +    function formatLicensePlate(input) {
+ +        let val = input.value.toUpperCase();
+ +        let errorMsg = '';
+ +        
+ +        // X├│a k├╜ tß╗▒ kh├┤ng hß╗úp lß╗ç
+ +        val = val.replace(/[^A-Z0-9\-\.]/g, '');
+ +        
+ +        let cleaned = val.replace(/[\-\.]/g, ''); // Loß║íi bß╗Å - v├á . ─æß╗â format lß║íi
+ +        let formatted = '';
+ +        
+ +        for (let i = 0; i < cleaned.length; i++) {
+ +            let c = cleaned[i];
+ +            if (i === 0 || i === 1) { // Slot 1, 2: Sß╗æ
+ +                if (/[0-9]/.test(c)) formatted += c;
+ +                else { errorMsg = "K├╜ tß╗▒ " + (i+1) + " phß║úi l├á sß╗æ."; break; }
+ +            } else if (i === 2) { // Slot 3: Chß╗»
+ +                if (/[A-Z]/.test(c)) formatted += c;
+ +                else { errorMsg = "K├╜ tß╗▒ 3 phß║úi l├á chß╗» c├íi."; break; }
+ +            } else if (i >= 3 && i <= 5) { // Slot 5, 6, 7: Sß╗æ (Slot 4 l├á dß║Ñu -)
+ +                if (i === 3) formatted += '-';
+ +                if (/[0-9]/.test(c)) formatted += c;
+ +                else { errorMsg = "K├╜ tß╗▒ " + (i+2) + " phß║úi l├á sß╗æ."; break; }
+ +            } else if (i >= 6 && i <= 7) { // Slot 9, 10: Sß╗æ (Slot 8 l├á dß║Ñu .)
+ +                if (i === 6) formatted += '.';
+ +                if (/[0-9]/.test(c)) formatted += c;
+ +                else { errorMsg = "K├╜ tß╗▒ " + (i+3) + " phß║úi l├á sß╗æ."; break; }
+ +            }
+ +        }
+ +
+ +        // Preserve trailing dashes and dots if they are typed at the correct position
+ +        if (val.endsWith('-') && cleaned.length === 3) {
+ +            formatted = cleaned + '-';
+ +        } else if (val.endsWith('.') && cleaned.length === 6) {
+ +            formatted = formatted.substring(0, 7) + '.';
+ +        }
+ +        
+ +        if (formatted.length > 10) {
+ +            formatted = formatted.substring(0, 10);
+ +        }
+ +        
+ +        input.value = formatted;
+ +        
+ +        if (formatted.length > 0 && formatted.length < 10 && !errorMsg) {
+ +            errorMsg = "Biß╗ân sß╗æ xe phß║úi ─æß╗º 10 k├╜ tß╗▒ (V├¡ dß╗Ñ: 51C-123.45).";
+ +        }
+ +        
+ +        let errorDiv = document.getElementById('plate_number_error');
+ +        if (errorMsg) {
+ +            input.classList.add('is-invalid');
+ +            input.setCustomValidity(errorMsg);
+ +            if (errorDiv) {
+ +                errorDiv.innerText = errorMsg;
+ +                errorDiv.style.display = 'block';
+ +                errorDiv.classList.add('d-block');
+ +            }
+ +        } else {
+ +            input.classList.remove('is-invalid');
+ +            input.setCustomValidity('');
+ +            if (errorDiv) {
+ +                errorDiv.style.display = 'none';
+ +                errorDiv.classList.remove('d-block');
+ +            }
+ +        }
+ +    }
+  </script>
+  @endpush
+  @endsection
+diff --cc routes/web.php
+index 973a0e7,cb779b0..0000000
+--- a/routes/web.php
++++ b/routes/web.php
+@@@ -175,7 -148,6 +179,10 @@@ Route::middleware('auth')->group(functi
+          Route::get('debit-notes/{debitNote}', [DebitNoteController::class, 'show'])->name('debit-notes.show');
+          Route::post('payments', [PaymentController::class, 'store'])->name('payments.store');
+          Route::post('recurring-expenses', [RecurringExpenseController::class, 'store'])->name('recurring-expenses.store');
+++<<<<<<< HEAD
+ +        Route::get('recurring-expenses/{recurringExpense}/edit', [RecurringExpenseController::class, 'edit'])->name('recurring-expenses.edit');
+++=======
+++>>>>>>> upstream/quyen-branch
+          Route::put('recurring-expenses/{recurringExpense}', [RecurringExpenseController::class, 'update'])->name('recurring-expenses.update');
+          Route::delete('recurring-expenses/{recurringExpense}', [RecurringExpenseController::class, 'destroy'])->name('recurring-expenses.destroy');
+      });

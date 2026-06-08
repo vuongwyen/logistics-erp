@@ -16,6 +16,8 @@ class TrackingLog extends Model
         'dispatch_order_id',
         'status_update',
         'updated_by',
+        'latitude',
+        'longitude',
     ];
 
     public function dispatchOrder(): BelongsTo
@@ -26,5 +28,13 @@ class TrackingLog extends Model
     public function updater(): BelongsTo
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'latitude' => 'decimal:7',
+            'longitude' => 'decimal:7',
+        ];
     }
 }

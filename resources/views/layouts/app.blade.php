@@ -30,18 +30,24 @@
             border-bottom: 1px solid #334155 !important;
             box-shadow: none !important;
         }
-        .card, .kpi-card, .modal-content, .dropdown-menu {
+        .card, .kpi-card, .modal-content, .dropdown-menu, .list-group-item, .accordion-item {
             background-color: #1e293b !important;
             color: #f1f5f9 !important;
             border: 1px solid #334155 !important;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5) !important;
+        }
+        .modal-header, .modal-footer, .card-header, .card-footer {
+            background-color: #1e293b !important;
+            color: #f1f5f9 !important;
+            border-color: #334155 !important;
         }
         .icon-box { background-color: #334155 !important; color: #fff !important; }
         .dropdown-item { color: #cbd5e1 !important; }
         .dropdown-item:hover { background-color: #334155 !important; color: #fff !important; }
         
         .table { color: #f1f5f9 !important; border-color: #334155 !important; }
-        .table thead th { background-color: #0f172a !important; color: #94a3b8 !important; border-bottom: 2px solid #334155 !important; }
+        .table thead th, .table-light, .table-light th, thead.bg-light th { background-color: #0f172a !important; color: #cbd5e1 !important; border-bottom: 2px solid #334155 !important; }
+        .table td, .table th { color: #f1f5f9 !important; border-color: #334155 !important; }
         .table-hover tbody tr:hover { background-color: rgba(255,255,255,0.05) !important; color: #fff !important; }
         
         .form-control, .form-select, .input-group-text {
@@ -49,6 +55,7 @@
             border-color: #334155 !important;
             color: #f1f5f9 !important;
         }
+        .form-control::placeholder { color: #94a3b8 !important; }
         .form-control:focus, .form-select:focus {
             background-color: #0f172a !important;
             border-color: var(--navy-dark) !important;
@@ -56,9 +63,20 @@
             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
         }
 
+        label, .form-label, .form-text, .text-dark, .text-body, .text-black { color: #cbd5e1 !important; }
+        code { color: #f9a8d4 !important; }
         .text-navy, .text-muted { color: #94a3b8 !important; }
         .text-navy.fw-bold, .fw-bold.text-navy { color: #f1f5f9 !important; }
-        .bg-light { background-color: #334155 !important; color: #fff !important; }
+        .bg-light, .bg-white, .btn-light {
+            background-color: #334155 !important;
+            color: #f1f5f9 !important;
+            border-color: #475569 !important;
+        }
+        .badge.bg-light { color: #f1f5f9 !important; }
+        .btn-outline-navy {
+            color: #bfdbfe !important;
+            border-color: #60a5fa !important;
+        }
         
         .alert-success { background-color: #064e3b !important; color: #6ee7b7 !important; border: none !important; }
         .alert-danger { background-color: #7f1d1d !important; color: #fca5a5 !important; border: none !important; }
@@ -117,7 +135,7 @@
                 </a>
                 @endif
 
-                @if(Auth::user()->hasRole(['ADMIN', 'DISPATCH']))
+                @if(Auth::user()->hasRole(['ADMIN', 'DISPATCH', 'ACCOUNTANT']))
                 <a href="{{ route('dispatch-orders.index') }}" class="nav-link-custom {{ request()->routeIs('dispatch-orders.*') ? 'active' : '' }}">
                     <i class="fa fa-route"></i> Điều vận
                 </a>

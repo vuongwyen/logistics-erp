@@ -117,22 +117,18 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold text-navy">Ngày đi <span class="text-danger">*</span></label>
-                        <input type="date" name="planned_departure_date" class="form-control @error('planned_departure_date') is-invalid @enderror" value="{{ old('planned_departure_date', now()->toDateString()) }}" required>
-                        @error('planned_departure_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold text-navy">Ngày về <span class="text-danger">*</span></label>
-                        <input type="date" name="planned_return_date" class="form-control @error('planned_return_date') is-invalid @enderror" value="{{ old('planned_return_date', now()->addDay()->toDateString()) }}" required>
-                        @error('planned_return_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                    </div>
-
-                    <div class="col-md-6">
                         <label class="form-label fw-bold text-navy">Định mức Nhiên liệu (Lít)</label>
                         <div class="input-group">
                             <input type="number" step="0.1" name="fuel_quota" class="form-control" placeholder="0.0">
                             <span class="input-group-text bg-light border-start-0">Lít</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-navy">Định mức giá dầu (VNĐ/Lít)</label>
+                        <div class="input-group">
+                            <input type="number" name="fuel_price_quota" class="form-control" placeholder="0">
+                            <span class="input-group-text bg-light border-start-0">VNĐ/Lít</span>
                         </div>
                     </div>
 
@@ -145,11 +141,15 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold text-navy">Định mức giá dầu (VNĐ/Lít)</label>
-                        <div class="input-group">
-                            <input type="number" name="fuel_price_quota" class="form-control" placeholder="0">
-                            <span class="input-group-text bg-light border-start-0">VNĐ/Lít</span>
-                        </div>
+                        <label class="form-label fw-bold text-navy">Ngày đi <span class="text-danger">*</span></label>
+                        <input type="text" name="planned_departure_date" class="form-control @error('planned_departure_date') is-invalid @enderror" value="{{ \App\Support\VietnameseDate::display(old('planned_departure_date', now()->toDateString())) }}" placeholder="Ngày/Tháng/Năm" data-date-input data-label="Ngày đi" required>
+                        @error('planned_departure_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-navy">Ngày về <span class="text-danger">*</span></label>
+                        <input type="text" name="planned_return_date" class="form-control @error('planned_return_date') is-invalid @enderror" value="{{ \App\Support\VietnameseDate::display(old('planned_return_date', now()->addDay()->toDateString())) }}" placeholder="Ngày/Tháng/Năm" data-date-input data-label="Ngày về" required>
+                        @error('planned_return_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 
                     <div class="col-12">
@@ -162,14 +162,14 @@
                         <input type="number" name="loading_percent" class="form-control" min="0" max="100" value="{{ old('loading_percent', 0) }}">
                     </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold text-navy">Vĩ độ hiện tại</label>
-                        <input type="number" step="0.0000001" name="current_latitude" class="form-control" placeholder="VD: 10.7769000">
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold text-navy">Kinh độ hiện tại</label>
-                        <input type="number" step="0.0000001" name="current_longitude" class="form-control" placeholder="VD: 106.7009000">
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold text-navy">Vị trí hiện tại</label>
+                        <input type="hidden" name="current_latitude">
+                        <input type="hidden" name="current_longitude">
+                        <button type="button" class="btn btn-outline-navy w-100" data-current-location>
+                            <i class="fa fa-location-crosshairs me-2"></i> Cập nhật vị trí hiện tại
+                        </button>
+                        <div class="small text-muted mt-1" data-location-status>Người dùng sẽ được hỏi quyền chia sẻ vị trí.</div>
                     </div>
 
                     <div class="col-12 mt-5">
